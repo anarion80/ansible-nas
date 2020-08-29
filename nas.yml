@@ -251,3 +251,7 @@
   - import_tasks: tasks/pytivo.yml
     when: (pytivo_enabled | default(False))
     tags: pytivo
+
+  - import_tasks: tasks/nzbhydra2.yml
+    when: (nzbhydra2_enabled | default(False))
+    tags: nzbhydra2
