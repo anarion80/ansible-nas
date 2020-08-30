@@ -19,6 +19,7 @@
 transmission_with_openvpn_enabled: false # Please see docs about how to set VPN credentials
 transmission_enabled: false
 nzbget_enabled: false
+sabnzbd_enabled: false
 pyload_enabled: false
 utorrent_enabled: false
 
@@ -815,6 +816,17 @@ nzbget_download_directory: "{{ downloads_root }}"
 nzbget_user_id: "0"
 nzbget_group_id: "0"
 nzbget_port: "6789"
+
+###
+### SABNzbd
+###
+sabnzbd_available_externally: "false"
+sabnzbd_data_directory: "{{ docker_home }}/sabnzbd"
+sabnzbd_download_directory: "{{ downloads_root }}"
+sabnzbd_user_id: "0"
+sabnzbd_group_id: "0"
+sabnzbd_port_http: "8080"
+sabnzbd_port_https: "9090"
 
 ###
 ### Nzbhydra2

@@ -255,3 +255,8 @@
   - import_tasks: tasks/nzbhydra2.yml
     when: (nzbhydra2_enabled | default(False))
     tags: nzbhydra2
+
+  - import_tasks: tasks/sabnzbd.yml
+    when: (sabnzbd_enabled | default(False))
+    tags: sabnzbd
+    
