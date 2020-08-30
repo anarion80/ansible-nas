@@ -1,0 +1,29 @@
+---
+- name: Create LazyLibrarian Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ lazylibrarian_data_directory }}"
+
+- name: LazyLibrarian
+  docker_container:
+    name: lazylibrarian
+    image: linuxserver/lazylibrarian
+    pull: true
+    volumes:
+      - "{{ lazylibrarian_downloads_directory }}:/downloads:rw"
+      - "{{ lazylibrarian_books_directory }}:/books:rw"
+    ports:
+      - "{{ lazylibrarian_port }}:5299"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ lazylibrarian_user_id }}"
+      PGID: "{{ lazylibrarian_group_id }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.backend: "lazylibrarian"
+      traefik.frontend.rule: "Host:lazylibrarian.{{ ansible_nas_domain }}"
+      traefik.enable: "{{ lazylibrarian_available_externally }}"
+      traefik.port: "5299"

@@ -43,6 +43,7 @@ ombi_enabled: false
 lidarr_enabled: false
 youtubedlmaterial_enabled: false
 mylar_enabled: false
+lazylibrarian_enabled: false
 
 # Music
 airsonic_enabled: false
@@ -548,6 +549,19 @@ lidarr_downloads_directory: "{{ downloads_root }}"
 lidarr_user_id: "0"
 lidarr_group_id: "0"
 lidarr_port: "8686"
+
+###
+### lazylibrarian
+###
+lazylibrarian_available_externally: "false"
+lazylibrarian_data_directory: "{{ docker_home }}/lazylibrarian/config"
+lazylibrarian_music_directory: "{{ music_root }}"
+lazylibrarian_downloads_directory: "{{ downloads_root }}"
+lazylibrarian_books_directory: "{{ books_root }}"
+lazylibrarian_user_id: "0"
+lazylibrarian_group_id: "0"
+lazylibrarian_port: "5299"
+
 
 ###
 ### YouTubeDL-Material

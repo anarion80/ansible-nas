@@ -259,4 +259,8 @@
   - import_tasks: tasks/sabnzbd.yml
     when: (sabnzbd_enabled | default(False))
     tags: sabnzbd
-    
+
+- import_tasks: tasks/lazylibrarian.yml
+    when: (lazylibrarian_enabled | default(False))
+    tags: lazylibrarian
+
