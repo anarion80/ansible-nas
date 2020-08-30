@@ -260,7 +260,10 @@
     when: (sabnzbd_enabled | default(False))
     tags: sabnzbd
 
-- import_tasks: tasks/lazylibrarian.yml
+  - import_tasks: tasks/lazylibrarian.yml
     when: (lazylibrarian_enabled | default(False))
     tags: lazylibrarian
 
+  - import_tasks: tasks/booksonic.yml
+    when: (booksonic_enabled | default(False))
+    tags: booksonic

@@ -27,6 +27,7 @@ utorrent_enabled: false
 # Media Serving
 plex_enabled: false
 tautulli_enabled: false
+booksonic_enabled: false
 
 # Media Sourcing
 sonarr_enabled: false         # tv
@@ -180,6 +181,12 @@ podcasts_root: "{{ samba_shares_root }}/podcasts"
 
 # Where your books are stored
 books_root: "{{ samba_shares_root }}/books"
+
+# Where your books are stored
+audiobooks_root: "{{ samba_shares_root }}/audiobooks"
+
+# Where your books are stored
+othermedia_root: "{{ samba_shares_root }}/othermedia"
 
 # Where your comics are stored
 comics_root: "{{ samba_shares_root }}/comics"
@@ -561,6 +568,19 @@ lazylibrarian_books_directory: "{{ books_root }}"
 lazylibrarian_user_id: "0"
 lazylibrarian_group_id: "0"
 lazylibrarian_port: "5299"
+
+###
+### booksonic
+###
+booksonic_available_externally: "false"
+booksonic_data_directory: "{{ docker_home }}/booksonic/config"
+booksonic_podcasts_directory: "{{ podcasts_root }}"
+booksonic_othermedia_directory: "{{ othermedia_root }}"
+booksonic_downloads_directory: "{{ downloads_root }}"
+booksonic_audiobooks_directory: "{{ audiobooks_root }}"
+booksonic_user_id: "0"
+booksonic_group_id: "0"
+booksonic_port: "4041"
 
 
 ###
