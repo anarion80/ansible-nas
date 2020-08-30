@@ -20,6 +20,7 @@ transmission_with_openvpn_enabled: false # Please see docs about how to set VPN 
 transmission_enabled: false
 nzbget_enabled: false
 sabnzbd_enabled: false
+nzbhydra2_enabled: false
 pyload_enabled: false
 utorrent_enabled: false
 

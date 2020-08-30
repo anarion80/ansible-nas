@@ -25,4 +25,5 @@
       traefik.backend: "nzbhydra2"
       traefik.frontend.rule: "Host:nzbhydra2.{{ ansible_nas_domain }}"
       traefik.enable: "{{ nzbhydra2_available_externally }}"
-      traefik.port: "5076"   
+      traefik.port: "5076"
+      
