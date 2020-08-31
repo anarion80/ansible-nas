@@ -1,6 +1,6 @@
 ---
 - name: Create Rclone service
-  copy:
+  template:
     src: rclone/rclone.service
     dest: "/etc/systemd/system/rclone.service"
-    mode: 0644
+ 

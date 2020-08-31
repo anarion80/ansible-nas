@@ -112,6 +112,54 @@ serposcope_enabled: false
 
 # Rclone
 rclone_enabled: false
+rclone_remote_to_mount: gsuite_sa
+rclone_mount: /mnt/GD
+rclone_service_user: root
+rclone_service_group: root
+rclone_configs:
+  - name: gdrive
+    properties:
+      type: drive
+      client_id: <CLIENT_ID>
+      client_secret: <CLIENT_SECRET>
+      token: '{"access_token":"<ACCESS_TOKEN>","token_type":"Bearer","refresh_token":"<REFRESH_TOKEN>","expiry":"<DATETIME>"}'
+      root_folder_id: <ROOT_FOLDER_ID>
+  - name: crypt
+    properties:
+      type: crypt
+      remote: gdrive:media
+      filename_encryption: standard
+      password: <PASSWORD>
+      password2: <PASSWORD2>
+  - name: gsuite
+    properties:
+      type: drive
+      client_id: <CLIENT_ID>
+      client_secret: <CLIENT_SECRET>
+      scope: drive
+      token: '{"access_token":"<ACCESS_TOKEN>","token_type":"Bearer","refresh_token":"<REFRESH_TOKEN>","expiry":"<DATETIME>"}'
+      root_folder_id: <ROOT_FOLDER_ID>
+  - name: gscrypt
+    properties:
+      type: crypt
+      remote: gsuite:media
+      filename_encryption: standard
+      password: <PASSWORD>
+      password2: <PASSWORD2>
+  - name: gsuite_sa
+    properties:
+      type: drive
+      scope: drive
+      service_account_file: <SA_JSON_FILE>
+      root_folder_id: <ROOT_FOLDER_ID>
+  - name: gscrypt_sa
+    properties:
+      type: crypt
+      remote: gsuite_sa:media
+      filename_encryption: standard
+      directory_name_encryption: true
+      password: <PASSWORD>
+      password2: <PASSWORD2>
 
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 

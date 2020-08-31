@@ -5,10 +5,10 @@ After=network-online.target
 
 [Service]
 Type=notify
-Environment=RCLONE_CONFIG=/root/.config/rclone/rclone.conf
+Environment=RCLONE_CONFIG={{ rclone_config_location }}
 
-ExecStart=/usr/bin/rclone mount gscrypt_sa: /mnt/GD \
---config /root/.config/rclone/rclone.conf \
+ExecStart=/usr/bin/rclone mount {{ rclone_remote_to_mount }}: {{ rclone_mount }} \
+--config "{{ rclone_config_location }}" \
 --fast-list \
 --drive-skip-gdocs \
 --vfs-read-chunk-size=64M \
@@ -35,8 +35,8 @@ ExecStart=/usr/bin/rclone mount gscrypt_sa: /mnt/GD \
 --rc
 ExecStop=/bin/fusermount -uz /mnt/GD
 Restart=on-failure
-User=openflixr
-Group=openflixr
+User={{ rclone_service_user }}
+Group={{ rclone_service_group }}
 
 [Install]
 WantedBy=multi-user.target
