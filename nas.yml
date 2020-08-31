@@ -281,3 +281,8 @@
   - import_tasks: tasks/rclone.yml
     when: (rclone_enabled | default(False))
     tags: rclone
+
+  - import_tasks: tasks/syncthing.yml
+    when: (syncthing_enabled | default(False))
+    tags: rclone
+

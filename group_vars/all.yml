@@ -71,6 +71,7 @@ krusader_enabled: false
 duplicati_enabled: false
 nextcloud_enabled: false
 timemachine_enabled: false
+syncthing_enabled: false
 
 # Software build and CI
 gitea_enabled: false
@@ -556,6 +557,17 @@ tautulli_port: "8185"
 duplicati_available_externally: "false"
 duplicati_data_directory: "{{ docker_home }}/duplicati/config"
 duplicati_port: "8200"
+
+###
+### Syncthing
+###
+syncthing_available_externally: "false"
+syncthing_data_directory: "{{ docker_home }}/syncthing/config"
+syncthing_webui_port: "8384"
+syncthing_listening_port: "22000"
+syncthing_discovery_port: "21027"
+syncthing_user_id: "0"
+syncthing_group_id: "0"
 
 ###
 ### Mylar
