@@ -166,6 +166,9 @@ rclone_configs:
 # MergerFS
 mergerfs_enabled: false
 
+# Grocy
+grocy_enabled: false
+
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
 # home static IP address, the cloudflare with the cloudflare_ddns dynamic DNS container enabled, or use a dynamic DNS provider like no-ip.
@@ -776,6 +779,15 @@ nginx_port_https: "443"
 guacamole_available_externally: "false"
 guacamole_data_directory: "{{ docker_home }}/guacamole"
 guacamole_port: "8090"
+
+###
+### Grocy
+###
+grocy_available_externally: "false"
+grocy_data_directory: "{{ docker_home }}/grocy"
+grocy_port: "9283"
+grocy_user_id: "0"
+grocy_group_id: "0"
 
 ###
 ### Miniflux
