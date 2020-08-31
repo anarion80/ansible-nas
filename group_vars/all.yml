@@ -114,6 +114,7 @@ serposcope_enabled: false
 rclone_enabled: false
 rclone_remote_to_mount: gsuite_sa
 rclone_mount: /mnt/GD
+rclone_impersonate_user: me@example.com
 rclone_service_user: root
 rclone_service_group: root
 rclone_configs:

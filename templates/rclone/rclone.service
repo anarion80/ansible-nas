@@ -25,7 +25,7 @@ ExecStart=/usr/bin/rclone mount {{ rclone_remote_to_mount }}: {{ rclone_mount }}
 --drive-chunk-size=64M \
 --fuse-flag=sync_read \
 --fuse-flag=auto_cache \
---drive-impersonate=anarion@anarion.pl \
+--drive-impersonate={{ rclone_impersonate_user }} \
 --allow-other \
 --allow-non-empty \
 --log-level NOTICE \
@@ -33,7 +33,7 @@ ExecStart=/usr/bin/rclone mount {{ rclone_remote_to_mount }}: {{ rclone_mount }}
 --umask 002 \
 --user-agent animosityapp \
 --rc
-ExecStop=/bin/fusermount -uz /mnt/GD
+ExecStop=/bin/fusermount -uz {{ rclone_mount }}
 Restart=on-failure
 User={{ rclone_service_user }}
 Group={{ rclone_service_group }}
