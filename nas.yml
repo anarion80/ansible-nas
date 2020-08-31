@@ -26,6 +26,11 @@
         - rclone
       when: (rclone_enabled | default(False))
 
+    - role: sprat.mergerfs
+      tags:
+        - mergerfs
+      when: (mergerfs_enabled | default(False))
+
   tasks:
   - import_tasks: tasks/general.yml
     tags: general
