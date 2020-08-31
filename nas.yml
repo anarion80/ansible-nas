@@ -21,6 +21,11 @@
         - docker
         - skip_ansible_lint
 
+    - role: stefangweichinger.ansible_rclone
+      tags:
+        - rclone
+      when: (rclone_enabled | default(False))
+
   tasks:
   - import_tasks: tasks/general.yml
     tags: general
@@ -267,3 +272,7 @@
   - import_tasks: tasks/booksonic.yml
     when: (booksonic_enabled | default(False))
     tags: booksonic
+
+  - import_tasks: tasks/rclone.yml
+    when: (rclone_enabled | default(False))
+    tags: rclone
