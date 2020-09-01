@@ -9,10 +9,47 @@
 # Add your all.yml config overrides to this file. See group_vars/all.yml for all possible settings.
 
 # Example options
-ansible_nas_hostname: ansible-nas
-ansible_nas_timezone: Etc/UTC
+ansible_nas_hostname: anarion-nas
+ansible_nas_timezone: Europe/Warsaw
+ansible_nas_user: anarion
 
 ## Enable some applications
-heimdall_enabled: true
-portainer_enabled: true
+#heimdall_enabled: true
+#portainer_enabled: true
+#organizr_enabled: true
+#watchtower_enabled: true
+#plex_enabled: true
+#tautulli_enabled: true
+#transmission_enabled: true
+#pyload_enabled: true
+#mylar_enabled: true
+#sonarr_enabled: true
+#radarr_enabled: true
+#glances_enabled: true
+#netdata_enabled: true
+#sickchill_enabled: true
+#gitea_enabled: true
+#stats_enabled: true
+#airsonic_enabled: true
+#jackett_enabled: true
+#nzbget_enabled: true
+#wallabag_enabled: true
+#calibre_enabled: true
+#homeassistant_enabled: true
+#bazarr_enabled: true
+#openhab_enabled: true
+#cloudcmd_enabled: true
+#krusader_enabled: true
+#ubooquity_enabled: true
+#ombi_enabled: true
+#lidarr_enabled: true
+#youtubedlmaterial_enabled: true
+#traefik_enabled: true
+#nzbhydra2_enabled: true
+#sabnzbd_enabled: true
+#lazylibrarian_enabled: true
+#booksonic_enabled: true
+#rclone_enabled: true
+#mergerfs_enabled: true
+#miniflux_enabled: true
 

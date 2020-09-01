@@ -16,7 +16,7 @@
   with_items:
     - "{{ grafana_data_directory }}"
     - "{{ grafana_data_directory }}/data"
-    - "{{ grafana_data_directory }}/data/dashboards/ansible-nas"
+    - "{{ grafana_data_directory }}/data/dashboards/anarion-nas"
     - "{{ grafana_data_directory }}/config/"
     - "{{ grafana_data_directory }}/config/provisioning"
     - "{{ grafana_data_directory }}/config/provisioning/datasources"
@@ -83,18 +83,18 @@
 
 - name: Template Grafana data source
   template:
-    src: grafana/provisioning/datasources/ansible-nas.yml
-    dest: "{{ grafana_data_directory }}/config/provisioning/datasources/ansible-nas.yml"
+    src: grafana/provisioning/datasources/anarion-nas.yml
+    dest: "{{ grafana_data_directory }}/config/provisioning/datasources/anarion-nas.yml"
 
-- name: Copy Ansible-NAS Dashboard Provisioner
+- name: Copy Anarion-NAS Dashboard Provisioner
   copy:
-    src: grafana/provisioning/dashboards/ansible-nas.yml
-    dest: "{{ grafana_data_directory }}/config/provisioning/dashboards/ansible-nas.yml"
+    src: grafana/provisioning/dashboards/anarion-nas.yml
+    dest: "{{ grafana_data_directory }}/config/provisioning/dashboards/anarion-nas.yml"
 
-- name: Copy Ansible-NAS Dashboard
+- name: Copy Anarion-NAS Dashboard
   copy:
-    src: grafana/dashboards/ansible-nas/ansible-nas-overview.json
-    dest: "{{ grafana_data_directory }}/data/dashboards/ansible-nas/ansible-nas-overview.json"
+    src: grafana/dashboards/anarion-nas/anarion-nas-overview.json
+    dest: "{{ grafana_data_directory }}/data/dashboards/anarion-nas/anarion-nas-overview.json"
 
 - name: Grafana
   docker_container:

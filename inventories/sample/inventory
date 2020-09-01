@@ -9,10 +9,10 @@
 
 [all]
 ## Example when running from a remote workstation
-# ansible-nas ansible_host=192.168.1.30
+# anarion-nas ansible_host=192.168.2.12
 
 ## Example when running directly on your Ansible-NAS server
-# ansible-nas ansible_connection=local ansible_host=localhost
+# anarion-nas ansible_connection=local ansible_host=localhost
 
 [nas]
-ansible-nas
+anarion-nas

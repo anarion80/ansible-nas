@@ -5,7 +5,7 @@
     state: directory
   with_items:
     - "{{ nzbhydra2_data_directory }}"
-    
+
 - name: Nzbhydra2
   docker_container:
     name: nzbhydra2
@@ -26,4 +26,3 @@
       traefik.frontend.rule: "Host:nzbhydra2.{{ ansible_nas_domain }}"
       traefik.enable: "{{ nzbhydra2_available_externally }}"
       traefik.port: "5076"
-      
