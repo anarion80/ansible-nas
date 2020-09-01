@@ -198,7 +198,7 @@ ansible_nas_user: anarion
 ansible_nas_email: anarion@go2.pl
 
 # Applications will have subdomain SSL certificates created if Traefik is enabled, e.g. anarion-nas.<your-domain>, nextcloud.<your-domain>
-ansible_nas_domain: .lan
+ansible_nas_domain: lan
 
 ###
 ### Docker
