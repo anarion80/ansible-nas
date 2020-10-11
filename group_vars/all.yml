@@ -184,6 +184,9 @@ traefik_port_ui: "8083"
 # Sets the hostname of your Ansible NAS
 ansible_nas_hostname: anarion-nas
 
+# Sets the SAMBA workgroup of your Ansible NAS
+ansible_nas_workgroup: workgroup
+
 # Sets the timezone for your Ansible NAS
 # You can find a list here https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
 ansible_nas_timezone: Europe/Warsaw
@@ -401,6 +404,9 @@ samba_map_to_guest: Bad Password
 
 # The NetBIOS hostname used by Samba on your network
 samba_netbios_name: "{{ ansible_nas_hostname }}"
+
+# TName of the server workgroup.
+samba_workgroup: "{{ ansible_nas_workgroup }}"
 
 ###
 ### Traefik
