@@ -113,11 +113,13 @@ serposcope_enabled: false
 
 # Rclone
 rclone_enabled: false
-rclone_remote_to_mount: gsuite_sa
+rclone_remote_to_mount: gscrypt_sa
 rclone_mount: /mnt/GD
 rclone_impersonate_user: me@example.com
 rclone_service_user: anarion-nas
 rclone_service_group: anarion-nas
+rclone_config_location: /home/{{ rclone_service_user }}/.config/rclone/rclone.conf
+
 rclone_configs:
   - name: gdrive
     properties:

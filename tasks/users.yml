@@ -10,6 +10,6 @@
     state: present
     system: yes
     update_password: on_create
-    create_home: no
+    create_home: yes
     group: anarion-nas
     shell: /usr/sbin/nologin

@@ -3,4 +3,29 @@
   template:
     src: rclone/rclone.service
     dest: "/etc/systemd/system/rclone.service"
- 
+
+- name: Create SA file
+  template:
+    src: rclone/gsuite.json
+    dest: "/home/{{ rclone_service_user }}/.config/rclone/gsuite.json"
+    owner: "{{ rclone_service_user }}"
+    group: "{{ rclone_service_group }}"
+
+- name: Create rclone.log file
+  file:
+    path: /var/log/rclone.log
+    state: touch
+    owner: "{{ rclone_service_user }}"
+    group: "{{ rclone_service_group }}"
+    mode: u=rw,g=r,o=r
+
+- name: Force systemd to reload configs
+  systemd:
+    daemon_reload: yes
+
+- name: Enable service rclone, ensure it is not masked #and start it
+  systemd:
+    name: rclone
+    enabled: yes
+    masked: no
+    #state: started

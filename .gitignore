@@ -10,3 +10,5 @@ roles
 
 # Session
 Session.vim
+inventories/my-ansible-nas/group_vars/nas.yml
+inventories/my-ansible-nas/inventory

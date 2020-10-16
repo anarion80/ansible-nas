@@ -7,7 +7,7 @@ After=network-online.target
 Type=notify
 Environment=RCLONE_CONFIG={{ rclone_config_location }}
 
-ExecStart=/usr/bin/rclone mount {{ rclone_remote_to_mount }}: {{ rclone_mount }} \
+ExecStart=/usr/local/bin/rclone mount {{ rclone_remote_to_mount }}: {{ rclone_mount }} \
 --config "{{ rclone_config_location }}" \
 --fast-list \
 --drive-skip-gdocs \
@@ -23,8 +23,6 @@ ExecStart=/usr/bin/rclone mount {{ rclone_remote_to_mount }}: {{ rclone_mount }}
 --transfers=16 \
 --checkers=8 \
 --drive-chunk-size=64M \
---fuse-flag=sync_read \
---fuse-flag=auto_cache \
 --drive-impersonate={{ rclone_impersonate_user }} \
 --allow-other \
 --allow-non-empty \
