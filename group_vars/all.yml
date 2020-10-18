@@ -119,6 +119,8 @@ rclone_impersonate_user: me@example.com
 rclone_service_user: anarion-nas
 rclone_service_group: anarion-nas
 rclone_config_location: /home/{{ rclone_service_user }}/.config/rclone/rclone.conf
+local_mount: /mnt/local
+mergerfs_mount: /mnt/gmedia
 
 rclone_configs:
   - name: gdrive

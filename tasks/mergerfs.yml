@@ -1,0 +1,32 @@
+---
+- name: Create mergerfs service
+  template:
+    src: rclone/gmedia.service
+    dest: "/etc/systemd/system/gmedia.service"
+
+- name: create local directory
+  file:
+    path: "{{ local_mount }}"
+    mode: 0775
+    state: directory
+    owner: anarion-nas
+    group: anarion-nas
+
+- name: create mergerfs directory
+  file:
+    path: "{{ gmedia_mount }}"
+    mode: 0775
+    state: directory
+    owner: anarion-nas
+    group: anarion-nas
+
+- name: Force systemd to reload configs
+  systemd:
+    daemon_reload: yes
+
+- name: Enable service gmedia, ensure it is not masked #and start it
+  systemd:
+    name: gmedia
+    enabled: yes
+    masked: no
+    #state: started
