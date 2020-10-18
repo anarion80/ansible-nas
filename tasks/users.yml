@@ -13,3 +13,9 @@
     create_home: yes
     group: anarion-nas
     shell: /bin/bash
+
+- name: add user account to anarion-nas group
+  user:
+    name: "{{ ansible_nas_user }}"
+    groups: anarion-nas
+    append: yes
