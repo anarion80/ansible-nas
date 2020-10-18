@@ -289,3 +289,7 @@
   - import_tasks: tasks/grocy.yml
     when: (grocy_enabled | default(False))
     tags: grocy
+
+  - import_tasks: tasks/fstab.yml
+    when: (fstab_enabled | default(False))
+    tags: fstab

@@ -385,6 +385,7 @@ ansible_nas_extra_packages:
   - unzip
   - lm-sensors
   - ctop
+  - cifs-utils
 
 ansible_python_interpreter: /usr/bin/python3
 

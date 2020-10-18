@@ -53,4 +53,5 @@ ansible_nas_workgroup: ANARION
 #rclone_enabled: true
 #mergerfs_enabled: true
 #miniflux_enabled: true
+#fstab_enabled: true
 
