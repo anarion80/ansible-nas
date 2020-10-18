@@ -1,0 +1,7 @@
+- name: Mount a downloads share
+  ansible.posix.mount:
+    src: //zyxel/admin/download
+    path: "{{ downloads_root }}"
+    fstype: cifs
+    opts: vers=1.0,user=admin,noserverino,dir_mode=0775,password=kolo4XX5,file_mode=0775,uid=anarion-nas,gid=anarion-nas
+    state: mounted
