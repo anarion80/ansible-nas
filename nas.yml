@@ -282,9 +282,17 @@
     when: (rclone_enabled | default(False))
     tags: rclone
 
+  - import_tasks: tasks/mergerfs.yml
+    when: (mergerfs_enabled | default(False))
+    tags: mergerfs
+
+  - import_tasks: tasks/cloud_upload.yml
+    when: (cloud_upload_enabled | default(False))
+    tags: cloud_upload
+
   - import_tasks: tasks/syncthing.yml
     when: (syncthing_enabled | default(False))
-    tags: rclone
+    tags: syncthing
 
   - import_tasks: tasks/grocy.yml
     when: (grocy_enabled | default(False))

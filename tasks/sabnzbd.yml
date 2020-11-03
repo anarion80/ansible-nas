@@ -13,6 +13,7 @@
     pull: true
     volumes:
       - "{{ sabnzbd_data_directory }}:/config:rw"
+      - "{{ sabnzbd_download_directory }}:/downloads:rw"      
     ports:
       - "{{ sabnzbd_port_http }}:8080"
       - "{{ sabnzbd_port_https }}:9090"

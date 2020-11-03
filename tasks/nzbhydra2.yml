@@ -13,6 +13,7 @@
     pull: true
     volumes:
       - "{{ nzbhydra2_data_directory }}:/config:rw"
+      - "{{ nzbhydra2_download_directory }}:/downloads:rw"
     ports:
       - "{{ nzbhydra2_port }}:5076"
     env:

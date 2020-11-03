@@ -1,0 +1,31 @@
+---
+- name: Create cloud_upload script
+  template:
+    src: rclone/cloud_upload.sh
+    dest: "/home/{{ rclone_service_user }}/.config/rclone/cloud_upload.sh"
+    owner: "{{ rclone_service_user }}"
+    group: "{{ rclone_service_group }}"
+    mode: u=rwx,g=rx,o=r
+
+- name: Create excludes
+  template:
+    src: rclone/excludes
+    dest: "/home/{{ rclone_service_user }}/.config/rclone/excludes"
+    owner: "{{ rclone_service_user }}"
+    group: "{{ rclone_service_group }}"
+
+- name: Create cloud_upload.log file
+  file:
+    path: /var/log/cloud_upload.log
+    state: touch
+    owner: "{{ rclone_service_user }}"
+    group: "{{ rclone_service_group }}"
+    mode: u=rw,g=r,o=r
+
+- name: Create cron job
+  cron:
+    name: "Run cloud_upload script"
+    user: "{{ rclone_service_user }}"
+    minute: "5"
+    hour: "1"
+    job: "/home/{{ rclone_service_user }}/.config/rclone/cloud_upload.sh"

@@ -14,7 +14,7 @@
 
 - name: create mergerfs directory
   file:
-    path: "{{ gmedia_mount }}"
+    path: "{{ mergerfs_mount }}"
     mode: 0775
     state: directory
     owner: anarion-nas
@@ -29,4 +29,4 @@
     name: gmedia
     enabled: yes
     masked: no
-    #state: started
+    state: started

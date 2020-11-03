@@ -113,6 +113,7 @@ serposcope_enabled: false
 
 # Rclone
 rclone_enabled: false
+cloud_upload_enabled: false
 rclone_remote_to_mount: gscrypt_sa
 rclone_mount: /mnt/GD
 rclone_impersonate_user: me@example.com
@@ -225,40 +226,43 @@ docker_storage_driver: overlay2
 ###
 # The location where all shares will be created by default. Can be overridden on a per-share basis.
 # This path will be mounted to backup containers, Duplicati
-samba_shares_root: /mnt/Volume3
+samba_shares_root: "{{ mergerfs_mount }}"
 
 # Where stuff downloaded will be stored
-downloads_root: "{{ samba_shares_root }}/downloads"
+downloads_root: /mnt/Volume3/downloads
 
 # Where your movies are stored
 movies_root: "{{ samba_shares_root }}/movies"
 
 # Where your TV episodes are stored
-tv_root: "{{ samba_shares_root }}/tv"
+tv_root: "{{ samba_shares_root }}/series"
 
 # Where torrent files are stored (picked up by Transmission for downloading)
-torrents_root: "{{ samba_shares_root }}/torrents"
+torrents_root: /mnt/Volume3/downloads/torrentwatch
 
 # Where music is stored
-music_root: "{{ samba_shares_root }}/music"
+music_root: "{{ samba_shares_root }}/Music"
 
 # Where podcasts are stored
-podcasts_root: "{{ samba_shares_root }}/podcasts"
+podcasts_root: "{{ samba_shares_root }}/Podcasts"
 
 # Where your books are stored
 books_root: "{{ samba_shares_root }}/books"
 
 # Where your books are stored
-audiobooks_root: "{{ samba_shares_root }}/audiobooks"
+audiobooks_root: "{{ samba_shares_root }}/Audiobooks"
 
 # Where your books are stored
-othermedia_root: "{{ samba_shares_root }}/othermedia"
+#othermedia_root: "{{ samba_shares_root }}/othermedia"
 
 # Where your comics are stored
 comics_root: "{{ samba_shares_root }}/comics"
 
 # Where photos are stored
-photos_root: "{{ samba_shares_root }}/photos"
+photos_root: "{{ samba_shares_root }}/Pics"
+
+# Where anime are stored
+anime_root: "{{ samba_shares_root }}/Anime"
 
 # The description that'll appear next to your Anarion-NAS box when browsing your network
 samba_server_string: Anarion NAS
@@ -297,21 +301,21 @@ samba_shares:
     browsable: yes
     path: "{{ music_root }}"
 
-  - name: podcasts
-    comment: 'Podcasts'
-    guest_ok: yes
-    public: yes
-    writable: yes
-    browsable: yes
-    path: "{{ podcasts_root }}"
+  # - name: podcasts
+  #   comment: 'Podcasts'
+  #   guest_ok: yes
+  #   public: yes
+  #   writable: yes
+  #   browsable: yes
+  #   path: "{{ podcasts_root }}"
 
-  - name: dump
-    comment: 'File dump'
-    guest_ok: yes
-    public: yes
-    writable: yes
-    browsable: yes
-    path: "{{ samba_shares_root }}/dump"
+  # - name: dump
+  #   comment: 'File dump'
+  #   guest_ok: yes
+  #   public: yes
+  #   writable: yes
+  #   browsable: yes
+  #   path: "{{ samba_shares_root }}/dump"
 
   - name: games
     comment: 'Games'
@@ -319,7 +323,7 @@ samba_shares:
     public: yes
     writable: yes
     browsable: yes
-    path: "{{ samba_shares_root }}/games"
+    path: "{{ samba_shares_root }}/ISO/Gry"
 
   - name: photos
     comment: 'Pictures'
@@ -327,7 +331,7 @@ samba_shares:
     public: yes
     writable: yes
     browsable: yes
-    path: "{{ samba_shares_root }}/photos"
+    path: "{{ samba_shares_root }}/Pics"
 
   - name: books
     comment: 'Books'
