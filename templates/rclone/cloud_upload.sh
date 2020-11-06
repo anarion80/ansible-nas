@@ -28,4 +28,4 @@ if /bin/findmnt $LOCAL -o FSTYPE -n | grep fuse; then
 fi
 
 # Move older local files to the cloud. I added in 3 days to let files sit a few days so intro anaylsis can happen locally
-/usr/loca/bin/rclone move $LOCAL {{ rclone_remote_to_mount }}: --log-file /var/log/cloud_upload.log -v --exclude-from /home/{{ rclone_service_user }}/.config/rclone/excludes --delete-empty-src-dirs --fast-list --drive-stop-on-upload-limit --min-age 3d
+/usr/local/bin/rclone move $LOCAL {{ rclone_remote_to_mount }}: --log-file /var/log/cloud_upload.log -v --exclude-from /home/{{ rclone_service_user }}/.config/rclone/excludes --delete-empty-src-dirs --fast-list --drive-stop-on-upload-limit --min-age 3d
