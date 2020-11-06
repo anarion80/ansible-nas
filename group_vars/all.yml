@@ -235,8 +235,14 @@ downloads_root: /mnt/Volume3/downloads
 # Where your movies are stored
 movies_root: "{{ samba_shares_root }}/movies"
 
+# Where your anime movies are stored
+anime_movies_root: "{{ samba_shares_root }}/Anime/anime_movies"
+
 # Where your TV episodes are stored
 tv_root: "{{ samba_shares_root }}/series"
+
+# Where your anime series are stored
+anime_series_root: "{{ samba_shares_root }}/Anime/anime_series"
 
 # Where torrent files are stored (picked up by Transmission for downloading)
 torrents_root: /mnt/Volume3/downloads/torrentwatch
@@ -510,8 +516,12 @@ plex_config_directory: "{{ docker_home }}/plex/config"
 plex_logs: "{{ docker_home }}/plex/logs"
 plex_movies_directory: "{{ movies_root }}"
 plex_movies_permissions: "rw"
+plex_anime_movies_directory: "{{ anime_movies_root }}"
+plex_anime_movies_permissions: "rw"
 plex_tv_directory: "{{ tv_root }}"
 plex_tv_permissions: "rw"
+plex_anime_series_directory: "{{ anime_series_root }}"
+plex_anime_series_permissions: "rw"
 plex_photos_directory: "{{ photos_root }}"
 plex_photos_permissions: "rw"
 plex_podcasts_directory: "{{ podcasts_root }}"
