@@ -1,0 +1,29 @@
+- name: Create Plex Autoscan Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ plex_autoscan_config_directory }}"
+
+- name: plex autoscan Docker Container
+  docker_container:
+    name: autoscan
+    image: cloudb0x/autoscan
+    pull: true
+    volumes:
+      - "{{ plex_autoscan_config_directory }}:/config:rw"
+      - "{{ plex_autoscan_movies_directory }}:/movies:{{ plex_autoscan_movies_permissions }}"
+      - "{{ plex_autoscan_tv_directory }}:/tv:{{ plex_autoscan_tv_permissions }}"
+      - "{{ plex_autoscan_photos_directory }}:/photos:{{ plex_autoscan_photos_permissions }}"
+      - "{{ plex_autoscan_podcasts_directory }}:/podcasts:{{ plex_autoscan_podcasts_permissions }}"
+      - "{{ plex_autoscan_music_directory }}:/music:{{ plex_autoscan_music_permissions }}"
+    network_mode: "host"
+    ports:
+      - "{{ plex_autoscan_port }}:3030"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ plex_autoscan_user_id }}"
+      PGID: "{{ plex_autoscan_group_id }}"
+    restart_policy: unless-stopped
+

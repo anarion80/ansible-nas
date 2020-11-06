@@ -55,4 +55,5 @@ ansible_nas_workgroup: ANARION
 #miniflux_enabled: true
 #fstab_enabled: true
 #cloud_upload_enabled: true
+#plex_autoscan_enabled: true
 

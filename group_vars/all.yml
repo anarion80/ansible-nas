@@ -28,6 +28,7 @@ utorrent_enabled: false
 plex_enabled: false
 tautulli_enabled: false
 booksonic_enabled: false
+plex_autoscan_enabled: false
 
 # Media Sourcing
 sonarr_enabled: false         # tv
@@ -520,6 +521,24 @@ plex_music_permissions: "rw"
 plex_user_id: "0"
 plex_group_id: "0"
 plex_port: "32400"
+
+###
+### Plex Autoscan
+###
+plex_autoscan_config_directory: "{{ docker_home }}/plex_autoscan/config"
+plex_autoscan_movies_directory: "{{ movies_root }}"
+plex_autoscan_movies_permissions: "ro"
+plex_autoscan_tv_directory: "{{ tv_root }}"
+plex_autoscan_tv_permissions: "ro"
+plex_autoscan_photos_directory: "{{ photos_root }}"
+plex_autoscan_photos_permissions: "ro"
+plex_autoscan_podcasts_directory: "{{ podcasts_root }}"
+plex_autoscan_podcasts_permissions: "ro"
+plex_autoscan_music_directory: "{{ music_root }}"
+plex_autoscan_music_permissions: "ro"
+plex_autoscan_user_id: "0"
+plex_autoscan_group_id: "0"
+plex_autoscan_port: "3030"
 
 ###
 ### PyTivo

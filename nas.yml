@@ -301,3 +301,7 @@
   - import_tasks: tasks/fstab.yml
     when: (fstab_enabled | default(False))
     tags: fstab
+
+  - import_tasks: tasks/plex_autoscan.yml
+    when: (plex_autoscan_enabled | default(False))
+    tags: plex_autoscan
