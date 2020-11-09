@@ -10,7 +10,7 @@ export RCLONE_USER_AGENT
 # WARNING: If you make this your rclone Google Drive mount, it will create a move loop
 # and delete your files!
 # Make sure to this to the local path you are moving from!
-LOCAL= {{ local_mount }}
+LOCAL={{ local_mount }}
 
 #exit if running
 if [[ $(pidof -x "$(basename "$0")" -o %PPID) ]]; then exit; fi
