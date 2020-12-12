@@ -230,7 +230,7 @@ docker_storage_driver: overlay2
 samba_shares_root: "{{ mergerfs_mount }}"
 
 # Where stuff downloaded will be stored
-downloads_root: /mnt/Volume3/downloads
+downloads_root: /mnt/Volume3/download
 
 # Where your movies are stored
 movies_root: "{{ samba_shares_root }}/movies"
@@ -245,7 +245,7 @@ tv_root: "{{ samba_shares_root }}/series"
 anime_series_root: "{{ samba_shares_root }}/Anime/anime_series"
 
 # Where torrent files are stored (picked up by Transmission for downloading)
-torrents_root: /mnt/Volume3/downloads/torrentwatch
+torrents_root: "{{ downloads_root }}/torrentwatch"
 
 # Where music is stored
 music_root: "{{ samba_shares_root }}/Music"
@@ -624,8 +624,8 @@ mylar_data_directory: "{{ docker_home }}/mylar"
 mylar_comics_directory: "{{ comics_root }}"
 mylar_downloads_directory: "{{ downloads_root }}"
 mylar_port_http: "8585"
-mylar_user_id: "0"
-mylar_group_id: "0"
+mylar_user_id: "999"
+mylar_group_id: "1001"
 
 ###
 ### Sonarr
