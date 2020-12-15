@@ -1,0 +1,28 @@
+---
+- name: Create Gaps Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ gaps_data_directory }}"
+
+- name: Gaps
+  docker_container:
+    name: gaps
+    image: housewrecker/gaps
+    pull: true
+    volumes:
+      - "{{ gaps_data_directory }}:/config:rw"
+    ports:
+      - "{{ gaps_port }}:80"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ gaps_user_id }}"
+      PGID: "{{ gaps_group_id }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.backend: "gaps"
+      traefik.frontend.rule: "Host:gaps.{{ ansible_nas_domain }}"
+      traefik.enable: "{{ gaps_available_externally }}"
+      traefik.port: "8484"
