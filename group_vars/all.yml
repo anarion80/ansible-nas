@@ -843,6 +843,15 @@ gaps_user_id: "0"
 gaps_group_id: "0"
 
 ###
+### Huginn
+###
+huginn_available_externally: "false"
+huginn_data_directory: "{{ docker_home }}/huginn"
+huginn_port: "3000"
+huginn_user_id: "0"
+huginn_group_id: "0"
+
+###
 ### Miniflux
 ###
 miniflux_available_externally: "false"

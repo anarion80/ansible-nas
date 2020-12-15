@@ -1,0 +1,28 @@
+---
+- name: Create Huginn Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ huginn_data_directory }}"
+
+- name: Huginn
+  docker_container:
+    name: huginn
+    image: huginn/huginn
+    pull: true
+    volumes:
+      - "{{ huginn_data_directory }}:/config:rw"
+    ports:
+      - "{{ huginn_port }}:80"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ huginn_user_id }}"
+      PGID: "{{ huginn_group_id }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.backend: "huginn"
+      traefik.frontend.rule: "Host:huginn.{{ ansible_nas_domain }}"
+      traefik.enable: "{{ ghuginn_available_externally }}"
+      traefik.port: "3000"

@@ -309,3 +309,7 @@
   - import_tasks: tasks/gaps.yml
     when: (gaps_enabled | default(False))
     tags: gaps
+
+  - import_tasks: tasks/huginn.yml
+    when: (huginn_enabled | default(False))
+    tags: huginn

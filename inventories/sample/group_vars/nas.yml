@@ -57,4 +57,5 @@ ansible_nas_workgroup: ANARION
 #cloud_upload_enabled: true
 #plex_autoscan_enabled: true
 #gaps_enabled: true
+#huginn_enabled: true
 
