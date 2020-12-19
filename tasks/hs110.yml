@@ -1,0 +1,12 @@
+- name: HS110 Influx Exporter
+  docker_container:
+    name: hs110
+    image: cgarnier/hs110-influx
+    pull: true
+    privileged: true
+    restart_policy: unless-stopped
+    env:
+      TIMER: "{{ hs110_timer }}"
+      DEVICE_IP_ADDR: "{{ hs110_device_ip }}"
+      INFLUX_HOST: "{{ hs110_timer }}"
+      HOSTNAME: "{{ hs110_timer }}"

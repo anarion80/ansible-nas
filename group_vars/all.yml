@@ -1104,3 +1104,11 @@ vd_users:
     password: "topsecret"
     sudo: "Y"
 vd_rdp_port: 3389
+
+###
+### HS110
+###
+hs110_timer: "5000"
+hs110_device_ip: "192.168.2.25"
+hs110_influx_host: "192.168.2.13"
+hs110_hostname: "HS110"

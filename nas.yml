@@ -313,3 +313,7 @@
   - import_tasks: tasks/huginn.yml
     when: (huginn_enabled | default(False))
     tags: huginn
+
+  - import_tasks: tasks/hs110.yml
+    when: (hs110_enabled | default(False))
+    tags: hs110

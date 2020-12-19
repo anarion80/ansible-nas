@@ -58,4 +58,5 @@ ansible_nas_workgroup: ANARION
 #plex_autoscan_enabled: true
 #gaps_enabled: true
 #huginn_enabled: true
+#hs110_enabled: true
 
