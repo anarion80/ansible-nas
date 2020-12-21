@@ -33,3 +33,4 @@
       traefik.frontend.rule: "Host:transmission.{{ ansible_nas_domain }}"
       traefik.enable: "{{ transmission_available_externally }}"
       traefik.port: "9091"
+      com.centurylinklabs.watchtower.enable: "{{ transmission_watchtower_enable }}"

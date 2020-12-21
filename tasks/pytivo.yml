@@ -35,3 +35,4 @@
       traefik.frontend.rule: "Host:pytivo.{{ ansible_nas_domain }}"
       traefik.enable: "{{ pytivo_available_externally }}"
       traefik.port: "9032"
+      com.centurylinklabs.watchtower.enable: "{{ pytivo_watchtower_enable }}"

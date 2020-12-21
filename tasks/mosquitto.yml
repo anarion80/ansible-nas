@@ -25,5 +25,7 @@
     ports:
       - "{{ mosquitto_port_a }}:1883"
       - "{{ mosquitto_port_b }}:9001"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ mosquitto_watchtower_enable }}"
     restart_policy: unless-stopped
     memory: 1g

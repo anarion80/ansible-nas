@@ -22,6 +22,8 @@
       - "{{ nginx_data_directory }}/vhost.d:/etc/nginx/vhost.d:rw"
       - "{{ nginx_data_directory }}/html:/usr/share/nginx/html:rw"
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ nginx_watchtower_enable }}"
     restart_policy: unless-stopped
     memory: 1g
 

@@ -26,3 +26,4 @@
       traefik.frontend.rule: "Host:znc.{{ ansible_nas_domain }}"
       traefik.enable: "{{ znc_available_externally }}"
       traefik.port: "6677"
+      com.centurylinklabs.watchtower.enable: "{{ znc_watchtower_enable }}"

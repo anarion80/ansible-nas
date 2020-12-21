@@ -27,3 +27,4 @@
       traefik.frontend.rule: "Host:cloudcmd.{{ ansible_nas_domain }}"
       traefik.enable: "{{ cloudcmd_available_externally }}"
       traefik.port: "8000"
+      com.centurylinklabs.watchtower.enable: "{{ cloudcmd_watchtower_enable }}"

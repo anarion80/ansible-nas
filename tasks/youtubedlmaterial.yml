@@ -34,4 +34,5 @@
       traefik.frontend.rule: "Host:youtubedlmaterial.{{ ansible_nas_domain }}"
       traefik.enable: "{{ youtubedlmaterial_available_externally }}"
       traefik.port: "17442"
+      com.centurylinklabs.watchtower.enable: "{{ youtubedlmaterial_watchtower_enable }}"
     memory: 1g

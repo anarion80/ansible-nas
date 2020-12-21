@@ -40,3 +40,4 @@
       traefik.frontend.rule: "Host:miniflux.{{ ansible_nas_domain }}"
       traefik.enable: "{{ miniflux_available_externally }}"
       traefik.port: "8080"
+      com.centurylinklabs.watchtower.enable: "{{ miniflux_watchtower_enable }}"

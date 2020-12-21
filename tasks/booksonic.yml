@@ -28,3 +28,4 @@
       traefik.frontend.rule: "Host:booksonic.{{ ansible_nas_domain }}"
       traefik.enable: "{{ booksonic_available_externally }}"
       traefik.port: "4041"
+      com.centurylinklabs.watchtower.enable: "{{ booksonic_watchtower_enable }}"

@@ -24,3 +24,4 @@
       traefik.frontend.rule: "Host:jackett.{{ ansible_nas_domain }}"
       traefik.enable: "{{ jackett_available_externally }}"
       traefik.port: "9117"
+      com.centurylinklabs.watchtower.enable: "{{ jackett_watchtower_enable }}"

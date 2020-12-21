@@ -14,6 +14,8 @@
     volumes:
       - "{{ mymediaforalexa_media_directory }}:/medialibrary:rw"
       - "{{ mymediaforalexa_data_directory }}:/datadir:rw"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ mymediaforalexa_watchtower_enable }}"
     network_mode: host
     restart_policy: unless-stopped
     memory: 1g

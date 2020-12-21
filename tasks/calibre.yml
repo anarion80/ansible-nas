@@ -26,4 +26,5 @@
       traefik.frontend.rule: "Host:calibre.{{ ansible_nas_domain }}"
       traefik.enable: "{{ calibre_available_externally }}"
       traefik.port: "8083"
+      com.centurylinklabs.watchtower.enable: "{{ calibre_watchtower_enable }}"
     memory: 1g

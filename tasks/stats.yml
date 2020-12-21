@@ -34,6 +34,8 @@
     restart_policy: unless-stopped
     env:
       INFLUXDB_LOGGING_LEVEL: "error"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ influxdb_watchtower_enable }}"
     memory: 1g
 
 - name: hddtemp
@@ -78,6 +80,8 @@
       HOST_VAR: "/hostfs/var"
       HOST_RUN: "/hostfs/run"
       HOST_MOUNT_PREFIX: "/hostfs"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ telegraf_watchtower_enable }}"
     restart_policy: unless-stopped
     memory: 1g
 
@@ -113,3 +117,4 @@
       traefik.frontend.rule: "Host:grafana.{{ ansible_nas_domain }}"
       traefik.enable: "{{ grafana_available_externally }}"
       traefik.port: "3000"
+      com.centurylinklabs.watchtower.enable: "{{ grafana_watchtower_enable }}"

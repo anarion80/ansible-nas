@@ -10,3 +10,5 @@
       DEVICE_IP_ADDR: "{{ hs110_device_ip }}"
       INFLUX_HOST: "{{ hs110_timer }}"
       HOSTNAME: "{{ hs110_timer }}"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ hs110_watchtower_enable }}"

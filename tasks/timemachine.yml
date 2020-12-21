@@ -15,6 +15,8 @@
       TMSIZE: "{{ timemachine_volume_size_limit }}"
       PASS: "{{ timemachine_password }}"
       SHARENAME: "{{ timemachine_share_name }}"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ timemachine_watchtower_enable }}"
     volumes:
       - "{{ timemachine_data_directory }}/data:/backups"
     ulimits:

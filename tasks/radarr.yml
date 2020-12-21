@@ -28,3 +28,4 @@
       traefik.frontend.rule: "Host:radarr.{{ ansible_nas_domain }}"
       traefik.enable: "{{ radarr_available_externally }}"
       traefik.port: "7878"
+      com.centurylinklabs.watchtower.enable: "{{ radarr_watchtower_enable }}"

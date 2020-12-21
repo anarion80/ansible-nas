@@ -30,5 +30,7 @@
     volumes:
       - "{{ traefik_data_directory }}/traefik.toml:/etc/traefik/traefik.toml:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ traefik_watchtower_enable }}"
     restart_policy: unless-stopped
     memory: 1g

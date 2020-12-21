@@ -22,4 +22,5 @@
       traefik.enable: "{{ homeassistant_available_externally }}"
       traefik.port: "8123"
       traefik.frontend.headers.SSLRedirect: "true"
+      com.centurylinklabs.watchtower.enable: "{{ homeassistant_watchtower_enable }}"
     memory: 1g

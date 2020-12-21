@@ -26,3 +26,4 @@
       traefik.frontend.rule: "Host:gaps.{{ ansible_nas_domain }}"
       traefik.enable: "{{ gaps_available_externally }}"
       traefik.port: "8484"
+      com.centurylinklabs.watchtower.enable: "{{ gaps_watchtower_enable }}"

@@ -30,3 +30,4 @@
       traefik.frontend.rule: "Host:jellyfin.{{ ansible_nas_domain }}"
       traefik.enable: "{{ jellyfin_available_externally }}"
       traefik.port: "8096"
+      com.centurylinklabs.watchtower.enable: "{{ jellyfin_watchtower_enable }}"

@@ -26,3 +26,4 @@
       traefik.frontend.rule: "Host:huginn.{{ ansible_nas_domain }}"
       traefik.enable: "{{ ghuginn_available_externally }}"
       traefik.port: "3000"
+      com.centurylinklabs.watchtower.enable: "{{ huginn_watchtower_enable }}"

@@ -42,3 +42,4 @@
       traefik.frontend.rule: "Host:serposcope.{{ ansible_nas_domain }}"
       traefik.enable: "{{ serposcope_available_externally }}"
       traefik.port: "7134"
+      com.centurylinklabs.watchtower.enable: "{{ serposcope_watchtower_enable }}"

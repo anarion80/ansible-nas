@@ -28,3 +28,4 @@
       traefik.frontend.rule: "Host:mylar.{{ ansible_nas_domain }}"
       traefik.enable: "{{ mylar_available_externally }}"
       traefik.port: "{{ mylar_port_http }}"
+      com.centurylinklabs.watchtower.enable: "{{ mylar_watchtower_enable }}"

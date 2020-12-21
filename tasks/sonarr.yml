@@ -28,3 +28,4 @@
       traefik.frontend.rule: "Host:sonarr.{{ ansible_nas_domain }}"
       traefik.enable: "{{ sonarr_available_externally }}"
       traefik.port: "8989"
+      com.centurylinklabs.watchtower.enable: "{{ sonarr_watchtower_enable }}"

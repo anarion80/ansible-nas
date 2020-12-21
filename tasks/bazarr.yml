@@ -28,3 +28,4 @@
       traefik.frontend.rule: "Host:bazarr.{{ ansible_nas_domain }}"
       traefik.enable: "{{ bazarr_available_externally }}"
       traefik.port: "6767"
+      com.centurylinklabs.watchtower.enable: "{{ bazarr_watchtower_enable }}"

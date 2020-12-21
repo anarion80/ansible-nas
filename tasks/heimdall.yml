@@ -45,3 +45,4 @@
       traefik.frontend.rule: "Host:heimdall.{{ ansible_nas_domain }}"
       traefik.enable: "{{ heimdall_available_externally }}"
       traefik.port: "80"
+      com.centurylinklabs.watchtower.enable: "{{ heimdall_watchtower_enable }}"

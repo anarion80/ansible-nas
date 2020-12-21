@@ -21,3 +21,4 @@
       traefik.frontend.rule: "Host:glances.{{ ansible_nas_domain }}"
       traefik.enable: "{{ glances_available_externally }}"
       traefik.port: "61208"
+      com.centurylinklabs.watchtower.enable: "{{ glances_watchtower_enable }}"

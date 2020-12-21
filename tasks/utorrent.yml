@@ -34,3 +34,4 @@
       traefik.frontend.rule: "Host:utorrent.{{ ansible_nas_domain }}"
       traefik.enable: "{{ utorrent_available_externally }}"
       traefik.port: "8080"
+      com.centurylinklabs.watchtower.enable: "{{ utorrent_watchtower_enable }}"

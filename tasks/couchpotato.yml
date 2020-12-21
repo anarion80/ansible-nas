@@ -30,3 +30,4 @@
       traefik.frontend.rule: "Host:couchpotato.{{ ansible_nas_domain }}"
       traefik.enable: "{{ couchpotato_available_externally }}"
       traefik.port: "5050"
+      com.centurylinklabs.watchtower.enable: "{{ couchpotato_watchtower_enable }}"

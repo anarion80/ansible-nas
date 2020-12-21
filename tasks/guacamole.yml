@@ -44,6 +44,7 @@
       traefik.frontend.rule: "Host:guacamole.{{ ansible_nas_domain }}"
       traefik.enable: "{{ guacamole_available_externally }}"
       traefik.port: "8080"
+      com.centurylinklabs.watchtower.enable: "{{ guacamole_watchtower_enable }}"
 
 - name: Restart Guacamole Container
   docker_container:

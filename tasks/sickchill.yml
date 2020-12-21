@@ -35,3 +35,4 @@
       traefik.frontend.rule: "Host:sickchill.{{ ansible_nas_domain }}"
       traefik.enable: "{{ sickchill_available_externally }}"
       traefik.port: "8081"
+      com.centurylinklabs.watchtower.enable: "{{ sickchill_watchtower_enable }}"

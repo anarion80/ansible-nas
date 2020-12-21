@@ -24,3 +24,4 @@
       traefik.frontend.rule: "Host:portainer.{{ ansible_nas_domain }}"
       traefik.enable: "{{ portainer_available_externally }}"
       traefik.port: "9000"
+      com.centurylinklabs.watchtower.enable: "{{ portainer_watchtower_enable }}"

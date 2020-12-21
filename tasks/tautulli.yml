@@ -28,3 +28,4 @@
       traefik.frontend.rule: "Host:tautulli.{{ ansible_nas_domain }}"
       traefik.enable: "{{ tautulli_available_externally }}"
       traefik.port: "8181"
+      com.centurylinklabs.watchtower.enable: "{{ tautulli_watchtower_enable }}"

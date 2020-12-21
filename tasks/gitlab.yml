@@ -48,3 +48,4 @@
       traefik.frontend.rule: "Host:gitlab.{{ ansible_nas_domain }}"
       traefik.enable: "{{ gitlab_available_externally }}"
       traefik.port: "80"
+      com.centurylinklabs.watchtower.enable: "{{ gitlab_watchtower_enable }}"

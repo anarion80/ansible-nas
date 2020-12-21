@@ -28,3 +28,4 @@
       traefik.frontend.rule: "Host:organizr.{{ ansible_nas_domain }}"
       traefik.enable: "{{ organizr_available_externally }}"
       traefik.port: "80"
+      com.centurylinklabs.watchtower.enable: "{{ organizr_watchtower_enable }}"

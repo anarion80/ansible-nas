@@ -27,3 +27,4 @@
       traefik.frontend.rule: "Host:nzbget.{{ ansible_nas_domain }}"
       traefik.enable: "{{ nzbget_available_externally }}"
       traefik.port: "6789"
+      com.centurylinklabs.watchtower.enable: "{{ nzbget_watchtower_enable }}"

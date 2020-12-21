@@ -53,3 +53,4 @@
       traefik.frontend.rule: "Host:transmission-openvpn.{{ ansible_nas_domain }}"
       traefik.enable: "{{ transmission_with_openvpn_available_externally }}"
       traefik.port: "9091"
+      com.centurylinklabs.watchtower.enable: "{{ transmission_openvpn_watchtower_enable }}"

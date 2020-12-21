@@ -32,5 +32,7 @@
       TZ: "{{ ansible_nas_timezone }}"
       PUID: "{{ plex_autoscan_user_id }}"
       PGID: "{{ plex_autoscan_group_id }}"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ plex_autoscan_watchtower_enable }}"
     restart_policy: unless-stopped
 

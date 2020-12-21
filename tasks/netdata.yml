@@ -30,3 +30,4 @@
       traefik.frontend.rule: "Host:netdata.{{ ansible_nas_domain }}"
       traefik.enable: "{{ netdata_available_externally }}"
       traefik.port: "19999"
+      com.centurylinklabs.watchtower.enable: "{{ netdata_watchtower_enable }}"

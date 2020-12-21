@@ -27,6 +27,7 @@
       traefik.hub.frontend.rule: "Host:bitwarden.{{ ansible_nas_domain }};Path:/notifications/hub"
       traefik.hub.port: "bitwarden_port_b"
       traefik.hub.protocol: "ws"
+      com.centurylinklabs.watchtower.enable: "{{ bitwarden_watchtower_enable }}"
     restart_policy: unless-stopped
     #memory: 1g
 

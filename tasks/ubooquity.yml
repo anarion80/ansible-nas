@@ -30,3 +30,4 @@
       traefik.frontend.rule: "Host:ubooquity.{{ ansible_nas_domain }}"
       traefik.enable: "{{ ubooquity_available_externally }}"
       traefik.port: "2202"
+      com.centurylinklabs.watchtower.enable: "{{ ubooquity_watchtower_enable }}"

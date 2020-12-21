@@ -25,3 +25,4 @@
       traefik.frontend.rule: "Host:duplicati.{{ ansible_nas_domain }}"
       traefik.enable: "{{ duplicati_available_externally }}"
       traefik.port: "8200"
+      com.centurylinklabs.watchtower.enable: "{{ duplicati_watchtower_enable }}"

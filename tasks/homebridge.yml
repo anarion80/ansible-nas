@@ -27,3 +27,4 @@
       traefik.frontend.rule: "Host:homebridge.{{ ansible_nas_domain }}"
       traefik.enable: "{{ homebridge_available_externally }}"
       traefik.port: "8087"
+      com.centurylinklabs.watchtower.enable: "{{ homebridge_watchtower_enable }}"

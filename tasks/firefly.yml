@@ -55,3 +55,4 @@
       traefik.frontend.rule: "Host:firefly.{{ ansible_nas_domain }}"
       traefik.enable: "{{ firefly_available_externally }}"
       traefik.port: "80"
+      com.centurylinklabs.watchtower.enable: "{{ firefly_watchtower_enable }}"

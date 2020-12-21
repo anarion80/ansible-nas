@@ -72,3 +72,4 @@
       traefik.frontend.rule: "Host:gitea.{{ ansible_nas_domain }}"
       traefik.enable: "{{ gitea_available_externally }}"
       traefik.port: "3000"
+      com.centurylinklabs.watchtower.enable: "{{ gitea_watchtower_enable }}"

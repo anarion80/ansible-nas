@@ -26,3 +26,4 @@
       traefik.frontend.rule: "Host:grocy.{{ ansible_nas_domain }}"
       traefik.enable: "{{ grocy_available_externally }}"
       traefik.port: "9283"
+      com.centurylinklabs.watchtower.enable: "{{ grocy_watchtower_enable }}"

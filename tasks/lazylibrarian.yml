@@ -27,3 +27,4 @@
       traefik.frontend.rule: "Host:lazylibrarian.{{ ansible_nas_domain }}"
       traefik.enable: "{{ lazylibrarian_available_externally }}"
       traefik.port: "5299"
+      com.centurylinklabs.watchtower.enable: "{{ lazylibrarian_watchtower_enable }}"

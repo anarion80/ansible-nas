@@ -26,3 +26,4 @@
       traefik.frontend.rule: "Host:lidarr.{{ ansible_nas_domain }}"
       traefik.enable: "{{ lidarr_available_externally }}"
       traefik.port: "8686"
+      com.centurylinklabs.watchtower.enable: "{{ lidarr_watchtower_enable }}"

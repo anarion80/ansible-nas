@@ -49,3 +49,4 @@
       traefik.frontend.rule: "Host:openhab.{{ ansible_nas_domain }}"
       traefik.enable: "{{ openhab_available_externally }}"
       traefik.port: "7777"
+      com.centurylinklabs.watchtower.enable: "{{ openhab_watchtower_enable }}"

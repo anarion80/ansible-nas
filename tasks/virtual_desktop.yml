@@ -23,6 +23,8 @@
       - "{{ samba_shares_root }}:/samba:rw"
       - "{{ docker_home }}:/docker:rw"
       - "/etc/timezone:/etc/timezone:ro"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ vd_watchtower_enable }}"
     ports:
       - "{{ vd_rdp_port }}:3389"
     privileged: true

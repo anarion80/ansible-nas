@@ -28,3 +28,4 @@
       traefik.frontend.rule: "Host:syncthing.{{ ansible_nas_domain }}"
       traefik.enable: "{{ syncthing_available_externally }}"
       traefik.port: "8384"
+      com.centurylinklabs.watchtower.enable: "{{ syncthing_watchtower_enable }}"
