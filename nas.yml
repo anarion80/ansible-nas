@@ -321,3 +321,7 @@
   - import_tasks: tasks/snipeit.yml
     when: (snipeit_enabled | default(False))
     tags: snipeit
+
+  - import_tasks: tasks/shaarli.yml
+    when: (shaarli_enabled | default(False))
+    tags: shaarli

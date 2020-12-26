@@ -1199,3 +1199,13 @@ snipeit_mail_password: "password"
 snipeit_app_key: ""
 snipeit_port: "9111"
 snipeit_watchtower_enable: "true"
+
+###
+### Shaarli
+###
+shaarli_available_externally: "false"
+shaarli_data_directory: "{{ docker_home }}/shaarli"
+shaarli_user_id: "0"
+shaarli_group_id: "0"
+shaarli_port: "8001"
+shaarli_watchtower_enable: "true"

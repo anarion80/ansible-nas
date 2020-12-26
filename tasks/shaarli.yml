@@ -1,0 +1,30 @@
+---
+- name: Create Shaarli Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0777
+  with_items:
+    - "{{ shaarli_data_directory }}/data"
+
+- name: Shaarli Docker Container
+  docker_container:
+    name: shaarli
+    image: shaarli/shaarli
+    pull: true
+    volumes:
+      - "{{ shaarli_data_directory }}/data:/var/www/shaarli/data:rw"
+    ports:
+      - "{{ shaarli_port }}:80"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ shaarli_user_id }}"
+      PGID: "{{ shaarli_group_id }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.backend: "shaarli"
+      traefik.frontend.rule: "Host:shaarli.{{ ansible_nas_domain }}"
+      traefik.enable: "{{ shaarli_available_externally }}"
+      traefik.port: "8001"
+      com.centurylinklabs.watchtower.enable: "{{ shaarli_watchtower_enable }}"
