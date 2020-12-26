@@ -317,3 +317,7 @@
   - import_tasks: tasks/hs110.yml
     when: (hs110_enabled | default(False))
     tags: hs110
+
+  - import_tasks: tasks/snipeit.yml
+    when: (snipeit_enabled | default(False))
+    tags: snipeit

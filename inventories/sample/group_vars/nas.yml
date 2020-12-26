@@ -59,4 +59,5 @@ ansible_nas_workgroup: ANARION
 #gaps_enabled: true
 #huginn_enabled: true
 #hs110_enabled: true
+#snipeit_enabled: true
 

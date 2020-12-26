@@ -1,0 +1,62 @@
+---
+- name: Snipe-It Mysql Docker Container
+  docker_container:
+    name: snipeit-mysql
+    image: mysql:5.7
+    pull: true
+    volumes:
+      - "{{ snipeit_data_directory }}/mysql:/var/lib/mysql:rw"
+    env:
+      MYSQL_DATABASE: "snipeit"
+      MYSQL_USER: "snipeit-user"
+      MYSQL_PASSWORD: "snipeit-pass"
+      MYSQL_ROOT_PASSWORD: "snipeit-secret"
+    restart_policy: unless-stopped
+    memory: 1g
+
+- name: Snipe-It Docker Container
+  docker_container:
+    name: snipeit
+    image: snipe/snipe-it
+    pull: true
+    links:
+        - snipeit-mysql:mysql
+    volumes:
+      - "{{ snipeit_data_directory }}/snipeit:/var/lib/snipeit:rw"
+    ports:
+      - "{{ snipeit_port }}:80"
+    env:
+      # Mysql Parameters
+      MYSQL_DATABASE: "snipeit"
+      MYSQL_USER: "snipeit-user"
+      MYSQL_PASSWORD: "snipeit-pass"
+      MYSQL_ROOT_PASSWORD: "snipeit-secret"
+
+      # Email Parameters
+      # - the hostname/IP address of your mailserver
+      MAIL_PORT_587_TCP_ADDR: "{{ snipeit_mail_server }}"
+      #the port for the mailserver (probably 587, could be another)
+      MAIL_PORT_587_TCP_PORT: "{{ snipeit_mail_server_port }}"
+      # the default from address, and from name for emails
+      MAIL_ENV_FROM_ADDR: "{{ snipeit_mail_from_address }}"
+      MAIL_ENV_FROM_NAME: "{{ snipeit_mail_from_name }}"
+      # - pick 'tls' for SMTP-over-SSL, 'tcp' for unencrypted
+      MAIL_ENV_ENCRYPTION: "{{ snipeit_mail_encryption }}"
+      # SMTP username and password
+      MAIL_ENV_USERNAME: "{{ snipeit_mail_username }}"
+      MAIL_ENV_PASSWORD: "{{ snipeit_mail_password }}"
+
+      # Snipe-IT Settings
+      APP_ENV: "production"
+      APP_DEBUG: "false"
+      APP_KEY: "{{ snipeit_app_key }}"
+      APP_URL: "http://{{ ansible_nas_hostname }}:{{ snipeit_port }}"
+      APP_TIMEZONE: "{{ ansible_nas_timezone }}"
+      APP_LOCALE: "en"
+    restart_policy: unless-stopped
+    labels:
+      traefik.backend: "snipeit"
+      traefik.frontend.rule: "Host:snipeit.{{ ansible_nas_domain }}"
+      traefik.enable: "{{ snipeit_available_externally }}"
+      traefik.port: "80"
+      com.centurylinklabs.watchtower.enable: "{{ snipeit_watchtower_enable }}"
