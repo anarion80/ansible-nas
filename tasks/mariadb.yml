@@ -1,0 +1,33 @@
+---
+- name: Create MariaDB Directory
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ mariadb_data_directory }}/data"
+
+- name: MariaDB
+  docker_container:
+    name: mariadb
+    image: mariadb
+    pull: true
+    volumes:
+      - "{{ mariadb_data_directory }}/data:/var/lib/mysql:rw"
+    ports:
+      - "{{ mariadb_port }}:8085"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ mariadb_user_id }}"
+      PGID: "{{ mariadb_group_id }}"
+      MYSQL_ROOT_PASSWORD: "{{ mariadb_root_password }}"
+      MYSQL_DATABASE: "{{ mariadb_database }}"
+      MYSQL_USER: "{{ mariadb_user }}"
+      MYSQL_PASSWORD: "{{ mariadb_password }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.backend: "nodered"
+      traefik.frontend.rule: "Host:nodered.{{ ansible_nas_domain }}"
+      traefik.enable: "{{ mariadb_available_externally }}"
+      traefik.port: "{{ mariadb_port }}"
+      com.centurylinklabs.watchtower.enable: "{{ mariadb_watchtower_enable }}"

@@ -1224,3 +1224,17 @@ nodered_user_id: "0"
 nodered_group_id: "0"
 nodered_port: "1880"
 nodered_watchtower_enable: "true"
+
+###
+### MariaDBd
+###
+mariadb_available_externally: "false"
+mariadb_data_directory: "{{ docker_home }}/mariadb"
+mariadb_root_password: "my_secret_password"
+mariadb_database: ""
+mariadb_user: ""
+mariadb_password: ""
+mariadb_user_id: "0"
+mariadb_group_id: "0"
+mariadb_port: "8085"
+mariadb_watchtower_enable: "false"

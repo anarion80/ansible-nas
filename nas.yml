@@ -329,4 +329,8 @@
   - import_tasks: tasks/nodered.yml
     when: (nodered_enabled | default(False))
     tags: nodered
-    
+
+  - import_tasks: tasks/mariadb.yml
+    when: (mariadb_enabled | default(False))
+    tags: mariadb
+

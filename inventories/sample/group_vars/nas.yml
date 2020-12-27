@@ -62,4 +62,5 @@ ansible_nas_workgroup: ANARION
 #snipeit_enabled: true
 #shaarli_enabled: true
 #nodered_enabled: true
+#mariadb_enabled: true
 
