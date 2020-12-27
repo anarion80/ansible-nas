@@ -1,0 +1,30 @@
+---
+- name: Create Nodered Directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0777
+  with_items:
+    - "{{ nodered_data_directory }}/data"
+
+- name: Nodered
+  docker_container:
+    name: nodered
+    image: nodered/node-red
+    pull: true
+    volumes:
+      - "{{ nodered_data_directory }}/data:/data:rw"
+    ports:
+      - "{{ nodered_port }}:1880"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ nodered_user_id }}"
+      PGID: "{{ nodered_group_id }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.backend: "nodered"
+      traefik.frontend.rule: "Host:nodered.{{ ansible_nas_domain }}"
+      traefik.enable: "{{ nodered_available_externally }}"
+      traefik.port: "{{ nodered_port }}"
+      com.centurylinklabs.watchtower.enable: "{{ nodered_watchtower_enable }}"

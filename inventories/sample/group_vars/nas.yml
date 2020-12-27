@@ -61,4 +61,5 @@ ansible_nas_workgroup: ANARION
 #hs110_enabled: true
 #snipeit_enabled: true
 #shaarli_enabled: true
+#nodered_enabled: true
 

@@ -178,6 +178,11 @@ grocy_enabled: false
 # Snipe-it
 snipeit_enabled: false
 
+# Shaarli
+shaarli_enabled: false
+
+# Snipe-it
+nodered_enabled: false
 
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
@@ -1209,3 +1214,13 @@ shaarli_user_id: "0"
 shaarli_group_id: "0"
 shaarli_port: "8001"
 shaarli_watchtower_enable: "true"
+
+###
+### Node-red
+###
+nodered_available_externally: "false"
+nodered_data_directory: "{{ docker_home }}/nodered"
+nodered_user_id: "0"
+nodered_group_id: "0"
+nodered_port: "1880"
+nodered_watchtower_enable: "true"

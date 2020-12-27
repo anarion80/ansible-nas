@@ -325,3 +325,8 @@
   - import_tasks: tasks/shaarli.yml
     when: (shaarli_enabled | default(False))
     tags: shaarli
+
+  - import_tasks: tasks/nodered.yml
+    when: (nodered_enabled | default(False))
+    tags: nodered
+    
