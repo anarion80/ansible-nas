@@ -63,4 +63,5 @@ ansible_nas_workgroup: ANARION
 #shaarli_enabled: true
 #nodered_enabled: true
 #mariadb_enabled: true
+#seafile_enabled: true
 

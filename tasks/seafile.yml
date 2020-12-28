@@ -1,0 +1,57 @@
+---
+- name: Create Seafile directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ seafile_data_directory }}/seafile"
+
+- name: Seafile Mysql Docker Container
+  docker_container:
+    name: seafile-mysql
+    image: mysql:5.7
+    pull: true
+    volumes:
+      - "{{ seafile_data_directory }}/mysql:/var/lib/mysql:rw"
+    env:
+      MYSQL_DATABASE: "{{ seafile_database }}"
+      MYSQL_USER: "{{ seafile_db_user }}"
+      MYSQL_PASSWORD: "s{{ seafile_db_password }}"
+      MYSQL_ROOT_PASSWORD: "{{ seafile_db_root_password }}"
+    restart_policy: unless-stopped
+    memory: 1g
+
+- name: Seafile Memcached Docker Container
+  docker_container:
+    name: seafile-memcached
+    image: memcached:1.5.6
+    pull: true
+    entrypoint: "memcached -m 256"
+
+- name: Seafile Docker Container
+  docker_container:
+    name: seafile
+    image: seafileltd/seafile-mc:latest
+    pull: true
+    links:
+        - seafile-mysql:mysql
+        - seafile-memcached:memcached
+    volumes:
+      - "{{ seafile_data_directory }}/seafile:/shared:rw"
+    ports:
+      - "{{ seafile_port }}:80"
+    env:
+      DB_HOST: "mysql"
+      DB_ROOT_PASSWD: "{{ seafile_db_root_password }}"  # Requested, the value shuold be root's password of MySQL service.
+      SEAFILE_ADMIN_EMAIL: "{{ seafile_admin_email }}" # Specifies Seafile admin user, default is 'me@example.com'.
+      SEAFILE_ADMIN_PASSWORD: "{{ seafile_admin_password }}"     # Specifies Seafile admin password, default is 'asecret'.
+      SEAFILE_SERVER_LETSENCRYPT: "{{ seafile_server_letsencrypt }}"   # Whether to use https or not.
+      SEAFILE_SERVER_HOSTNAME: "{{ seafile_server_hostname }}" # Specifies your host name if https is enabled.
+      TIME_ZONE: "{{ ansible_nas_timezone }}"
+    restart_policy: unless-stopped
+    labels:
+      traefik.backend: "seafile"
+      traefik.frontend.rule: "Host:seafile.{{ ansible_nas_domain }}"
+      traefik.enable: "{{ seafile_available_externally }}"
+      traefik.port: "80"
+      com.centurylinklabs.watchtower.enable: "{{ seafile_watchtower_enable }}"

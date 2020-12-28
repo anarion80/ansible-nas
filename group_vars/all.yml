@@ -184,6 +184,9 @@ shaarli_enabled: false
 # Snipe-it
 nodered_enabled: false
 
+# Seafile
+seafile_enabled: false
+
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
 # home static IP address, the cloudflare with the cloudflare_ddns dynamic DNS container enabled, or use a dynamic DNS provider like no-ip.
@@ -1226,7 +1229,7 @@ nodered_port: "1880"
 nodered_watchtower_enable: "true"
 
 ###
-### MariaDBd
+### MariaDB
 ###
 mariadb_available_externally: "false"
 mariadb_data_directory: "{{ docker_home }}/mariadb"
@@ -1238,3 +1241,21 @@ mariadb_user_id: "0"
 mariadb_group_id: "0"
 mariadb_port: "8085"
 mariadb_watchtower_enable: "false"
+
+###
+### Seafile
+###
+seafile_available_externally: "false"
+seafile_data_directory: "{{ docker_home }}/seafile"
+seafile_db_root_password: "my_secret_password"
+seafile_database: "seafile"
+seafile_db_user: "seafile-user"
+seafile_db_password: "seafile-password"
+seafile_admin_email: "{{ ansible_nas_email }}"
+seafile_admin_password: "asecret"
+seafile_server_letsencrypt: "false"
+seafile_server_hostname: "seafile.{{ ansible_nas_domain }}"
+seafile_user_id: "0"
+seafile_group_id: "0"
+seafile_port: "8082"
+seafile_watchtower_enable: "false"

@@ -334,3 +334,6 @@
     when: (mariadb_enabled | default(False))
     tags: mariadb
 
+  - import_tasks: tasks/seafile.yml
+    when: (seafile_enabled | default(False))
+    tags: seafile
