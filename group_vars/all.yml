@@ -197,6 +197,16 @@ traefik_port_http: "80"
 traefik_port_https: "443"
 traefik_port_ui: "8083"
 traefik_watchtower_enable: "true"
+
+# 
+# Traefik2
+# 
+traefik2_enabled: false
+traefik2_port_http: "80"
+traefik2_port_https: "443"
+traefik2_port_ui: "8083"
+traefik2_watchtower_enable: "true"
+
 ###
 ### General
 ###
@@ -220,7 +230,7 @@ ansible_nas_user: anarion
 ansible_nas_email: anarion@go2.pl
 
 # Applications will have subdomain SSL certificates created if Traefik is enabled, e.g. anarion-nas.<your-domain>, nextcloud.<your-domain>
-ansible_nas_domain: lan
+ansible_nas_domain: nas.anarion.pl
 
 ###
 ### Docker
@@ -443,6 +453,13 @@ samba_workgroup: "{{ ansible_nas_workgroup }}"
 traefik_docker_image: traefik:v1.7
 traefik_data_directory: "{{ docker_home }}/traefik"
 traefik_debug: "false"
+
+###
+### Traefik2
+###
+traefik2_docker_image: traefik:latest
+traefik2_data_directory: "{{ docker_home }}/traefik2"
+traefik2_debug: "false"
 
 ###
 ### Heimdall

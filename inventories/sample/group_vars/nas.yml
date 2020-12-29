@@ -46,6 +46,7 @@ ansible_nas_workgroup: ANARION
 #lidarr_enabled: true
 #youtubedlmaterial_enabled: true
 #traefik_enabled: true
+#traefik2_enabled: true
 #nzbhydra2_enabled: true
 #sabnzbd_enabled: true
 #lazylibrarian_enabled: true
