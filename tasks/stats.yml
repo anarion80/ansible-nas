@@ -36,6 +36,7 @@
       INFLUXDB_LOGGING_LEVEL: "error"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ influxdb_watchtower_enable }}"
+      traefik.enable: "false"
     memory: 1g
 
 - name: hddtemp
@@ -48,6 +49,8 @@
     env:
       HDDTEMP_ARGS: "-q -d -F /dev/sd*"
       TZ: "{{ ansible_nas_timezone }}"
+    labels:
+      traefik.enable: "false"
     memory: 128m
 
 - name: Template telegraf.conf
@@ -82,6 +85,7 @@
       HOST_MOUNT_PREFIX: "/hostfs"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ telegraf_watchtower_enable }}"
+      traefik.enable: "false"
     restart_policy: unless-stopped
     memory: 1g
 

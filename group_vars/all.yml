@@ -841,6 +841,10 @@ grafana_port: "3000"
 influxdb_watchtower_enable: "false"
 grafana_watchtower_enable: "true"
 telegraf_watchtower_enable: "false"
+telegraf_ipmi_user: "user"
+telegraf_ipmi_password: "password"
+telegraf_ipmi_host: "127.0.0.1"
+telegraf_ipmi_interface: "lanplus"
 
 ###
 ### Gitea
