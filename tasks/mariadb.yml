@@ -26,8 +26,8 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "nodered"
-      traefik.frontend.rule: "Host:nodered.{{ ansible_nas_domain }}"
+      traefik.backend: "mariadb"
+      traefik.frontend.rule: "Host:mariadb.{{ ansible_nas_domain }}"
       traefik.enable: "{{ mariadb_available_externally }}"
       traefik.port: "{{ mariadb_port }}"
       com.centurylinklabs.watchtower.enable: "{{ mariadb_watchtower_enable }}"
