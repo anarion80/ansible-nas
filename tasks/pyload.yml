@@ -25,8 +25,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "pyload"
-      traefik.frontend.rule: "Host:pyload.{{ ansible_nas_domain }}"
       traefik.enable: "{{ pyload_available_externally }}"
-      traefik.port: "8000"
+      traefik.http.services.pyload.loadbalancer.server.port: "8000"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.pyload.middlewares: "whitelist"
+      traefik.http.routers.pyload.rule: "Host(`pyload.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ pyload_watchtower_enable }}"

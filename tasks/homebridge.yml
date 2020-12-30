@@ -23,8 +23,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "homebridge"
-      traefik.frontend.rule: "Host:homebridge.{{ ansible_nas_domain }}"
       traefik.enable: "{{ homebridge_available_externally }}"
-      traefik.port: "8087"
+      traefik.http.services.homebridge.loadbalancer.server.port: "8087"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.homebridge.middlewares: "whitelist"
+      traefik.http.routers.homebridge.rule: "Host(`homebridge.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ homebridge_watchtower_enable }}"

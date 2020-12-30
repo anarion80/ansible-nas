@@ -38,6 +38,8 @@
       MYSQL_USER: "gitea"
       MYSQL_PASSWORD: "gitea"
       MYSQL_ROOT_PASSWORD: "gitea"
+    labels:
+      traefik.enable: "false"
     restart_policy: unless-stopped
     memory: 1g
 
@@ -68,8 +70,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "gitea"
-      traefik.frontend.rule: "Host:gitea.{{ ansible_nas_domain }}"
       traefik.enable: "{{ gitea_available_externally }}"
-      traefik.port: "3000"
+      traefik.http.services.gitea.loadbalancer.server.port: "3000"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.gitea.middlewares: "whitelist"
+      traefik.http.routers.gitea.rule: "Host(`gitea.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ gitea_watchtower_enable }}"

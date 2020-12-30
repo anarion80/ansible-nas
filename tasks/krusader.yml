@@ -26,9 +26,11 @@
       VNC_PASSWORD: "{{ krusader_vnc_password }}"
     restart_policy: unless-stopped
     labels:
-      traefik.backend: "krusader"
-      traefik.frontend.rule: "Host:krusader.{{ ansible_nas_domain }}"
       traefik.enable: "{{ krusader_available_externally }}"
-      traefik.port: "5800"
+      traefik.http.services.krusader.loadbalancer.server.port: "5800"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.krusader.middlewares: "whitelist"
+      traefik.http.routers.krusader.rule: "Host(`krusader.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ krusader_watchtower_enable }}"
     memory: 1g

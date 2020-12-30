@@ -26,8 +26,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "jellyfin"
-      traefik.frontend.rule: "Host:jellyfin.{{ ansible_nas_domain }}"
       traefik.enable: "{{ jellyfin_available_externally }}"
-      traefik.port: "8096"
+      traefik.http.services.jellyfin.loadbalancer.server.port: "8096"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.jellyfin.middlewares: "whitelist"
+      traefik.http.routers.jellyfin.rule: "Host(`jellyfin.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ jellyfin_watchtower_enable }}"

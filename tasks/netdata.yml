@@ -26,8 +26,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "netdata"
-      traefik.frontend.rule: "Host:netdata.{{ ansible_nas_domain }}"
       traefik.enable: "{{ netdata_available_externally }}"
-      traefik.port: "19999"
+      traefik.http.services.netdata.loadbalancer.server.port: "19999"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.netdata.middlewares: "whitelist"
+      traefik.http.routers.netdata.rule: "Host(`netdata.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ netdata_watchtower_enable }}"

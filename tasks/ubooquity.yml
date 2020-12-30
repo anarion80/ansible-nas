@@ -26,8 +26,10 @@
       - "{{ ubooquity_port_admin }}:2203"
     restart_policy: unless-stopped
     labels:
-      traefik.backend:  "ubooquity"
-      traefik.frontend.rule: "Host:ubooquity.{{ ansible_nas_domain }}"
       traefik.enable: "{{ ubooquity_available_externally }}"
-      traefik.port: "2202"
+      traefik.http.services.ubooquity.loadbalancer.server.port: "2202"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.ubooquity.middlewares: "whitelist"
+      traefik.http.routers.ubooquity.rule: "Host(`ubooquity.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ ubooquity_watchtower_enable }}"

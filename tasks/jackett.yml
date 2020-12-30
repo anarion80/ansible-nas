@@ -20,8 +20,10 @@
       TZ: "{{ ansible_nas_timezone }}"
     restart_policy: unless-stopped
     labels:
-      traefik.backend: "jackett"
-      traefik.frontend.rule: "Host:jackett.{{ ansible_nas_domain }}"
       traefik.enable: "{{ jackett_available_externally }}"
-      traefik.port: "9117"
+      traefik.http.services.jackett.loadbalancer.server.port: "9117"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.jackett.middlewares: "whitelist"
+      traefik.http.routers.jackett.rule: "Host(`jackett.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ jackett_watchtower_enable }}"

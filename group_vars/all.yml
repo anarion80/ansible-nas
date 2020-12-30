@@ -198,15 +198,6 @@ traefik_port_https: "443"
 traefik_port_ui: "8083"
 traefik_watchtower_enable: "true"
 
-# 
-# Traefik2
-# 
-traefik2_enabled: false
-traefik2_port_http: "80"
-traefik2_port_https: "443"
-traefik2_port_ui: "8083"
-traefik2_watchtower_enable: "true"
-
 ###
 ### General
 ###
@@ -379,6 +370,9 @@ samba_shares:
     browsable: yes
     path: "{{ samba_shares_root }}/comics"
 
+downloads_user: "user"
+downloads_password: "password"
+
 ###
 ### NFS
 ###
@@ -450,16 +444,9 @@ samba_workgroup: "{{ ansible_nas_workgroup }}"
 ###
 ### Traefik
 ###
-traefik_docker_image: traefik:v1.7
+traefik_docker_image: traefik:latest
 traefik_data_directory: "{{ docker_home }}/traefik"
 traefik_debug: "false"
-
-###
-### Traefik2
-###
-traefik2_docker_image: traefik:latest
-traefik2_data_directory: "{{ docker_home }}/traefik2"
-traefik2_debug: "false"
 
 ###
 ### Heimdall
@@ -1014,9 +1001,11 @@ minidlna_watchtower_enable: "true"
 ###
 ### get_iplayer
 ###
+get_iplayer_available_externally: "false"
 get_iplayer_config_directory: "{{ docker_home }}/get_iplayer"
 get_iplayer_download_directory: "{{ tv_root }}/iplayer_downloads"
 get_iplayer_port: "8182"
+get_iplayer_watchtower_enable: "true"
 
 ###
 ### mymediaforalexa

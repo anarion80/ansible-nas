@@ -24,8 +24,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "mylar"
-      traefik.frontend.rule: "Host:mylar.{{ ansible_nas_domain }}"
       traefik.enable: "{{ mylar_available_externally }}"
-      traefik.port: "{{ mylar_port_http }}"
+      traefik.http.services.mylar.loadbalancer.server.port: "8090"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.mylar.middlewares: "whitelist"
+      traefik.http.routers.mylar.rule: "Host(`mylar.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ mylar_watchtower_enable }}"

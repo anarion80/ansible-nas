@@ -16,6 +16,7 @@
       - "{{ mymediaforalexa_data_directory }}:/datadir:rw"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ mymediaforalexa_watchtower_enable }}"
+      traefik.enable: "false"
     network_mode: host
     restart_policy: unless-stopped
     memory: 1g

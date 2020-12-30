@@ -21,13 +21,16 @@
       LOG_FILE: "/data/bitwarden.log"
       WEBSOCKET_ENABLED: "true"
     labels:
-      traefik.web.frontend.rule: "Host:bitwarden.{{ ansible_nas_domain }}"
+      #traefik.hub.frontend.rule: "Host:bitwarden.{{ ansible_nas_domain }};Path:/notifications/hub"
+      #traefik.hub.port: "bitwarden_port_b"
+      #traefik.hub.protocol: "ws"
       traefik.enable: "{{ bitwarden_available_externally }}"
-      traefik.web.port: "80"
-      traefik.hub.frontend.rule: "Host:bitwarden.{{ ansible_nas_domain }};Path:/notifications/hub"
-      traefik.hub.port: "bitwarden_port_b"
-      traefik.hub.protocol: "ws"
-      com.centurylinklabs.watchtower.enable: "{{ bitwarden_watchtower_enable }}"
+      traefik.http.services.bitwarden.loadbalancer.server.port: "80"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.bitwarden.middlewares: "whitelist"
+      traefik.http.routers.bitwarden.rule: "Host(`bitwarden.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ bitbitwarden_watchtower_enablewarden }}"
     restart_policy: unless-stopped
     #memory: 1g
 
@@ -38,4 +41,6 @@
     pull: true
     restart_policy: unless-stopped
     volumes_from: bitwarden
+    labels:
+      traefik.enable: "false"
     memory: 1g

@@ -20,8 +20,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "ombi"
-      traefik.frontend.rule: "Host:ombi.{{ ansible_nas_domain }}"
       traefik.enable: "{{ ombi_available_externally }}"
-      traefik.port: "3579"
+      traefik.http.services.ombi.loadbalancer.server.port: "3579"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.ombi.middlewares: "whitelist"
+      traefik.http.routers.ombi.rule: "Host(`ombi.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ ombi_watchtower_enable }}"

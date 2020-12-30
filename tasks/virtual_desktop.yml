@@ -25,6 +25,8 @@
       - "/etc/timezone:/etc/timezone:ro"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ vd_watchtower_enable }}"
+      traefik.enable: "false"
+
     ports:
       - "{{ vd_rdp_port }}:3389"
     privileged: true

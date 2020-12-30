@@ -29,8 +29,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "transmission"
-      traefik.frontend.rule: "Host:transmission.{{ ansible_nas_domain }}"
       traefik.enable: "{{ transmission_available_externally }}"
-      traefik.port: "9091"
+      traefik.http.services.ttransmission.loadbalancer.server.port: "9091"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.transmission.middlewares: "whitelist"
+      traefik.http.routers.transmission.rule: "Host(`transmission.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ transmission_watchtower_enable }}"

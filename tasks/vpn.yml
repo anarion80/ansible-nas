@@ -32,6 +32,7 @@
       "{{ openvpn_config_directory }}/nordvpn:/etc/openvpn/conf/nordvpn:rw"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ openvpn_watchtower_enable }}"
+      traefik.enable: "false"
     devices:
       - /dev/net/tun
     capabilities:

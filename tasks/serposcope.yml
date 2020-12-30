@@ -17,6 +17,8 @@
       MYSQL_USER: "serposcope"
       MYSQL_PASSWORD: "serposcope"
       MYSQL_ROOT_PASSWORD: "serposcope"
+    labels:
+      traefik.enable: "false"
     restart_policy: unless-stopped
     memory: 1g
 
@@ -38,8 +40,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "serposcope"
-      traefik.frontend.rule: "Host:serposcope.{{ ansible_nas_domain }}"
       traefik.enable: "{{ serposcope_available_externally }}"
-      traefik.port: "7134"
+      traefik.http.services.serposcope.loadbalancer.server.port: "7134"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.serposcope.middlewares: "whitelist"
+      traefik.http.routers.serposcope.rule: "Host(`serposcope.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ serposcope_watchtower_enable }}"

@@ -34,5 +34,6 @@
       PGID: "{{ plex_autoscan_group_id }}"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ plex_autoscan_watchtower_enable }}"
+      traefik.enable: "false"
     restart_policy: unless-stopped
 

@@ -17,6 +17,8 @@
       SHARENAME: "{{ timemachine_share_name }}"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ timemachine_watchtower_enable }}"
+      traefik.enable: "false"
+
     volumes:
       - "{{ timemachine_data_directory }}/data:/backups"
     ulimits:

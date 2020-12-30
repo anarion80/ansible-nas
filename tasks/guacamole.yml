@@ -40,10 +40,12 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "guacamole"
-      traefik.frontend.rule: "Host:guacamole.{{ ansible_nas_domain }}"
       traefik.enable: "{{ guacamole_available_externally }}"
-      traefik.port: "8080"
+      traefik.http.services.guacamole.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.guacamole.middlewares: "whitelist"
+      traefik.http.routers.guacamole.rule: "Host(`guacamole.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ guacamole_watchtower_enable }}"
 
 - name: Restart Guacamole Container

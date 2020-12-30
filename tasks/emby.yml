@@ -25,8 +25,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "emby"
-      traefik.frontend.rule: "Host:emby.{{ ansible_nas_domain }}"
       traefik.enable: "{{ emby_available_externally }}"
-      traefik.port: "8096"
+      traefik.http.services.emby.loadbalancer.server.port: "8096"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.emby.middlewares: "whitelist"
+      traefik.http.routers.emby.rule: "Host(`emby.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ emby_watchtower_enable }}"

@@ -14,6 +14,8 @@
     pull: true
     volumes:
       - "{{ joomla_data_directory }}/db:/var/lib/mysql"
+    labels:
+      traefik.enable: "false"
     env:
       MYSQL_DATABASE: "joomla"
       MYSQL_USER: "joomla"
@@ -39,8 +41,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "joomla"
-      traefik.frontend.rule: "Host: joomla.{{ ansible_nas_domain }}"
       traefik.enable: "{{ joomla_available_externally }}"
-      traefik.port: "80"
+      traefik.http.services.joomla.loadbalancer.server.port: "80"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.joomla.middlewares: "whitelist"
+      traefik.http.routers.joomla.rule: "Host(`joomla.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ joomla_watchtower_enable }}"

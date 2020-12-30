@@ -24,8 +24,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "booksonic"
-      traefik.frontend.rule: "Host:booksonic.{{ ansible_nas_domain }}"
       traefik.enable: "{{ booksonic_available_externally }}"
-      traefik.port: "4041"
+      traefik.http.services.booksonic.loadbalancer.server.port: "4040"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.booksonic.middlewares: "whitelist"
+      traefik.http.routers.booksonic.rule: "Host(`booksonic.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ booksonic_watchtower_enable }}"

@@ -30,7 +30,20 @@
     volumes:
       - "{{ traefik_data_directory }}/traefik.toml:/etc/traefik/traefik.toml:ro"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    ports:
+      - "{{ traefik_port_http }}:80"
+      - "{{ traefik_port_https }}:443"
+      - "{{ traefik_port_ui }}:8080"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ traefik_watchtower_enable }}"
+      traefik.enable: "true"
+      traefik.http.routers.traefik-secure.entrypoints: "websecure"
+      traefik.http.routers.traefik-secure.rule: "Host(`traefik.{{ ansible_nas_domain }}`)"
+      traefik.http.routers.traefik-secure.service: "api@internal"
+      traefik.http.routers.traefik.entrypoints: "web"
+      traefik.http.routers.traefik.rule: "Host(`traefik.{{ ansible_nas_domain }}`)"
+      traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.services.traefik-secure.loadbalancer.server.port: "{{ traefik_port_ui }}"
+      traefik.http.services.traefik.loadbalancer.server.port: "{{ traefik_port_ui }}"
     restart_policy: unless-stopped
     memory: 1g

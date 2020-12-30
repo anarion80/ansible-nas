@@ -26,8 +26,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "mariadb"
-      traefik.frontend.rule: "Host:mariadb.{{ ansible_nas_domain }}"
       traefik.enable: "{{ mariadb_available_externally }}"
-      traefik.port: "{{ mariadb_port }}"
+      traefik.http.services.mariadb.loadbalancer.server.port: "8085"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.mariadb.middlewares: "whitelist"
+      traefik.http.routers.mariadb.rule: "Host(`mariadb.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ mariadb_watchtower_enable }}"

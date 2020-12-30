@@ -30,8 +30,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "utorrent"
-      traefik.frontend.rule: "Host:utorrent.{{ ansible_nas_domain }}"
       traefik.enable: "{{ utorrent_available_externally }}"
-      traefik.port: "8080"
+      traefik.http.services.utorrent.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.utorrent.middlewares: "whitelist"
+      traefik.http.routers.utorrent.rule: "Host(`utorrent.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ utorrent_watchtower_enable }}"

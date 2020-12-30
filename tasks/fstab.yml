@@ -3,5 +3,5 @@
     src: //zyxel/admin/download
     path: "{{ downloads_root }}"
     fstype: cifs
-    opts: vers=1.0,user=admin,noserverino,dir_mode=0775,password=kolo4XX5,file_mode=0775,uid=anarion-nas,gid=anarion-nas
+    opts: vers=1.0,user={{ downloads_user }},noserverino,dir_mode=0775,password={{ downloads_password }},file_mode=0775,uid=anarion-nas,gid=anarion-nas
     state: mounted

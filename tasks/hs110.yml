@@ -12,3 +12,5 @@
       HOSTNAME: "{{ hs110_timer }}"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ hs110_watchtower_enable }}"
+      traefik.enable: "false"
+

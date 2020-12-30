@@ -22,8 +22,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "grocy"
-      traefik.frontend.rule: "Host:grocy.{{ ansible_nas_domain }}"
       traefik.enable: "{{ grocy_available_externally }}"
-      traefik.port: "9283"
+      traefik.http.services.grocy.loadbalancer.server.port: "80"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.grocy.middlewares: "whitelist"
+      traefik.http.routers.grocy.rule: "Host(`grocy.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ grocy_watchtower_enable }}"

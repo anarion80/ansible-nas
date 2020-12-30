@@ -24,6 +24,7 @@
       - "/var/run/docker.sock:/tmp/docker.sock:ro"
     labels:
       com.centurylinklabs.watchtower.enable: "{{ nginx_watchtower_enable }}"
+      traefik.enable: "false"
     restart_policy: unless-stopped
     memory: 1g
 
@@ -35,6 +36,8 @@
     volumes:
       - "{{ nginx_data_directory }}/certs:/etc/nginx/certs:rw"
       - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      traefik.enable: "false"
     volumes_from: nginx-proxy
     restart_policy: unless-stopped
     memory: 1g

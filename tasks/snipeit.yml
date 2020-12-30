@@ -11,6 +11,8 @@
       MYSQL_USER: "snipeit-user"
       MYSQL_PASSWORD: "snipeit-pass"
       MYSQL_ROOT_PASSWORD: "snipeit-secret"
+    labels:
+      traefik.enable: "false"
     restart_policy: unless-stopped
     memory: 1g
 
@@ -50,13 +52,15 @@
       APP_ENV: "production"
       APP_DEBUG: "false"
       APP_KEY: "{{ snipeit_app_key }}"
-      APP_URL: "http://{{ ansible_nas_hostname }}:{{ snipeit_port }}"
+      APP_URL: "http://snipeit.{{ ansible_nas_domain }}"
       APP_TIMEZONE: "{{ ansible_nas_timezone }}"
       APP_LOCALE: "en"
     restart_policy: unless-stopped
     labels:
-      traefik.backend: "snipeit"
-      traefik.frontend.rule: "Host:snipeit.{{ ansible_nas_domain }}"
       traefik.enable: "{{ snipeit_available_externally }}"
-      traefik.port: "80"
+      traefik.http.services.snipeit.loadbalancer.server.port: "80"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.snipeit.middlewares: "whitelist"
+      traefik.http.routers.snipeit.rule: "Host(`snipeit.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ snipeit_watchtower_enable }}"

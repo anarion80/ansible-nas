@@ -20,6 +20,8 @@
       MYSQL_USER: "firefly"
       MYSQL_PASSWORD: "firefly"
       MYSQL_ROOT_PASSWORD: "firefly"
+    labels:
+      traefik.enable: "false"
     restart_policy: unless-stopped
     memory: 1g
 
@@ -51,8 +53,10 @@
     restart_policy: unless-stopped
     memory: 1g
     labels:
-      traefik.backend: "firefly"
-      traefik.frontend.rule: "Host:firefly.{{ ansible_nas_domain }}"
       traefik.enable: "{{ firefly_available_externally }}"
-      traefik.port: "8080"
+      traefik.http.services.firefly.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.firefly.middlewares: "whitelist"
+      traefik.http.routers.firefly.rule: "Host(`firefly.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ firefly_watchtower_enable }}"

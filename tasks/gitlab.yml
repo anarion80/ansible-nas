@@ -44,8 +44,10 @@
     restart_policy: unless-stopped
     memory: 4g
     labels:
-      traefik.backend: "gitlab"
-      traefik.frontend.rule: "Host:gitlab.{{ ansible_nas_domain }}"
       traefik.enable: "{{ gitlab_available_externally }}"
-      traefik.port: "80"
+      traefik.http.services.gitlab.loadbalancer.server.port: "80"
+      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
+      traefik.http.routers.gitlab.middlewares: "whitelist"
+      traefik.http.routers.gitlab.rule: "Host(`gitlab.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ gitlab_watchtower_enable }}"

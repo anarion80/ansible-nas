@@ -46,10 +46,6 @@
     when: (traefik_enabled | default(False))
     tags: traefik
 
-  - import_tasks: tasks/traefik2.yml
-    when: (traefik2_enabled | default(False))
-    tags: traefik2
-
   - import_tasks: tasks/heimdall.yml
     when: (heimdall_enabled | default(False))
     tags: heimdall
