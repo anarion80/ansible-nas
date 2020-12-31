@@ -42,9 +42,9 @@
     labels:
       traefik.enable: "{{ guacamole_available_externally }}"
       traefik.http.services.guacamole.loadbalancer.server.port: "8080"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.guacamole.middlewares: "whitelist"
+      traefik.http.middlewares.guacamole-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.guacamole-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.guacamole.middlewares: "guacamole-whitelist"
       traefik.http.routers.guacamole.rule: "Host(`guacamole.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ guacamole_watchtower_enable }}"
 

@@ -32,8 +32,8 @@
     labels:
       traefik.enable: "{{ utorrent_available_externally }}"
       traefik.http.services.utorrent.loadbalancer.server.port: "8080"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.utorrent.middlewares: "whitelist"
+      traefik.http.middlewares.utorrent-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.utorrent-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.utorrent.middlewares: "utorrent-whitelist"
       traefik.http.routers.utorrent.rule: "Host(`utorrent.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ utorrent_watchtower_enable }}"

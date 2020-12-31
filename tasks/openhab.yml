@@ -47,8 +47,8 @@
     labels:
       traefik.enable: "{{ openhab_available_externally }}"
       traefik.http.services.openhab.loadbalancer.server.port: "7777"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.openhab.middlewares: "whitelist"
+      traefik.http.middlewares.openhab-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.openhab-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.openhab.middlewares: "openhab-whitelist"
       traefik.http.routers.openhab.rule: "Host(`openhab.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ openhab_watchtower_enable }}"

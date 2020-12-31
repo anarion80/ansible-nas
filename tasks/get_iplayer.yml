@@ -19,9 +19,9 @@
     labels:
       traefik.enable: "{{ get_iplayer_available_externally }}"
       traefik.http.services.get_iplayer.loadbalancer.server.port: "8181"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.get_iplayer.middlewares: "whitelist"
+      traefik.http.middlewares.get_iplayer-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.get_iplayer-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.get_iplayer.middlewares: "get_iplayer-whitelist"
       traefik.http.routers.get_iplayer.rule: "Host(`get_iplayer.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ get_iplayer_watchtower_enable }}"
     restart_policy: unless-stopped

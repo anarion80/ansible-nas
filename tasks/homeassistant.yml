@@ -19,9 +19,9 @@
     labels:
       traefik.enable: "{{ homeassistant_available_externally }}"
       traefik.http.services.homeassistant.loadbalancer.server.port: "8123"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.homeassistant.middlewares: "whitelist"
+      traefik.http.middlewares.homeassistant-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.homeassistant-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.homeassistant.middlewares: "homeassistant-whitelist"
       traefik.http.routers.homeassistant.rule: "Host(`homeassistant.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ homeassistant_watchtower_enable }}"
     memory: 1g

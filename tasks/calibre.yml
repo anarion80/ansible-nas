@@ -24,9 +24,9 @@
     labels:
       traefik.enable: "{{ calibre_available_externally }}"
       traefik.http.services.calibre.loadbalancer.server.port: "8083"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.calibre.middlewares: "whitelist"
+      traefik.http.middlewares.calibre-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.calibre-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.calibre.middlewares: "calibre-whitelist"
       traefik.http.routers.calibre.rule: "Host(`calibre.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ calibre_watchtower_enable }}"
     memory: 1g

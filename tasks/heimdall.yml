@@ -43,8 +43,8 @@
     labels:
       traefik.enable: "{{ heimdall_available_externally }}"
       traefik.http.services.heimdall.loadbalancer.server.port: "80"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.heimdall.middlewares: "whitelist"
+      traefik.http.middlewares.heimdall-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.heimdall-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.heimdall.middlewares: "heimdall-whitelist"
       traefik.http.routers.heimdall.rule: "Host(`heimdall.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ heimdall_watchtower_enable }}"

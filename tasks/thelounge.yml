@@ -29,9 +29,9 @@
     labels:
       traefik.enable: "{{ thelounge_available_externally }}"
       traefik.http.services.thelounge.loadbalancer.server.port: "9000"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.thelounge.middlewares: "whitelist"
+      traefik.http.middlewares.thelounge-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.thelounge-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.thelounge.middlewares: "thelounge-whitelist"
       traefik.http.routers.thelounge.rule: "Host(`thelounge.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ thelounge_watchtower_enable }}"
 

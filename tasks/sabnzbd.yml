@@ -26,8 +26,8 @@
     labels:
       traefik.enable: "{{ sabnzbd_available_externally }}"
       traefik.http.services.sabnzbd.loadbalancer.server.port: "8080"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.sabnzbd.middlewares: "whitelist"
+      traefik.http.middlewares.sabnzbd-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.sabnzbd-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.sabnzbd.middlewares: "sabnzbd-whitelist"
       traefik.http.routers.sabnzbd.rule: "Host(`sabnzbd.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ sabnzbd_watchtower_enable }}"

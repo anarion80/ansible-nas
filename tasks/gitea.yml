@@ -72,8 +72,8 @@
     labels:
       traefik.enable: "{{ gitea_available_externally }}"
       traefik.http.services.gitea.loadbalancer.server.port: "3000"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.gitea.middlewares: "whitelist"
+      traefik.http.middlewares.gitea-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.gitea-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.gitea.middlewares: "gitea-whitelist"
       traefik.http.routers.gitea.rule: "Host(`gitea.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ gitea_watchtower_enable }}"

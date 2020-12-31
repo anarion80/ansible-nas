@@ -26,8 +26,8 @@
     labels:
       traefik.enable: "{{ bazarr_available_externally }}"
       traefik.http.services.bazarr.loadbalancer.server.port: "6767"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.bazarr.middlewares: "whitelist"
+      traefik.http.middlewares.bazarr-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.bazarr-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.bazarr.middlewares: "bazarr-whitelist"
       traefik.http.routers.bazarr.rule: "Host(`bazarr.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ bazarr_watchtower_enable }}"

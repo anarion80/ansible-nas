@@ -30,8 +30,8 @@
     labels:
       traefik.enable: "{{ plex_available_externally }}"
       traefik.http.services.plex.loadbalancer.server.port: "32400"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.plex.middlewares: "whitelist"
+      traefik.http.middlewares.plex-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.plex-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.plex.middlewares: "plex-whitelist"
       traefik.http.routers.plex.rule: "Host(`plex.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ plex_watchtower_enable }}"

@@ -27,8 +27,8 @@
     labels:
       traefik.enable: "{{ emby_available_externally }}"
       traefik.http.services.emby.loadbalancer.server.port: "8096"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.emby.middlewares: "whitelist"
+      traefik.http.middlewares.emby-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.emby-hitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.emby.middlewares: "emby-whitelist"
       traefik.http.routers.emby.rule: "Host(`emby.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ emby_watchtower_enable }}"

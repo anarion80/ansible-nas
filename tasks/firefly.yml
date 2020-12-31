@@ -55,8 +55,8 @@
     labels:
       traefik.enable: "{{ firefly_available_externally }}"
       traefik.http.services.firefly.loadbalancer.server.port: "8080"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.firefly.middlewares: "whitelist"
+      traefik.http.middlewares.firefly-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.firefly-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.firefly.middlewares: "firefly-whitelist"
       traefik.http.routers.firefly.rule: "Host(`firefly.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ firefly_watchtower_enable }}"

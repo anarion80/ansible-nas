@@ -24,8 +24,8 @@
     labels:
       traefik.enable: "{{ huginn_available_externally }}"
       traefik.http.services.huginn.loadbalancer.server.port: "80"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.huginn.middlewares: "whitelist"
+      traefik.http.middlewares.huginn-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.huginn-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.huginn.middlewares: "huginn-whitelist"
       traefik.http.routers.huginn.rule: "Host(`huginn.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ huginn_watchtower_enable }}"

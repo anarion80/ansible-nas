@@ -25,8 +25,8 @@
     labels:
       traefik.enable: "{{ cloudcmd_available_externally }}"
       traefik.http.services.cloudcmd.loadbalancer.server.port: "8000"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.cloudcmd.middlewares: "whitelist"
+      traefik.http.middlewares.cloudcmd-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.cloudcmd-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.cloudcmd.middlewares: "cloudcmd-whitelist"
       traefik.http.routers.cloudcmd.rule: "Host(`cloudcmd.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ cloudcmd_watchtower_enable }}"

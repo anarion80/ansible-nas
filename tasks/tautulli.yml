@@ -26,8 +26,8 @@
     labels:
       traefik.enable: "{{ tautulli_available_externally }}"
       traefik.http.services.tautulli.loadbalancer.server.port: "8181"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.tautulli.middlewares: "whitelist"
+      traefik.http.middlewares.tautulli-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.tautulli-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.tautulli.middlewares: "tautulli-whitelist"
       traefik.http.routers.tautulli.rule: "Host(`tautulli.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ tautulli_watchtower_enable }}"

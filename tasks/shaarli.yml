@@ -25,8 +25,8 @@
     labels:
       traefik.enable: "{{ shaarli_available_externally }}"
       traefik.http.services.shaarli.loadbalancer.server.port: "80"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.shaarli.middlewares: "whitelist"
+      traefik.http.middlewares.shaarli-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.shaarli-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.shaarli.middlewares: "shaarli-whitelist"
       traefik.http.routers.shaarli.rule: "Host(`shaarli.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ shaarli_watchtower_enable }}"

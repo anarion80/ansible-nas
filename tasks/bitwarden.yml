@@ -26,9 +26,9 @@
       #traefik.hub.protocol: "ws"
       traefik.enable: "{{ bitwarden_available_externally }}"
       traefik.http.services.bitwarden.loadbalancer.server.port: "80"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.bitwarden.middlewares: "whitelist"
+      traefik.http.middlewares.bitwarden-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.bitwarden-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.bitwarden.middlewares: "bitwarden-whitelist"
       traefik.http.routers.bitwarden.rule: "Host(`bitwarden.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ bitbitwarden_watchtower_enablewarden }}"
     restart_policy: unless-stopped

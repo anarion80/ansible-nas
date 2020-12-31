@@ -59,8 +59,8 @@
     labels:
       traefik.enable: "{{ snipeit_available_externally }}"
       traefik.http.services.snipeit.loadbalancer.server.port: "80"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.snipeit.middlewares: "whitelist"
+      traefik.http.middlewares.snipeit-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.snipeit-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.snipeit.middlewares: "snipeit-whitelist"
       traefik.http.routers.snipeit.rule: "Host(`snipeit.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ snipeit_watchtower_enable }}"

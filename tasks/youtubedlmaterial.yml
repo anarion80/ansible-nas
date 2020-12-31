@@ -32,9 +32,9 @@
     labels:
       traefik.enable: "{{ youtubedlmaterial_available_externally }}"
       traefik.http.services.youtubedlmaterial.loadbalancer.server.port: "17442"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.youtubedlmaterial.middlewares: "whitelist"
+      traefik.http.middlewares.youtubedlmaterial-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.youtubedlmaterial-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.youtubedlmaterial.middlewares: "youtubedlmaterial-whitelist"
       traefik.http.routers.youtubedlmaterial.rule: "Host(`youtubedlmaterial.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ youtubedlmaterial_watchtower_enable }}"
     memory: 1g

@@ -26,8 +26,8 @@
     labels:
       traefik.enable: "{{ booksonic_available_externally }}"
       traefik.http.services.booksonic.loadbalancer.server.port: "4040"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.booksonic.middlewares: "whitelist"
+      traefik.http.middlewares.booksonic-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.booksonic-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.booksonic.middlewares: "booksonic-whitelist"
       traefik.http.routers.booksonic.rule: "Host(`booksonic.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ booksonic_watchtower_enable }}"

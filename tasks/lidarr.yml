@@ -24,8 +24,8 @@
     labels:
       traefik.enable: "{{ lidarr_available_externally }}"
       traefik.http.services.lidarr.loadbalancer.server.port: "8686"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.lidarr.middlewares: "whitelist"
+      traefik.http.middlewares.lidarr-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.lidarr-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.lidarr.middlewares: "lidarr-whitelist"
       traefik.http.routers.lidarr.rule: "Host(`lidarr.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ lidarr_watchtower_enable }}"

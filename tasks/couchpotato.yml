@@ -28,8 +28,8 @@
     labels:
       traefik.enable: "{{ couchpotato_available_externally }}"
       traefik.http.services.couchpotato.loadbalancer.server.port: "5050"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.couchpotato.middlewares: "whitelist"
+      traefik.http.middlewares.couchpotato-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.couchpotato-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.couchpotato.middlewares: "couchpotato-whitelist"
       traefik.http.routers.couchpotato.rule: "Host(`couchpotato.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ couchpotato_watchtower_enable }}"

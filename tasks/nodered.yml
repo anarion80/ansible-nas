@@ -25,8 +25,8 @@
     labels:
       traefik.enable: "{{ nodered_available_externally }}"
       traefik.http.services.nodered.loadbalancer.server.port: "1880"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.nodered.middlewares: "whitelist"
+      traefik.http.middlewares.nodered-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.nodered-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.nodered.middlewares: "nodered-whitelist"
       traefik.http.routers.nodered.rule: "Host(`nodered.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ nodered_watchtower_enable }}"

@@ -25,8 +25,8 @@
     labels:
       traefik.enable: "{{ nzbhydra2_available_externally }}"
       traefik.http.services.nzbhydra2.loadbalancer.server.port: "5076"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.nzbhydra2.middlewares: "whitelist"
+      traefik.http.middlewares.nzbhydra2-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.nzbhydra2-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.nzbhydra2.middlewares: "nzbhydra2-whitelist"
       traefik.http.routers.nzbhydra2.rule: "Host(`nzbhydra2.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ nzbhydra2_watchtower_enable }}"

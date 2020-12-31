@@ -22,8 +22,8 @@
     labels:
       traefik.enable: "{{ jackett_available_externally }}"
       traefik.http.services.jackett.loadbalancer.server.port: "9117"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.jackett.middlewares: "whitelist"
+      traefik.http.middlewares.jackett-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.jackett-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.jackett.middlewares: "jackett-whitelist"
       traefik.http.routers.jackett.rule: "Host(`jackett.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ jackett_watchtower_enable }}"

@@ -26,8 +26,8 @@
     labels:
       traefik.enable: "{{ sonarr_available_externally }}"
       traefik.http.services.sonarr.loadbalancer.server.port: "8989"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.sonarr.middlewares: "whitelist"
+      traefik.http.middlewares.sonarr-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.sonarr-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.sonarr.middlewares: "sonarr-whitelist"
       traefik.http.routers.sonarr.rule: "Host(`sonarr.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ sonarr_watchtower_enable }}"

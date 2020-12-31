@@ -33,8 +33,8 @@
     labels:
       traefik.enable: "{{ sickchill_available_externally }}"
       traefik.http.services.sickchill.loadbalancer.server.port: "8081"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.sickchill.middlewares: "whitelist"
+      traefik.http.middlewares.sickchill-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.sickchill-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.sickchill.middlewares: "sickchill-whitelist"
       traefik.http.routers.sickchill.rule: "Host(`sickchill.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ sickchill_watchtower_enable }}"

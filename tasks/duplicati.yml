@@ -23,8 +23,8 @@
     labels:
       traefik.enable: "{{ duplicati_available_externally }}"
       traefik.http.services.duplicati.loadbalancer.server.port: "8200"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.duplicati.middlewares: "whitelist"
+      traefik.http.middlewares.duplicati-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.duplicati-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.duplicati.middlewares: "duplicati-whitelist"
       traefik.http.routers.duplicati.rule: "Host(`duplicati.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ duplicati_watchtower_enable }}"

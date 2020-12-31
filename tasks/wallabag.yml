@@ -22,9 +22,9 @@
     labels:
       traefik.enable: "{{ wallabag_available_externally }}"
       traefik.http.services.wallabag.loadbalancer.server.port: "80"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.wallabag.middlewares: "whitelist"
+      traefik.http.middlewares.wallabag-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.wallabag-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.wallabag.middlewares: "wallabag-whitelist"
       traefik.http.routers.wallabag.rule: "Host(`wallabag.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ wallabag_watchtower_enable }}"
     memory: 1g

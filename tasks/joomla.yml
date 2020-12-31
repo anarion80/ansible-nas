@@ -43,8 +43,8 @@
     labels:
       traefik.enable: "{{ joomla_available_externally }}"
       traefik.http.services.joomla.loadbalancer.server.port: "80"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.joomla.middlewares: "whitelist"
+      traefik.http.middlewares.joomla-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.joomla-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.joomla.middlewares: "joomla-whitelist"
       traefik.http.routers.joomla.rule: "Host(`joomla.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ joomla_watchtower_enable }}"

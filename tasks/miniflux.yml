@@ -38,8 +38,8 @@
     labels:
       traefik.enable: "{{ miniflux_available_externally }}"
       traefik.http.services.miniflux.loadbalancer.server.port: "8080"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.miniflux.middlewares: "whitelist"
+      traefik.http.middlewares.miniflux-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.miniflux-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.miniflux.middlewares: "miniflux-whitelist"
       traefik.http.routers.miniflux.rule: "Host(`miniflux.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ miniflux_watchtower_enable }}"

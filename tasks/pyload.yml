@@ -27,8 +27,8 @@
     labels:
       traefik.enable: "{{ pyload_available_externally }}"
       traefik.http.services.pyload.loadbalancer.server.port: "8000"
-      traefik.http.middlewares.whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.2.0/16"
-      traefik.http.routers.pyload.middlewares: "whitelist"
+      traefik.http.middlewares.pyload-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.pyload-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.pyload.middlewares: "pyload-whitelist"
       traefik.http.routers.pyload.rule: "Host(`pyload.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ pyload_watchtower_enable }}"
