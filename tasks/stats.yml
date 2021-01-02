@@ -40,11 +40,11 @@
       traefik.http.services.grafana.loadbalancer.server.port: "8086"
       traefik.http.middlewares.grafana-whitelist.ipwhitelist.ipstrategy.depth: "0"
       traefik.http.middlewares.grafana-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
-      traefik.http.routers.grafana.middlewares: "grafana-whitelist,testHeader"
+      traefik.http.routers.grafana.middlewares: "grafana-whitelist,influxdb-header"
       traefik.http.routers.grafana.rule: "Host(`influxdb.{{ ansible_nas_domain }}`)"
       traefik.http.middlewares.influx-redirect.redirectScheme.scheme: "https"
-      traefik.http.middlewares.testHeader.headers.forceSTSHeader: "true"
-      traefik.http.middlewares.testHeader.headers.accesscontrolalloworiginlist: "https://grafana.{{ ansible_nas_domain }}"
+      traefik.http.middlewares.influxdb-header.headers.forceSTSHeader: "true"
+      traefik.http.middlewares.influxdb-header.headers.accesscontrolalloworiginlist: "https://grafana.{{ ansible_nas_domain }}"
     memory: 1g
 
 - name: hddtemp
