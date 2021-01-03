@@ -113,6 +113,9 @@ pytivo_enabled: false
 # SEO
 serposcope_enabled: false
 
+# phpMyAdmin
+phpmyadmin_enabled: false
+
 # Rclone
 rclone_enabled: false
 cloud_upload_enabled: false
@@ -1283,3 +1286,13 @@ seafile_user_id: "0"
 seafile_group_id: "0"
 seafile_port: "8082"
 seafile_watchtower_enable: "false"
+
+###
+### phpMyAdmin
+###
+phpmyadmin_available_externally: "true"
+phpmyadmin_data_directory: "{{ docker_home }}/phpmyadmin"
+phpmyadmin_user_id: "0"
+phpmyadmin_group_id: "0"
+phpmyadmin_port: "8087"
+phpmyadmin_watchtower_enable: "true"

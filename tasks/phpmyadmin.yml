@@ -1,0 +1,38 @@
+
+---
+- name: Create phpMyAdmin Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ phpmyadmin_data_directory }}"
+
+- name: Create phpmyadmin container
+  docker_container:
+    name: phpmyadmin
+    image: phpmyadmin
+    pull: true
+    volumes:
+      - "{{ phpmyadmin_data_directory }}:/etc/phpmyadmin:rw"
+    #links:
+    # - firefly-mysql:firefly-mysql
+    # - snipeit-mysql:snipeit-mysql
+    #  - mariadb:mariadb
+    #  - nextcloud-mysql:nextcloud-mysql
+    env:
+      PUID: "{{ phpmyadmin_user_id }}"
+      PGID: "{{ phpmyadmin_group_id }}"
+      TZ: "{{ ansible_nas_timezone }}"
+      PMA_ARBITRARY: "1"
+    ports:
+      - "{{ phpmyadmin_port }}:80"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ phpmyadmin_available_externally }}"
+      traefik.http.services.organizr.loadbalancer.server.port: "80"
+      traefik.http.middlewares.organizr-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.organizr-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.organizr.middlewares: "phpmyadmin-whitelist"
+      traefik.http.routers.organizr.rule: "Host(`phpmyadmin.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ phpmyadmin_watchtower_enable }}"

@@ -341,3 +341,7 @@
   - import_tasks: tasks/seafile.yml
     when: (seafile_enabled | default(False))
     tags: seafile
+
+  - import_tasks: tasks/phpmyadmin.yml
+    when: (phpmyadmin_enabled | default(False))
+    tags: phpmyadmin
