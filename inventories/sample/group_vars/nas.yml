@@ -50,6 +50,7 @@ ansible_nas_workgroup: ANARION
 #sabnzbd_enabled: true
 #lazylibrarian_enabled: true
 #booksonic_enabled: true
+#booksonic-air_enabled: true
 #rclone_enabled: true
 #mergerfs_enabled: true
 #miniflux_enabled: true

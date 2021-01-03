@@ -278,6 +278,10 @@
     when: (booksonic_enabled | default(False))
     tags: booksonic
 
+  - import_tasks: tasks/booksonic-air.yml
+    when: (booksonic-air_enabled | default(False))
+    tags: booksonic-air
+
   - import_tasks: tasks/rclone.yml
     when: (rclone_enabled | default(False))
     tags: rclone

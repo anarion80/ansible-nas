@@ -28,6 +28,7 @@ utorrent_enabled: false
 plex_enabled: false
 tautulli_enabled: false
 booksonic_enabled: false
+booksonicair_enabled: false
 plex_autoscan_enabled: false
 
 # Media Sourcing
@@ -735,6 +736,19 @@ booksonic_group_id: "0"
 booksonic_port: "4041"
 booksonic_watchtower_enable: "true"
 
+###
+### booksonic-air
+###
+booksonicair_available_externally: "false"
+booksonicair_data_directory: "{{ docker_home }}/booksonic-air/config"
+booksonicair_podcasts_directory: "{{ podcasts_root }}"
+#booksonicair_othermedia_directory: "{{ othermedia_root }}"
+booksonicair_downloads_directory: "{{ downloads_root }}"
+booksonicair_audiobooks_directory: "{{ audiobooks_root }}"
+booksonicair_user_id: "0"
+booksonicair_group_id: "0"
+booksonicair_port: "4042"
+booksonicair_watchtower_enable: "true"
 
 ###
 ### YouTubeDL-Material

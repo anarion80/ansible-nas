@@ -1,0 +1,53 @@
+---
+- name: Create booksonic-air Directory
+  file:
+    path: "{{ booksonicair_data_directory }}"
+    state: directory
+
+- name: booksonic-air
+  docker_container:
+    name: booksonic-air
+    image: linuxserver/booksonic-air
+    pull: true
+    volumes:
+      - "{{ booksonicair_audiobooks_directory }}:/audiobooks:rw"
+      - "{{ booksonicair_podcasts_directory }}:/podcasts:rw"
+    #  - "{{ booksonicair_othermedia_directory }}:/othermedia:rw"
+      - "{{ booksonicair_downloads_directory }}:/downloads:rw"
+      - "{{ booksonicair_data_directory }}:/config:rw"
+    ports:
+      - "{{ booksonicair_port }}:4040"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ booksonicair_user_id }}"
+      PGID: "{{ booksonicair_group_id }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ booksonicair_available_externally }}"
+      traefik.http.services.booksonicair.loadbalancer.server.port: "4040"
+      traefik.http.middlewares.booksonicair-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.booksonicair-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.booksonicair.middlewares: "booksonicair-whitelist"
+      traefik.http.routers.booksonicair.rule: "Host(`booksonic-air.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ booksonicair_watchtower_enable }}"
+
+- name: Wait for container to get set up
+  pause:
+    seconds: 30
+
+- name: Stop the container
+  docker_container:
+    name: booksonic-air
+    state: stopped
+
+- name: Add server.use-forward-headers to config file
+  lineinfile:
+    path: "{{ booksonicair_data_directory }}/airsonic.properties"
+    line: 'server.use-forward-headers=true'
+    insertbefore: BOF
+
+- name: Start the container
+  docker_container:
+    name: booksonic-air
+    state: started
