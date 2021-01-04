@@ -1075,6 +1075,11 @@ firefly_available_externally: "false"
 firefly_data_directory: "{{ docker_home }}/firefly"
 firefly_port: "8066"
 firefly_watchtower_enable: "true"
+fireflycsv_available_externally: "false"
+fireflycsv_access_token: ""
+fireflycsv_data_directory: "{{ docker_home }}/fireflycsv"
+fireflycsv_port: "8067"
+fireflycsv_watchtower_enable: "true"
 
 ###
 ### Nzbget

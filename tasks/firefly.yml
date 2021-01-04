@@ -44,6 +44,7 @@
     env:
       APP_ENV: "local"
       APP_KEY: "S0m3R@nd0mString0f32Ch@rsEx@ct1y"
+      TRUSTED_PROXIES: "**"
       DB_CONNECTION: "mysql"
       DB_HOST: "db"
       DB_DATABASE: "firefly"
@@ -59,4 +60,30 @@
       traefik.http.middlewares.firefly-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
       traefik.http.routers.firefly.middlewares: "firefly-whitelist"
       traefik.http.routers.firefly.rule: "Host(`firefly.{{ ansible_nas_domain }}`)"
+      #traefik.http.middlewares.firefly-redirect.redirectScheme.scheme: "https"
+      #traefik.http.middlewares.firefly-header.headers.forceSTSHeader: "true"
+      #traefik.http.middlewares.firefly-header.headers.accesscontrolalloworiginlist: "https://firefly.{{ ansible_nas_domain }}"
       com.centurylinklabs.watchtower.enable: "{{ firefly_watchtower_enable }}"
+
+- name: Create Firefly III CSV Importer container
+  docker_container:
+    name: firefly-csv
+    image: fireflyiii/csv-importer
+    pull: true
+    volumes:
+      - "{{ fireflycsv_data_directory }}/configurations:/var/www/html/storage/configurations:rw"
+    ports:
+      - "{{ fireflycsv_port }}:8080"
+    env:
+      FIREFLY_III_ACCESS_TOKEN: "{{ fireflycsv_access_token }}"
+      FIREFLY_III_URL: "http://firefly.{{ ansible_nas_domain }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ fireflycsv_available_externally }}"
+      traefik.http.services.firefly.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.firefly-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.firefly-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.firefly.middlewares: "fireflycsv-whitelist"
+      traefik.http.routers.firefly.rule: "Host(`fireflycsv.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ fireflycsv_watchtower_enable }}"
