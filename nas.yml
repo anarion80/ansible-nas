@@ -345,3 +345,7 @@
   - import_tasks: tasks/phpmyadmin.yml
     when: (phpmyadmin_enabled | default(False))
     tags: phpmyadmin
+
+  - import_tasks: tasks/errors.yml
+    when: (errorpages_enabled | default(False))
+    tags: errorpages

@@ -66,4 +66,5 @@ ansible_nas_workgroup: ANARION
 #mariadb_enabled: true
 #seafile_enabled: true
 #phpmyadmin_enabled: true
+#errorpages_enabled: true
 

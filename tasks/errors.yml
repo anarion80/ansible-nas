@@ -1,0 +1,34 @@
+- name: Create error-pages Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ error_pages_data_directory }}/config"
+
+- name: Calibre error-pages Container
+  docker_container:
+    name: error-pagesls -
+    image: tarampampam/error-pages
+    pull: true
+    volumes:
+      - "{{ error_pages_data_directory }}/config:/opt/html"
+    env:
+      TEMPLATE_NAME: "l7-dark"
+    ports:
+      - "{{ error_pages_port }}:8080"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "true"
+      traefik.http.routers.error-pages-router.rule: "HostRegexp(`{host:.+}`)"
+      traefik.http.routers.error-pages-router.priority: "10"
+      # should say that all of your services work on https
+      #traefik.http.routers.error-pages-router.tls: 'true'
+      traefik.http.routers.error-pages-router.entrypoints: "web,websecure"
+      traefik.http.routers.error-pages-router.middlewares: "error-pages-middleware@docker"
+      traefik.http.services.error-pages-service.loadbalancer.server.port: "8080"
+      # "errors" middleware settings
+      traefik.http.middlewares.error-pages-middleware.errors.status: "400-599"
+      traefik.http.middlewares.error-pages-middleware.errors.service: "error-pages-service@docker"
+      traefik.http.middlewares.error-pages-middleware.errors.query: /{status}.html
+      com.centurylinklabs.watchtower.enable: "{{ error_pages_watchtower_enable }}"
+    memory: 1g

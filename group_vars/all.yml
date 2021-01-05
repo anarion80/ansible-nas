@@ -191,6 +191,9 @@ nodered_enabled: false
 # Seafile
 seafile_enabled: false
 
+# error-pages
+errorpages_enabled: false
+
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
 # home static IP address, the cloudflare with the cloudflare_ddns dynamic DNS container enabled, or use a dynamic DNS provider like no-ip.
@@ -1301,3 +1304,11 @@ phpmyadmin_user_id: "0"
 phpmyadmin_group_id: "0"
 phpmyadmin_port: "8087"
 phpmyadmin_watchtower_enable: "true"
+
+###
+### error pages
+###
+#error_pages_available_externally: "true"
+error_pages_data_directory: "{{ docker_home }}/errors"
+error_pages_port: "8100"
+error_pages_watchtower_enable: "true"
