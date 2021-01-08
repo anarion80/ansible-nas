@@ -40,14 +40,62 @@
       traefik.http.routers.traefik-secure.entrypoints: "websecure"
       traefik.http.routers.traefik-secure.rule: "Host(`traefik.{{ ansible_nas_domain }}`)"
       traefik.http.routers.traefik-secure.service: "api@internal"
+      traefik.http.routers.traefik-secure.middlewares: "traefik-whitelist"
       traefik.http.routers.traefik.entrypoints: "web"
       traefik.http.routers.traefik.rule: "Host(`traefik.{{ ansible_nas_domain }}`)"
       traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.routers.traefik.middlewares: "traefik-whitelist"
       traefik.http.services.traefik-secure.loadbalancer.server.port: "{{ traefik_port_ui }}"
       traefik.http.services.traefik.loadbalancer.server.port: "{{ traefik_port_ui }}"
       traefik.http.middlewares.traefik-whitelist.ipwhitelist.ipstrategy.depth: "1"
       traefik.http.middlewares.traefik-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
-      traefik.http.routers.traefik.middlewares: "traefik-whitelist"
-      traefik.http.routers.traefik-secure.middlewares: "traefik-whitelist"
     restart_policy: unless-stopped
     memory: 1g
+
+- name: Create error pages directory
+  file:
+    path: "{{ traefik_data_directory }}/error-pages"
+    state: directory
+
+- name: Create nginx directory
+  file:
+    path: "{{ traefik_data_directory }}/nginx"
+    state: directory
+
+- name: Template nginx default.conf
+  template:
+    src: traefik/nginx/default.conf
+    dest: "{{ traefik_data_directory }}/nginx/default.conf"
+
+- name: Copy nginx error pages
+  template:
+    src: "{{ item }}"
+    dest: "{{ traefik_data_directory }}/error-pages/"
+  with_fileglob:
+    - "templates/traefik/nginx/error_pages/*"
+
+- name: Nginx for Errors Docker Container
+  docker_container:
+    name: nginxErrors
+    image: nginx:latest
+    pull: true
+    network_mode: bridge
+    volumes:
+      - "{{ traefik_data_directory }}/error-pages:/usr/share/nginx/error-pages"
+      - "{{ traefik_data_directory }}/nginx/default.conf:/etc/nginx/conf.d/default.conf"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ traefik_watchtower_enable }}"
+      traefik.enable: "true"
+      traefik.http.routers.error-router.rule: "HostRegexp(`{host:.+}`)"
+      traefik.http.routers.error-router.priority: "1"
+      traefik.http.routers.error-router.entrypoints: "web,websecure"
+      traefik.http.routers.error-router.middlewares: "error-pages-middleware"
+      traefik.http.middlewares.error-pages-middleware.errors.status: "400-599"
+      traefik.http.middlewares.error-pages-middleware.errors.service: "error-pages-service"
+      traefik.http.middlewares.error-pages-middleware.errors.query: /{status}.html
+      traefik.http.services.error-pages-service.loadbalancer.server.port: "80"
+      #traefik.http.middlewares.tocustom404.redirectregex.regex: ^(.*)
+      #traefik.http.middlewares.tocustom404.redirectregex.replacement: http://error.localhost/404.html
+
+    restart_policy: unless-stopped
+
