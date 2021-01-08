@@ -14,7 +14,7 @@
     volumes:
       - "{{ gaps_data_directory }}:/config:rw"
     ports:
-      - "{{ gaps_port }}:80"
+      - "{{ gaps_port }}:8484"
     env:
       TZ: "{{ ansible_nas_timezone }}"
       PUID: "{{ gaps_user_id }}"
@@ -23,7 +23,7 @@
     memory: 1g
     labels:
       traefik.enable: "{{ gaps_available_externally }}"
-      traefik.http.services.gaps.loadbalancer.server.port: "80"
+      traefik.http.services.gaps.loadbalancer.server.port: "8484"
       traefik.http.middlewares.gaps-whitelist.ipwhitelist.ipstrategy.depth: "1"
       traefik.http.middlewares.gaps-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
       traefik.http.routers.gaps.middlewares: "gaps-whitelist"
