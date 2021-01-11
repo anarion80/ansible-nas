@@ -349,3 +349,7 @@
   - import_tasks: tasks/errors.yml
     when: (errorpages_enabled | default(False))
     tags: errorpages
+
+  - import_tasks: tasks/flarum.yml
+    when: (flarum_enabled | default(False))
+    tags: flarum
