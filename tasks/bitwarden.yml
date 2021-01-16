@@ -30,7 +30,7 @@
       traefik.http.middlewares.bitwarden-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
       traefik.http.routers.bitwarden.middlewares: "bitwarden-whitelist"
       traefik.http.routers.bitwarden.rule: "Host(`bitwarden.{{ ansible_nas_domain }}`)"
-      com.centurylinklabs.watchtower.enable: "{{ bitbitwarden_watchtower_enablewarden }}"
+      com.centurylinklabs.watchtower.enable: "{{ bitwarden_watchtower_enable }}"
     restart_policy: unless-stopped
     #memory: 1g
 
