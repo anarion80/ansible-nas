@@ -451,6 +451,13 @@ samba_netbios_name: "{{ ansible_nas_hostname }}"
 # Name of the server workgroup.
 samba_workgroup: "{{ ansible_nas_workgroup }}"
 
+# SMTP email
+ansible_smtp_host: "localhost"
+ansible_smtp_port: "25"
+ansible_smtp_from: "{{ ansible_nas_user }}@{{ ansible_nas_domain }}"
+ansible_smtp_from_name: "{{ anisble_nas_user }}"
+ansible_smtp_ssl: "false"
+
 ###
 ### Traefik
 ###
