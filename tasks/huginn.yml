@@ -14,7 +14,7 @@
     volumes:
       - "{{ huginn_data_directory }}:/config:rw"
     ports:
-      - "{{ huginn_port }}:80"
+      - "{{ huginn_port }}:3000"
     env:
       TZ: "{{ ansible_nas_timezone }}"
       PUID: "{{ huginn_user_id }}"
@@ -23,7 +23,7 @@
     memory: 1g
     labels:
       traefik.enable: "{{ huginn_available_externally }}"
-      traefik.http.services.huginn.loadbalancer.server.port: "80"
+      traefik.http.services.huginn.loadbalancer.server.port: "3000"
       traefik.http.middlewares.huginn-whitelist.ipwhitelist.ipstrategy.depth: "1"
       traefik.http.middlewares.huginn-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
       traefik.http.routers.huginn.middlewares: "huginn-whitelist"

@@ -939,7 +939,7 @@ gaps_watchtower_enable: "true"
 ###
 huginn_available_externally: "false"
 huginn_data_directory: "{{ docker_home }}/huginn"
-huginn_port: "3000"
+huginn_port: "3001"
 huginn_user_id: "0"
 huginn_group_id: "0"
 huginn_watchtower_enable: "true"
