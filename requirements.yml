@@ -13,5 +13,7 @@ roles:
 
   - name: sprat.mergerfs
 
+  - name: arillso.restic
+
 collections:
   - name: ansible.posix

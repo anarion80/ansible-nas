@@ -68,4 +68,6 @@ ansible_nas_workgroup: ANARION
 #phpmyadmin_enabled: true
 #errorpages_enabled: true
 #flarum_enabled: true
+#restic_enabled: true
+
 

@@ -176,6 +176,9 @@ rclone_configs:
 # MergerFS
 mergerfs_enabled: false
 
+# Restic
+restic_enabled: false
+
 # Grocy
 grocy_enabled: false
 
@@ -1353,3 +1356,30 @@ flarum_db_password: "password" #MySQL password
 flarum_db_prefix: "flarum_" #MySQL database prefix (default flarum_)
 flarum_db_timeout: "60" #Time in seconds after which we stop trying to reach the MySQL server (useful for clusters, default 60)
 flarum_watchtower_enable: "true"
+
+##
+## Restic
+##
+#restic_url:
+restic_version:	"0.11.0" #The version of Restic to install
+restic_download_path: "/opt/restic" #Download location for the restic binary
+restic_install_path: "/usr/local/bin" #Install location for the restic binary
+restic_script_dir: "~/restic" #Location of the generated backup scripts
+restic_log_dir: "{{ restic_script_dir }}/log" #Location of the logs of the backup scripts
+restic_create_cron: "false" #Should a cronjob be created for each backup
+restic_dir_owner: "root" #The owner of all created dirs
+restic_dir_group: "root" #The group of all created dirs
+
+restic_repos:
+  remote:
+    location: "location"
+    password: "securepassword"
+    init: true
+
+restic_backups:
+  data:
+    name: "data"
+    repo: "remote"
+    src: "/path/to/data"
+    scheduled: true
+    schedule_hour: 1

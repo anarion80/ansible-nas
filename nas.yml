@@ -31,6 +31,11 @@
         - mergerfs
       when: (mergerfs_enabled | default(False))
 
+    - role: arillso.restic
+      tags:
+        - restic
+      when: (restic_enabled | default(False))
+
   tasks:
   - import_tasks: tasks/general.yml
     tags: general
@@ -353,3 +358,7 @@
   - import_tasks: tasks/flarum.yml
     when: (flarum_enabled | default(False))
     tags: flarum
+
+  - import_tasks: tasks/restic.yml
+    when: (restic_enabled | default(False))
+    tags: restic

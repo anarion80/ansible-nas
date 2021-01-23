@@ -1,0 +1,22 @@
+*.log
+*.swp
+*.cache
+**/.Trash
+**/.thumbnails
+**/cache
+**/logs
+**/.cache
+**.log
+**.qlog
+{{ docker_image_directory }}
+sonarr/**/MediaCover
+radarr/**/MediaCover
+lidarr/**/MediaCover
+plex/**/Crash Reports
+plex/**/logs
+plex/**/cache
+mylar/**/logs
+mylar/**/cache
+**/jellyfin
+**/organizr
+ombi/**/Logs

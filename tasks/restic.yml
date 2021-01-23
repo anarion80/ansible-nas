@@ -1,0 +1,39 @@
+---
+- name: Create restic key file
+  template:
+    src: restic/restic.keys
+    dest: "{{ restic_script_dir }}/restic.keys"
+    owner: "{{ restic_dir_owner }}"
+    group: "{{ restic_dir_group }}"
+    mode: 0600
+  with_items: '{{ restic_repos }}'
+
+- name: Create include file
+  template:
+    src: restic/include
+    dest: "{{ restic_script_dir }}/include"
+    owner: "{{ restic_dir_owner }}"
+    group: "{{ restic_dir_group }}"
+
+- name: Create exclude file
+  template:
+    src: restic/exclude
+    dest: "{{ restic_script_dir }}/exclude"
+    owner: "{{ restic_dir_owner }}"
+    group: "{{ restic_dir_group }}"
+
+- name: Create backup script
+  template:
+    src: restic/restic_backup.sh
+    dest: "{{ restic_script_dir }}/restic_backup.sh"
+    owner: "{{ restic_dir_owner }}"
+    group: "{{ restic_dir_group }}"
+    mode: 0700
+
+- name: Create cron job for backups
+  cron:
+    name: "Run backup script as root"
+    user: "root"
+    minute: "5"
+    hour: "0"
+    job: "ionice -c2 -n7 nice -n19 bash /root/restic/restic_backup.sh > /var/log/backup.log 2>&1"

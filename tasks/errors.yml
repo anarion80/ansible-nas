@@ -5,9 +5,9 @@
   with_items:
     - "{{ error_pages_data_directory }}/config"
 
-- name: Calibre error-pages Container
+- name: error-pages Container
   docker_container:
-    name: error-pagesls -
+    name: error-pages
     image: tarampampam/error-pages
     pull: true
     volumes:
