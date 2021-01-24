@@ -53,3 +53,28 @@
       traefik.http.routers.flarum.middlewares: "flarum-whitelist"
       traefik.http.routers.flarum.rule: "Host(`flarum.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ flarum_watchtower_enable }}"
+
+- name: Add PL language pack
+  shell: docker exec flarum composer require rob006/flarum-lang-polish
+- name: Add fof/formatting
+  shell: docker exec flarum composer require fof/formatting
+- name: Add fof/links
+  shell: docker exec flarum composer require fof/links
+- name: Add fof/polls
+  shell: docker exec flarum composer require fof/polls
+- name: Add fof/byobu
+  shell: docker exec flarum composer require "fof/byobu:*"
+- name: Add fof/merge discussions
+  shell: docker exec flarum composer require fof/merge-discussions
+- name: Add fof/follow-tags
+  shell: docker exec flarum composer require fof/follow-tags
+- name: Add fof/reactions
+  shell: docker exec flarum composer require fof/reactions
+- name: Add fof/split
+  shell: docker exec flarum composer require "fof/split:*"
+- name: Add summaries
+  shell: docker exec flarum composer require jordanjay29/flarum-ext-summaries
+- name: Add fof/subscribed
+  shell: docker exec flarum composer require "fof/subscribed:*"
+
+
