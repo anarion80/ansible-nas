@@ -7,6 +7,20 @@
   with_items:
     - "{{ phpmyadmin_data_directory }}"
 
+- name: Get infos on container
+  docker_container_info:
+    name: "{{ item }}"
+  with_items:
+    - "{{ phpmyadmin_databases }}"
+  register: outcome
+
+- name: Create config file
+  template:
+    src: phpmyadmin/config.inc.php
+    dest: "{{ phpmyadmin_data_directory }}/config.inc.php"
+    owner: "{{ phpmyadmin_user_id }}"
+    group: "{{ phpmyadmin_group_id }}"
+
 - name: Create phpmyadmin container
   docker_container:
     name: phpmyadmin
@@ -14,11 +28,6 @@
     pull: true
     volumes:
       - "{{ phpmyadmin_data_directory }}:/etc/phpmyadmin:rw"
-    #links:
-    # - firefly-mysql:firefly-mysql
-    # - snipeit-mysql:snipeit-mysql
-    #  - mariadb:mariadb
-    #  - nextcloud-mysql:nextcloud-mysql
     env:
       PUID: "{{ phpmyadmin_user_id }}"
       PGID: "{{ phpmyadmin_group_id }}"

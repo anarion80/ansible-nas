@@ -1317,6 +1317,12 @@ phpmyadmin_user_id: "0"
 phpmyadmin_group_id: "0"
 phpmyadmin_port: "8087"
 phpmyadmin_watchtower_enable: "true"
+phpmyadmin_databases:
+  - "mariadb"
+  - "firefly-mysql"
+  - "nextcloud-mysql"
+  - "seafile-mysql"
+  - "snipeit-mysql"
 
 ###
 ### error pages
