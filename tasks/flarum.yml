@@ -18,7 +18,7 @@
     env:
       TZ: "{{ ansible_nas_timezone }}"
       PUID: "{{ flarum_user_id }}"
-      PGID: "{{ flaru,_group_id }}"
+      PGID: "{{ flarum_group_id }}"
       MEMORY_LIMIT: "{{ flarum_memory_limit }}" #PHP memory limit (default 256M)
       UPLOAD_MAX_SIZE: "{{ flarum_max_upload_size }}" #Upload max size (default 16M)
       CLEAR_ENV: "{{ flarum_clear_env }}" #Clear environment in FPM workers (default yes)
