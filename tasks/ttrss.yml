@@ -1,0 +1,80 @@
+- name: Create ttrss Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ ttrss_user_id }}"
+    group: "{{ ttrss_group_id }}"
+    mode: 0755
+  with_items:
+    - "{{ ttrss_data_directory }}"
+
+- name: Create PostgreSQL container for ttrss
+  docker_container:
+    name: ttrss-postgress
+    image: postgres:12-alpine
+    pull: true
+    volumes:
+      - "{{ ttrss_data_directory }}/data:/var/lib/postgresql/data:rw"
+    env:
+      POSTGRES_PASSWORD: "{{ ttrss_db_pass }}"
+      POSTGRES_USER: "{{ ttrss_db_user }}"
+    labels:
+      traefik.enable: "false"
+    restart_policy: unless-stopped
+    memory: 1g
+
+
+- name: ttrss Docker Container
+  docker_container:
+    name: ttrss
+    image: cthulhoo/ttrss-fpm-pgsql-static
+    pull: true
+    volumes:
+      - "{{ ttrss_data_directory }}/config:/var/www/html:rw"
+      - "{{ ttrss_data_directory }}/backups:/backups:rw"
+    links:
+      - ttrss-postgress:db
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      OWNER_UID: "{{ ttrss_user_id }}"
+      OWNER_GID: "{{ ttrss_group_id }}"
+      SELF_URL_PATH: "{{ ttrss_url }}"
+      DB_TYPE: "pgsql"
+      DB_HOST: "{{ ttrss_db_host}}"
+      DB_NAME: "{{ ttrss_db_name }}"
+      DB_USER: "{{ ttrss_db_user }}"
+      DB_PASS: "{{ ttrss_db_pass }}"
+      HTTP_PORT: "{{ ttrss_port }}"
+      HTTP_HOST: "localhost"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
+
+- name: Create nginx container for ttrss
+  docker_container:
+    name: ttrss-nginx
+    image: cthulhoo/ttrss-web-nginx
+    pull: true
+    links:
+      - ttrss:app
+    volumes:
+      - "{{ ttrss_data_directory }}/config:/var/www/html:ro"
+    ports:
+      - "{{ ttrss_port }}:80"
+    labels:
+      traefik.enable: "{{ ttrss_available_externally }}"
+      traefik.http.services.ttrss.loadbalancer.server.port: "80"
+      traefik.http.middlewares.ttrss-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.ttrss-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.ttrss.middlewares: "ttrss-whitelist"
+      traefik.http.routers.ttrss.rule: "Host(`ttrss.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
+    restart_policy: unless-stopped
+
+- name: Start ttrss updater
+  shell: docker exec -d ttrss /updater.sh
+
+- name: Start ttrss backups
+  shell: docker exec -d ttrss /dcron.sh -f

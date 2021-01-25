@@ -69,5 +69,5 @@ ansible_nas_workgroup: ANARION
 #errorpages_enabled: true
 #flarum_enabled: true
 #restic_enabled: true
-
+#ttrss_enabled: true
 

@@ -54,6 +54,7 @@ mymediaforalexa_enabled: false
 
 # News
 miniflux_enabled: false
+ttrss_enabled: false
 
 # System Management
 heimdall_enabled: false
@@ -1389,3 +1390,19 @@ restic_backups:
     src: "/path/to/data"
     scheduled: true
     schedule_hour: 1
+
+#
+# ttrss
+#
+ttrss_available_externally: "true"
+ttrss_data_directory: "{{ docker_home }}/ttrss"
+ttrss_port: "8280"
+ttrss_user_id: "999"
+ttrss_group_id: "1001"
+ttrss_db_host: "db" #MySQL database hostname / IP address required
+ttrss_db_port: "3306" #MySQL database port (default 3306)
+ttrss_db_name: "ttrss" #MySQL database name (default flarum)
+ttrss_db_user: "ttrss" #MySQL user (default flarum)
+ttrss_db_pass: "password" #MySQL password
+ttrss_url: "https://ttrss.{{ ansible_nas_domain }}"
+ttrss_watchtower_enable: "true"

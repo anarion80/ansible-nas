@@ -362,3 +362,7 @@
   - import_tasks: tasks/restic.yml
     when: (restic_enabled | default(False))
     tags: restic
+
+  - import_tasks: tasks/ttrss.yml
+    when: (ttrss_enabled | default(False))
+    tags: ttrss
