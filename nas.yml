@@ -366,3 +366,7 @@
   - import_tasks: tasks/ttrss.yml
     when: (ttrss_enabled | default(False))
     tags: ttrss
+
+  - import_tasks: tasks/openldap.yml
+    when: (openldap_enabled | default(False))
+    tags: openldap    

@@ -117,6 +117,9 @@ serposcope_enabled: false
 # phpMyAdmin
 phpmyadmin_enabled: false
 
+# OpenLDAP
+openldap_enabled: false
+
 # Rclone
 rclone_enabled: false
 cloud_upload_enabled: false
@@ -1406,3 +1409,20 @@ ttrss_db_user: "ttrss" #MySQL user (default flarum)
 ttrss_db_pass: "password" #MySQL password
 ttrss_url: "https://ttrss.{{ ansible_nas_domain }}"
 ttrss_watchtower_enable: "true"
+
+#
+# OpenLDAP
+#
+openldap_available_externally: "false"
+phpldapadmin_available_externally: "true"
+openldap_data_directory: "{{ docker_home }}/openldap"
+openldap_port: "389"
+openldap_port_ssl: "636"
+phpldapadmin_port: "6443"
+openldap_user_id: "999"
+openldap_group_id: "1001"
+openldap_organization: "My Organization"
+openldap_domain: "my-organization.com"
+openldap_admin_password: "secure-password"
+openldap_watchtower_enable: "true"
+phpldapadmin_watchtower_enable: "true"

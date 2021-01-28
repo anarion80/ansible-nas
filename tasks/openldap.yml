@@ -1,0 +1,56 @@
+---
+- name: Create OpenLDAP Directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    mode: 0777
+  with_items:
+    - "{{ openldap_data_directory }}/data"
+
+- name: OpenLDAP
+  docker_container:
+    name: openldap
+    image: osixia/openldap
+    pull: true
+    volumes:
+      - "{{ openldap_data_directory }}/lib:/var/lib/ldap:rw"
+      - "{{ openldap_data_directory }}/config:/etc/ldap/slapd.d:rw"
+    ports:
+      - "{{ openldap_port }}:389"
+      - "{{ openldap_port_ssl }}:636"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      LDAP_ORGANISATION: "{{ openldap_organization }}"
+      LDAP_DOMAIN: "{{ openldap_domain }}"
+      LDAP_ADMIN_PASSWORD: "{{ openldap_admin_password }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ openldap_available_externally }}"
+      com.centurylinklabs.watchtower.enable: "{{ openldap_watchtower_enable }}"
+
+- name: phpLDAPadmin
+  docker_container:
+    name: phpldapadmin
+    image: osixia/phpldapadmin
+    pull: true
+    volumes:
+      - "{{ openldap_data_directory }}/lib:/var/lib/ldap:rw"
+      - "{{ openldap_data_directory }}/config:/etc/ldap/slapd.d:rw"
+    ports:
+      - "{{ phpldapadmin_port }}:443"
+    links:
+      - openldap:openldap
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ phpldapadmin_available_externally }}"
+      traefik.http.services.phpldapadmin.loadbalancer.server.port: "443"
+      traefik.http.middlewares.phpldapadmin-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.phpldapadmin-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.phpldapadmin.middlewares: "phpldapadmin-whitelist"
+      traefik.http.routers.phpldapadmin.rule: "Host(`phpldapadmin.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ phpldapadmin_watchtower_enable }}"      
