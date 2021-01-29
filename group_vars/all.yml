@@ -855,7 +855,7 @@ znc_watchtower_enable: "true"
 ###
 ### Stats
 ###
-grafana_available_externally: "false"
+grafana_available_externally: "true"
 telegraf_data_directory: "{{ docker_home }}/telegraf"
 influxdb_data_directory: "{{ docker_home }}/influxdb"
 grafana_data_directory: "{{ docker_home }}/grafana"

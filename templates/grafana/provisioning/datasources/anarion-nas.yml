@@ -14,7 +14,7 @@ datasources:
   orgId: 1
   # <string> url
   #url: http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:8086
-  url: https://influxdb.{{ ansible_nas_domain }}:8086
+  url: https://influxdb.{{ ansible_nas_domain }}
   # <string> database password, if used
   password:
   # <string> database user, if used

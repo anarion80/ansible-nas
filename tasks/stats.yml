@@ -37,11 +37,11 @@
     labels:
       com.centurylinklabs.watchtower.enable: "{{ influxdb_watchtower_enable }}"
       traefik.enable: "true"
-      traefik.http.services.grafana.loadbalancer.server.port: "8086"
-      traefik.http.middlewares.grafana-whitelist.ipwhitelist.ipstrategy.depth: "0"
-      traefik.http.middlewares.grafana-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
-      traefik.http.routers.grafana.middlewares: "grafana-whitelist,influxdb-header"
-      traefik.http.routers.grafana.rule: "Host(`influxdb.{{ ansible_nas_domain }}`)"
+      traefik.http.services.influxdb.loadbalancer.server.port: "8086"
+      traefik.http.middlewares.influxdb-whitelist.ipwhitelist.ipstrategy.depth: "0"
+      traefik.http.middlewares.influxdb-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.influxdb.middlewares: "influxdb-whitelist,influxdb-header"
+      traefik.http.routers.influxdb.rule: "Host(`influxdb.{{ ansible_nas_domain }}`)"
       traefik.http.middlewares.influx-redirect.redirectScheme.scheme: "https"
       traefik.http.middlewares.influxdb-header.headers.forceSTSHeader: "true"
       traefik.http.middlewares.influxdb-header.headers.accesscontrolalloworiginlist: "https://grafana.{{ ansible_nas_domain }}"
@@ -132,3 +132,46 @@
       traefik.http.routers.grafana.middlewares: "grafana-whitelist"
       traefik.http.routers.grafana.rule: "Host(`grafana.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ grafana_watchtower_enable }}"
+
+- name: Apt-get update
+  shell: docker exec telegraf apt-get update
+- name: Install python3
+  shell: docker exec telegraf apt-get install python3 -y
+- name: Install ipmitool
+  shell: docker exec telegraf apt-get install ipmitool -y
+- name: Install tplink script
+  shell: docker exec telegraf wget https://raw.githubusercontent.com/softScheck/tplink-smartplug/master/tplink_smartplug.py
+- name: Change script permissions
+  shell: docker exec telegraf chmod a+x tplink_smartplug.py
+- name: restart docker
+  docker_container:
+    name: telegraf
+    image: telegraf
+    state: started
+    restart: yes
+    pull: true
+    links:
+      - hddtemp:hddtemp
+    privileged: true
+    ipc_mode: host
+    volumes:
+      - "{{ telegraf_data_directory }}/telegraf.conf:/etc/telegraf/telegraf.conf:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+      - "/:/hostfs:ro"
+      - "/etc:/hostfs/etc:ro"
+      - "/proc:/hostfs/proc:ro"
+      - "/sys:/hostfs/sys:ro"
+      - "/var:/hostfs/var:ro"
+      - "/run:/hostfs/run:ro"
+    env:
+      HOST_ETC: "/hostfs/etc"
+      HOST_PROC: "/hostfs/proc"
+      HOST_SYS: "/hostfs/sys"
+      HOST_VAR: "/hostfs/var"
+      HOST_RUN: "/hostfs/run"
+      HOST_MOUNT_PREFIX: "/hostfs"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ telegraf_watchtower_enable }}"
+      traefik.enable: "false"
+    restart_policy: unless-stopped
+    memory: 1g
