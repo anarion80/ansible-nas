@@ -52,6 +52,65 @@
       traefik.enable: "false"
       com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
 
+- name: ttrss Docker Updater Container
+  docker_container:
+    name: ttrss-updater
+    image: cthulhoo/ttrss-fpm-pgsql-static
+    pull: true
+    volumes:
+      - "{{ ttrss_data_directory }}/config:/var/www/html:rw"
+    links:
+      - ttrss:app
+      - ttrss-postgress:db
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      OWNER_UID: "{{ ttrss_user_id }}"
+      OWNER_GID: "{{ ttrss_group_id }}"
+      SELF_URL_PATH: "{{ ttrss_url }}"
+      DB_TYPE: "pgsql"
+      DB_HOST: "{{ ttrss_db_host}}"
+      DB_NAME: "{{ ttrss_db_name }}"
+      DB_USER: "{{ ttrss_db_user }}"
+      DB_PASS: "{{ ttrss_db_pass }}"
+      HTTP_PORT: "{{ ttrss_port }}"
+      HTTP_HOST: "localhost"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
+    command: "/updater.sh"
+
+- name: ttrss Docker Backup Container
+  docker_container:
+    name: ttrss-backup
+    image: cthulhoo/ttrss-fpm-pgsql-static
+    pull: true
+    volumes:
+      - "{{ ttrss_data_directory }}/config:/var/www/html:rw"
+      - "{{ ttrss_data_directory }}/backups:/backups:rw"
+    links:
+      - ttrss:app
+      - ttrss-postgress:db
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      OWNER_UID: "{{ ttrss_user_id }}"
+      OWNER_GID: "{{ ttrss_group_id }}"
+      SELF_URL_PATH: "{{ ttrss_url }}"
+      DB_TYPE: "pgsql"
+      DB_HOST: "{{ ttrss_db_host}}"
+      DB_NAME: "{{ ttrss_db_name }}"
+      DB_USER: "{{ ttrss_db_user }}"
+      DB_PASS: "{{ ttrss_db_pass }}"
+      HTTP_PORT: "{{ ttrss_port }}"
+      HTTP_HOST: "localhost"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
+    command: "/dcron.sh -f"
+
 - name: Create nginx container for ttrss
   docker_container:
     name: ttrss-nginx
@@ -72,9 +131,3 @@
       traefik.http.routers.ttrss.rule: "Host(`ttrss.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
     restart_policy: unless-stopped
-
-- name: Start ttrss updater
-  shell: docker exec -d ttrss /updater.sh
-
-- name: Start ttrss backups
-  shell: docker exec -d ttrss /dcron.sh -f
