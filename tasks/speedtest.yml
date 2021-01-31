@@ -1,0 +1,38 @@
+---
+- name: Create Speedtest Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ speedtest_data_directory }}"
+
+- name: Speedtest
+  docker_container:
+    name: speedtest
+    image: linuxserver/librespeed
+    pull: true
+    volumes:
+      - "{{ speedtest_data_directory }}:/config:rw"
+    ports:
+      - "{{ speedtest_webui_port }}:80"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ speedtest_user_id }}"
+      PGID: "{{ speedtest_group_id }}"
+      PASSWORD: "{{ speedtest_password }}"
+      CUSTOM_RESULTS: "{{ speedtest_custom_results }}"
+      DB_TYPE: "{{ speedtest_db_type }}"
+      DB_NAME: "{{ speedtest_db_name }}"
+      DB_HOSTNAME: "{{ speedtest_db_hostname }}"
+      DB_USERNAME: "{{ speedtest_db_username }}"
+      DB_PASSWORD: "{{ speedtest_db_password }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ speedtest_available_externally }}"
+      traefik.http.services.speedtest.loadbalancer.server.port: "80"
+      traefik.http.middlewares.speedtest-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.speedtest-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.speedtest.middlewares: "speedtest-whitelist"
+      traefik.http.routers.speedtest.rule: "Host(`speedtest.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ speedtest_watchtower_enable }}"

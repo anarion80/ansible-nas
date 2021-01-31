@@ -369,4 +369,9 @@
 
   - import_tasks: tasks/openldap.yml
     when: (openldap_enabled | default(False))
-    tags: openldap    
+    tags: openldap
+
+  - import_tasks: tasks/speedtest.yml
+    when: (speedtest_enabled | default(False))
+    tags: speedtest
+    

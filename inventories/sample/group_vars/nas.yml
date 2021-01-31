@@ -71,4 +71,5 @@ ansible_nas_workgroup: ANARION
 #restic_enabled: true
 #ttrss_enabled: true
 #openldap_enabled: true
+#speedtest_enabled: true
 

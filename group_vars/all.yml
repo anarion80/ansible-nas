@@ -204,6 +204,9 @@ errorpages_enabled: false
 # flarum
 flarum_enabled: false
 
+# speedtest
+speedtest_enabled: false
+
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
 # home static IP address, the cloudflare with the cloudflare_ddns dynamic DNS container enabled, or use a dynamic DNS provider like no-ip.
@@ -1426,3 +1429,20 @@ openldap_domain: "my-organization.com"
 openldap_admin_password: "secure-password"
 openldap_watchtower_enable: "true"
 phpldapadmin_watchtower_enable: "true"
+
+#
+# speedtest
+#
+speedtest_available_externally: "true"
+speedtest_data_directory: "{{ docker_home }}/speedtest"
+speedtest_webui_port: "8288"
+speedtest_user_id: "999"
+speedtest_group_id: "1001"
+speedtest_password: "secure"
+speedtest_custom_results: "false"
+speedtest_db_type: ""
+speedtest_db_name: ""
+speedtest_db_hostname: ""
+speedtest_db_username: ""
+speedtest_db_password: ""
+speedtest_watchtower_enable: "true"
