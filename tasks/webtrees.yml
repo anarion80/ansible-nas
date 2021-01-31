@@ -1,0 +1,48 @@
+---
+- name: Create Webtrees Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ webtrees_data_directory }}"
+
+- name: Webtrees
+  docker_container:
+    name: webtrees
+    image: nathanvaughn/webtrees
+    pull: true
+    volumes:
+      - "{{ webtrees_data_directory }}/data:/var/www/webtrees/data/:rw"
+      - "{{ webtrees_data_directory }}/media:/var/www/webtrees/media/:rw"
+      - "{{ webtrees_data_directory }}/modules:/var/www/webtrees/modules_v4/:rw"
+    ports:
+      - "{{ webtrees_http_port }}:80"
+      - "{{ webtrees_https_port }}:443"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ webtrees_user_id }}"
+      PGID: "{{ webtrees_group_id }}"
+      LANG: "{{ webtrees_lang }}"
+      PRETTY_URLS: "{{ webtrees_pretty_urls }}"
+      BASE_URL: "{{ webtrees_base_url }}"
+      DB_TYPE: "{{ webtrees_db_type }}"
+      DB_HOST: "{{ webtrees_db_host }}"
+      DB_PORT: "{{ webtrees_db_port }}"
+      DB_USER: "{{ webtrees_db_user }}"
+      DB_PASS: "{{ webtrees_db_pass }}"
+      DB_NAME: "{{ webtrees_db_name}}"
+      DB_PREFIX: "{{ webtrees_db_prefix }}"
+      WT_USER: "{{ webtrees_wt_user }}"
+      WT_NAME: "{{ webtrees_wt_name }}"
+      WT_PASS: "{{ webtrees_wt_pass }}"
+      WT_EMAIL: "{{ webtrees_wt_email}}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ webtrees_available_externally }}"
+      traefik.http.services.webtrees.loadbalancer.server.port: "80"
+      traefik.http.middlewares.webtrees-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.webtrees-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.webtrees.middlewares: "webtrees-whitelist"
+      traefik.http.routers.webtrees.rule: "Host(`webtrees.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ webtrees_watchtower_enable }}"

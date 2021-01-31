@@ -207,6 +207,10 @@ flarum_enabled: false
 # speedtest
 speedtest_enabled: false
 
+# webtrees
+webtrees_enabled: false
+
+
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
 # home static IP address, the cloudflare with the cloudflare_ddns dynamic DNS container enabled, or use a dynamic DNS provider like no-ip.
@@ -1446,3 +1450,28 @@ speedtest_db_hostname: ""
 speedtest_db_username: ""
 speedtest_db_password: ""
 speedtest_watchtower_enable: "true"
+
+#
+# webtrees
+#
+webtrees_available_externally: "true"
+webtrees_data_directory: "{{ docker_home }}/webtrees"
+webtrees_http_port: "8289"
+webtrees_https_port: "8290"
+webtrees_lang: "en-us"
+webtrees_pretty_urls: "false"
+webtrees_base_url: "https://webtrees.{{ ansible_nas_domain }}"
+webtrees_user_id: "999"
+webtrees_group_id: "1001"
+webtrees_db_type: "sqlite"
+webtrees_db_name: ""
+webtrees_db_host: ""
+webtrees_db_user: ""
+webtrees_db_pass: ""
+webtrees_db_port: ""
+webtrees_db_prefix: ""
+webtrees_wt_user: ""
+webtrees_wt_name: ""
+webtrees_wt_pass: ""
+webtrees_wt_email: ""
+webtrees_watchtower_enable: "true"
