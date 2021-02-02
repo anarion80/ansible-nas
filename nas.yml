@@ -378,3 +378,8 @@
   - import_tasks: tasks/webtrees.yml
     when: (webtrees_enabled | default(False))
     tags: webtrees
+
+  - import_tasks: tasks/photoprism.yml
+    when: (photoprism_enabled | default(False))
+    tags: photoprism
+    

@@ -73,4 +73,5 @@ ansible_nas_workgroup: ANARION
 #openldap_enabled: true
 #speedtest_enabled: true
 #webtrees_enabled: true
+#photoprism_enabled: true
 

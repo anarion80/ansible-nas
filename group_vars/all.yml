@@ -210,6 +210,8 @@ speedtest_enabled: false
 # webtrees
 webtrees_enabled: false
 
+# webtrees
+photoprism_enabled: false
 
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
@@ -1475,3 +1477,36 @@ webtrees_wt_name: ""
 webtrees_wt_pass: ""
 webtrees_wt_email: ""
 webtrees_watchtower_enable: "true"
+
+#
+# photoprism
+#
+photoprism_available_externally: "true"
+photoprism_watchtower_enable: "true"
+photoprism_data_directory: "{{ docker_home }}/photoprism"
+photoprism_user_id: "999"
+photoprism_group_id: "1001"
+photoprism_umask: "117"
+photoprism_admin_password: "insecure"
+photoprism_http_port: "2342"
+photoprism_http_compression: "false"
+photoprism_debug: "false"
+photoprism_public: "false"
+photoprism_readonly: "false"
+photoprism_experimental: "false"
+photoprism_disable_webdav: "false"
+photoprism_disable_settings: "false"
+photoprism_disable_tensorflow: "false"
+photoprism_darktable_presets: "false"
+photoprism_detect_nsfw: "false"
+photoprism_upload_nsfw: "true"
+photoprism_database_driver: "mysql"
+photoprism_database_server: "db:3306"
+photoprism_database_name: "photoprism"
+photoprism_database_user: "photoprism"
+photoprism_database_password: "insecure"
+photoprism_site_url: "https://photoprism.{{ ansible_nas_domain }}"
+photoprism_site_title: "PhotoPrism"
+photoprism_site_caption: "Browse Your Life"
+photoprism_site_description: ""
+photoprism_site_author: ""

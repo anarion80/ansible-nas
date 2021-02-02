@@ -1,0 +1,56 @@
+---
+- name: Photoprism
+  docker_container:
+    name: photoprism
+    image: photoprism/photoprism
+    pull: true
+    volumes:
+      # Your photo and video files ([local path]:[container path]):
+      - "{{ photoprism_data_directory }}/originals:/photoprism/originals:ro"
+      # Multiple folders can be indexed by mounting them as sub-folders of /photoprism/originals:
+      # - "/mnt/Family:/photoprism/originals/Family"    # [folder_1]:/photoprism/originals/[folder_1]
+      # - "/mnt/Friends:/photoprism/originals/Friends"  # [folder_2]:/photoprism/originals/[folder_2]
+      # Mounting an import folder is optional (see docs):
+      - "{{ photoprism_data_directory }}/import:/photoprism/import"
+      # Permanent storage for settings, index & sidecar files (DON'T REMOVE):
+      - "{{ photoprism_data_directory }}/storage:/photoprism/storage"
+    ports:
+      - "{{ photoprism_http_port }}:2342"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      UID: "{{ photoprism_user_id }}"
+      GID: "{{ photoprism_group_id }}"
+      UMASK: "{{ photoprism_umask }}"
+      PHOTOPRISM_ADMIN_PASSWORD: "{{ photoprism_admin_password }}"
+      PHOTOPRISM_HTTP_PORT: "{{ photoprism_http_port }}"
+      PHOTOPRISM_HTTP_COMPRESSION: "{{ photoprism_http_compression }}"
+      PHOTOPRISM_DEBUG: "{{ photoprism_debug }}"
+      PHOTOPRISM_PUBLIC: "{{ photoprism_public }}"
+      PHOTOPRISM_READONLY: "{{ photoprism_readonly }}"
+      PHOTOPRISM_EXPERIMENTAL: "{{ photoprism_experimental }}"
+      PHOTOPRISM_DISABLE_WEBDAV: "{{ photoprism_disable_webdav }}"
+      PHOTOPRISM_DISABLE_SETTINGS: "{{ photoprism_disable_settings }}"
+      PHOTOPRISM_DISABLE_TENSORFLOW: "{{ photoprism_disable_tensorflow }}"
+      PHOTOPRISM_DARKTABLE_PRESETS: "{{ photoprism_darktable_presets }}"
+      PHOTOPRISM_DETECT_NSFW: "{{ photoprism_detect_nsfw }}"
+      PHOTOPRISM_UPLOAD_NSFW: "{{ photoprism_upload_nsfw }}"
+      PHOTOPRISM_DATABASE_DRIVER: "{{ photoprism_database_driver }}"
+      PHOTOPRISM_DATABASE_SERVER: "{{ photoprism_database_server }}"
+      PHOTOPRISM_DATABASE_NAME: "{{ photoprism_database_name }}"
+      PHOTOPRISM_DATABASE_USER: "{{ photoprism_database_user }}"
+      PHOTOPRISM_DATABASE_PASSWORD: "{{ photoprism_database_password }}"
+      PHOTOPRISM_SITE_URL: "{{ photoprism_site_url }}"
+      PHOTOPRISM_SITE_TITLE: "{{ photoprism_site_title }}"
+      PHOTOPRISM_SITE_CAPTION: "{{ photoprism_site_caption }}"
+      PHOTOPRISM_SITE_DESCRIPTION: "{{ photoprism_site_description }}"
+      PHOTOPRISM_SITE_AUTHOR: "{{ photoprism_site_author }}"
+    restart_policy: unless-stopped
+    memory: 2g
+    labels:
+      traefik.enable: "{{ photoprism_available_externally }}"
+      traefik.http.services.photoprism.loadbalancer.server.port: "2342"
+      traefik.http.middlewares.photoprism-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.photoprism-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.photoprism.middlewares: "photoprism-whitelist"
+      traefik.http.routers.photoprism.rule: "Host(`photoprism.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ photoprism_watchtower_enable }}"
