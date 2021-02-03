@@ -1,6 +1,6 @@
 #!/bin/bash
 # Runs Restic backup on a schedule via cron, emails with status
-
+PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/snap/bin
 FROM="restic@{{ ansible_nas_domain }}"
 EMAIL="{{ ansible_nas_email }}"
 LOG="/var/log/restic.log"

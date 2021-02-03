@@ -15,6 +15,7 @@ lidarr/**/MediaCover
 plex/**/Crash Reports
 plex/**/logs
 plex/**/cache
+plex/**
 mylar/**/logs
 mylar/**/cache
 **/jellyfin
