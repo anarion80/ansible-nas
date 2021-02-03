@@ -1416,6 +1416,9 @@ ttrss_db_port: "3306" #MySQL database port (default 3306)
 ttrss_db_name: "ttrss" #MySQL database name (default flarum)
 ttrss_db_user: "ttrss" #MySQL user (default flarum)
 ttrss_db_pass: "password" #MySQL password
+ttrss_db_port: "5432"
+ttrss_smtp_from_name: "Tiny Tiny RSS"
+ttrss_smtp_from_address: "ttrss@{{ ansible_nas_domain }}"
 ttrss_url: "https://ttrss.{{ ansible_nas_domain }}"
 ttrss_watchtower_enable: "true"
 
