@@ -74,4 +74,6 @@ ansible_nas_workgroup: ANARION
 #speedtest_enabled: true
 #webtrees_enabled: true
 #photoprism_enabled: true
+#whoogle_enabled: true
+
 

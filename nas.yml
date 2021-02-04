@@ -382,4 +382,8 @@
   - import_tasks: tasks/photoprism.yml
     when: (photoprism_enabled | default(False))
     tags: photoprism
+
+  - import_tasks: tasks/whoogle.yml
+    when: (whoogle_enabled | default(False))
+    tags: whoogle
     

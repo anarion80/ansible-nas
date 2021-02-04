@@ -210,8 +210,11 @@ speedtest_enabled: false
 # webtrees
 webtrees_enabled: false
 
-# webtrees
+# photoprism
 photoprism_enabled: false
+
+# whoogle
+whoogle_enabled: false
 
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
@@ -1411,11 +1414,10 @@ ttrss_data_directory: "{{ docker_home }}/ttrss"
 ttrss_port: "8280"
 ttrss_user_id: "999"
 ttrss_group_id: "1001"
-ttrss_db_host: "db" #MySQL database hostname / IP address required
-ttrss_db_port: "3306" #MySQL database port (default 3306)
-ttrss_db_name: "ttrss" #MySQL database name (default flarum)
-ttrss_db_user: "ttrss" #MySQL user (default flarum)
-ttrss_db_pass: "password" #MySQL password
+ttrss_db_host: "db"
+ttrss_db_name: "ttrss"
+ttrss_db_user: "ttrss"
+ttrss_db_pass: "password"
 ttrss_db_port: "5432"
 ttrss_smtp_from_name: "Tiny Tiny RSS"
 ttrss_smtp_from_address: "ttrss@{{ ansible_nas_domain }}"
@@ -1513,3 +1515,21 @@ photoprism_site_title: "PhotoPrism"
 photoprism_site_caption: "Browse Your Life"
 photoprism_site_description: ""
 photoprism_site_author: ""
+
+#
+# whoogle
+#
+whoogle_available_externally: "true"
+whoogle_watchtower_enable: "true"
+whoogle_data_directory: "{{ docker_home }}/whoogle"
+whoogle_port: "5000"
+whoogle_user: "whoogle"
+whoogle_pass: "insecure"
+whoogle_proxy_user: "proxy-user"
+whoogle_proxy_password: "insecure"
+whoogle_proxy_type: "" #<proxy type (http|socks4|socks5)
+whoogle_proxy_loc: "" #<proxy host/ip>
+whoogle_alt_tw: "" #nitter.net
+whoogle_alt_yt: "" #invidious.snopyta.org
+whoogle_alt_ig: "" #bibliogram.art/u
+whoogle_alt_rd: "" #libredd.it

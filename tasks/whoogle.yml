@@ -1,0 +1,38 @@
+---
+- name: Whoogle Docker Container
+  docker_container:
+    name: whoogle
+    image: benbusby/whoogle-search
+    pull: true
+    volumes:
+      - "{{ whoogle_data_directory }}/config:/config:rw"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      #PUID: "{{ whoogle_user_id }}"
+      #PGID: "{{ whoogle_group_id }}"
+      # Basic auth configuration, uncomment to enable
+      WHOOGLE_USER: "{{ whoogle_user }}"
+      WHOOGLE_PASS: "{{ whoogle_pass }}"
+      # Proxy configuration, uncomment to enable
+      WHOOGLE_PROXY_USER: "{{ whoogle_proxy_user }}"
+      WHOOGLE_PROXY_PASS: "{{ whoogle_proxy_password }}"
+      WHOOGLE_PROXY_TYPE: "{{ whoogle_proxy_type }}" #<proxy type (http|socks4|socks5)
+      WHOOGLE_PROXY_LOC: "{{ whoogle_proxy_loc }}" #<proxy host/ip>
+      # Site alternative configurations, uncomment to enable
+      # Note: If not set, the feature will still be available
+      # with default values.
+      WHOOGLE_ALT_TW: "{{ whoogle_alt_tw }}" #nitter.net
+      WHOOGLE_ALT_YT: "{{ whoogle_alt_yt }}" #invidious.snopyta.org
+      WHOOGLE_ALT_IG: "{{ whoogle_alt_ig }}" #bibliogram.art/u
+      WHOOGLE_ALT_RD: "{{ whoogle_alt_rd }}" #libredd.it
+    ports:
+      - "{{ whoogle_port }}:5000"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "{{ whoogle_available_externally }}"
+      traefik.http.services.whoogle.loadbalancer.server.port: "5000"
+      traefik.http.middlewares.whoogle-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.whoogle-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.whoogle.middlewares: "whoogle-whitelist"
+      traefik.http.routers.whoogle.rule: "Host(`whoogle.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ whoogle_watchtower_enable }}"
