@@ -213,6 +213,9 @@ webtrees_enabled: false
 # photoprism
 photoprism_enabled: false
 
+# photostructure
+photostructure_enabled: false
+
 # whoogle
 whoogle_enabled: false
 
@@ -1515,6 +1518,16 @@ photoprism_site_title: "PhotoPrism"
 photoprism_site_caption: "Browse Your Life"
 photoprism_site_description: ""
 photoprism_site_author: ""
+
+#
+# photostructure
+#
+photostructure_available_externally: "true"
+photostructure_watchtower_enable: "true"
+photostructure_data_directory: "{{ docker_home }}/photostructure"
+photostructure_user_id: "999"
+photostructure_group_id: "1001"
+photostructure_http_port: "1787"
 
 #
 # whoogle

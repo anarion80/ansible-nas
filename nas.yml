@@ -383,6 +383,10 @@
     when: (photoprism_enabled | default(False))
     tags: photoprism
 
+  - import_tasks: tasks/photostructure.yml
+    when: (photostructure_enabled | default(False))
+    tags: photostructure    
+
   - import_tasks: tasks/whoogle.yml
     when: (whoogle_enabled | default(False))
     tags: whoogle

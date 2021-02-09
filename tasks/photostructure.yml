@@ -1,0 +1,27 @@
+---
+- name: PhotoStructure
+  docker_container:
+    name: photostructure
+    image: photostructure/server
+    pull: true
+    volumes:
+      - "{{ photostructure_data_directory }}/library:/ps/library:rw"
+      - "{{ photostructure_data_directory }}/config:/ps/config"
+      - "{{ photostructure_data_directory }}/logs:/ps/logs"
+    ports:
+      - "{{ photostructure_http_port }}:1787"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      UID: "{{ photostructure_user_id }}"
+      GID: "{{ photostructure_group_id }}"
+      PS_HTTP_PORT: "{{ photostructure_http_port }}"
+    restart_policy: unless-stopped
+    memory: 2g
+    labels:
+      traefik.enable: "{{ photostructure_available_externally }}"
+      traefik.http.services.photostructure.loadbalancer.server.port: "1787"
+      traefik.http.middlewares.photostructure-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.photostructure-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.photostructure.middlewares: "photostructure-whitelist"
+      traefik.http.routers.photostructure.rule: "Host(`photostructure.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ photostructure_watchtower_enable }}"
