@@ -76,5 +76,6 @@ ansible_nas_workgroup: ANARION
 #photoprism_enabled: true
 #whoogle_enabled: true
 #photostructure_enabled: true
+#librephotos_enabled: true
 
 

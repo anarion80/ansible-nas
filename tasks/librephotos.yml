@@ -1,0 +1,112 @@
+- name: Create LibrePhotos Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ librephotos_user_id }}"
+    group: "{{ librephotos_group_id }}"
+    mode: 0755
+  with_items:
+    - "{{ librephotos_data_directory }}"
+
+- name: Create PostgreSQL container for LibrePhotos
+  docker_container:
+    name: librephotos-db
+    image: postgres
+    pull: true
+    volumes:
+      - "{{ librephotos_data_directory }}/data:/var/lib/postgresql/data:rw"
+    env:
+      POSTGRES_PASSWORD: "{{ librephotos_db_pass }}"
+      POSTGRES_USER: "{{ librephotos_db_user }}"
+      POSTGRES_DB: "{{ librephotos_db_name }}"
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ librephotos_watchtower_enable }}"
+    restart_policy: unless-stopped
+    memory: 1g
+
+- name: LibrePhotos Redis Docker Container
+  docker_container:
+    name: librephotos-redis
+    image: redis:alpine
+    pull: true
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ librephotos_watchtower_enable }}"
+
+- name: LibrePhotos Frontend Docker Container
+  docker_container:
+    name: librephotos-frontend
+    image: reallibrephotos/librephotos-frontend:{{ librephotos_image_tag }}
+    pull: true
+    tty: true
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ librephotos_watchtower_enable }}"
+
+- name: LibrePhotos Backend Docker Container
+  docker_container:
+    name: librephotos-backend
+    image: reallibrephotos/librephotos:{{ librephotos_image_tag }}
+    pull: true
+    tty: true
+    volumes:
+      - "{{ librephotos_data_directory }}/photos:/data:ro"
+      - "{{ librephotos_data_directory }}/promedia:/code/protected_media"
+      - "{{ librephotos_data_directory }}/logs:/code/logs"
+      - "{{ librephotos_data_directory }}/cache:/root/.cache"
+    links:
+      - librephotos-db:db
+      - librephotos-redis:redis
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      SECRET_KEY: "{{ librephotos_secret_key }}"
+      BACKEND_HOST: "librephotos-backend"
+      ADMIN_EMAIL: "{{ librephotos_admin_email }}"
+      ADMIN_USERNAME: "{{ librephotos_admin_username }}"
+      ADMIN_PASSWORD: "{{ librephotos_admin_password }}"
+      DEBUG: "{{ librephotos_debug }}"
+      DB_BACKEND: "postgresql"
+      DB_NAME: "{{ librephotos_db_name }}"
+      DB_USER: "{{ librephotos_db_user }}"
+      DB_PASS: "{{ librephotos_db_pass }}"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+      REDIS_HOST: "redis"
+      REDIS_PORT: "6379"
+      MAPBOX_API_KEY: "{{ librephotos_mapbox_api_key }}"
+      TIME_ZONE: "{{ ansible_nas_timezone }}"
+      WEB_CONCURRENCY: "{{ librephotos_web_concurrency }}"
+      WORKER_TIMEOUT: "{{ librephotos_worker_timeout }}"
+      SKIP_PATTERNS: "{{ librephotos_skip_patterns }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ librephotos_available_externally }}"
+      com.centurylinklabs.watchtower.enable: "{{ librephotos_watchtower_enable }}"
+
+- name: LibrePhotos Proxy Docker Container
+  docker_container:
+    name: librephotos-proxy
+    image: reallibrephotos/librephotos-proxy:{{ librephotos_image_tag }}
+    pull: true
+    tty: true
+    ports:
+      - "{{ librephotos_proxy_port }}:80"
+    links:
+      - librephotos-frontend:frontend
+      - librephotos-backend:backend
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ librephotos_available_externally }}"
+      traefik.http.services.librephotos.loadbalancer.server.port: "80"
+      traefik.http.middlewares.librephotos-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.librephotos-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.librephotos.middlewares: "librephotos-whitelist"
+      traefik.http.routers.librephotos.rule: "Host(`librephotos.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ librephotos_watchtower_enable }}"

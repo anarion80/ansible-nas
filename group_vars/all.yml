@@ -216,6 +216,9 @@ photoprism_enabled: false
 # photostructure
 photostructure_enabled: false
 
+# librephotos
+librephotos_enabled: false
+
 # whoogle
 whoogle_enabled: false
 
@@ -1546,3 +1549,26 @@ whoogle_alt_tw: "" #nitter.net
 whoogle_alt_yt: "" #invidious.snopyta.org
 whoogle_alt_ig: "" #bibliogram.art/u
 whoogle_alt_rd: "" #libredd.it
+
+#
+# librephotos
+#
+librephotos_available_externally: "true"
+librephotos_watchtower_enable: "true"
+librephotos_image_tag: "dev"
+librephotos_data_directory: "{{ docker_home }}/librephotos"
+librephotos_secret_key: "pOdusJKQEf9gNS7ZlrlO"
+librephotos_admin_email: "{{ ansible_nas_email }}"
+librephotos_admin_username: "admin"
+librephotos_admin_password: "insecure"
+librephotos_debug: "false"
+librephotos_proxy_port: "3002"
+librephotos_db_name: "librephotos"
+librephotos_db_user: "docker"
+librephotos_db_pass: "insecure"
+librephotos_mapbox_api_key: "key"
+librephotos_web_concurrency: "2"
+librephotos_worker_timeout: "1800"
+librephotos_skip_patterns: ""
+librephotos_user_id: "999"
+librephotos_group_id: "1001"

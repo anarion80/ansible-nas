@@ -385,7 +385,11 @@
 
   - import_tasks: tasks/photostructure.yml
     when: (photostructure_enabled | default(False))
-    tags: photostructure    
+    tags: photostructure
+
+  - import_tasks: tasks/librephotos.yml
+    when: (librephotos_enabled | default(False))
+    tags: librephotos
 
   - import_tasks: tasks/whoogle.yml
     when: (whoogle_enabled | default(False))
