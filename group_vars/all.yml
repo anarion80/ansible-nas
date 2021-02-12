@@ -186,6 +186,9 @@ restic_enabled: false
 # Grocy
 grocy_enabled: false
 
+# Barcode Buddy
+barcodebuddy_enabled: false
+
 # Snipe-it
 snipeit_enabled: false
 
@@ -1572,3 +1575,18 @@ librephotos_worker_timeout: "1800"
 librephotos_skip_patterns: ""
 librephotos_user_id: "999"
 librephotos_group_id: "1001"
+
+#
+# barcodebuddy
+#
+barcodebuddy_available_externally: "true"
+barcodebuddy_watchtower_enable: "true"
+barcodebuddy_data_directory: "{{ docker_home }}/barcodebuddy"
+barcodebuddy_http_port: "8201"
+barcodebuddy_https_port: "8202"
+barcodebuddy_user_id: "999"
+barcodebuddy_group_id: "1001"
+barcodebuddy_scanner: "false"
+barcodebuddy_ignore_ssl_ca: "true"
+barcodebuddy_ignore_ssl_host: "true"
+barcodebuddy_grocy_url: "https://grocy.{{ ansible_nas_domain }}"

@@ -1,0 +1,38 @@
+---
+- name: Create Barcode Buddy Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ barcodebuddy_data_directory }}/config"
+
+- name: Barcode Buddy Docker Container
+  docker_container:
+    name: barcodebuddy
+    image: f0rc3/barcodebuddy-docker
+    pull: true
+    volumes:
+      - "{{ barcodebuddy_data_directory }}/config:/config:rw"
+    ports:
+      - "{{ barcodebuddy_http_port }}:80"
+      - "{{ barcodebuddy_https_port }}:443"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ barcodebuddy_user_id }}"
+      PGID: "{{ barcodebuddy_group_id }}"
+      ATTACH_BARCODESCANNER: "{{ barcodebuddy_scanner }}"
+      IGNORE_SSL_CA: "{{ barcodebuddy_ignore_ssl_ca }}"
+      IGNORE_SSL_HOST: "{{ barcodebuddy_ignore_ssl_host }}"
+      BBUDDY_EXTERNAL_GROCY_URL: "{{ barcodebuddy_grocy_url }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ barcodebuddy_available_externally }}"
+      traefik.http.services.barcodebuddy.loadbalancer.server.port: "80"
+      traefik.http.middlewares.barcodebuddy-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.barcodebuddy-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.barcodebuddy.middlewares: "barcodebuddy-whitelist"
+      traefik.http.routers.barcodebuddy.rule: "Host(`barcodebuddy.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ barcodebuddy_watchtower_enable }}"
+
