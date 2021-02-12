@@ -398,4 +398,8 @@
   - import_tasks: tasks/barcodebuddy.yml
     when: (barcodebuddy_enabled | default(False))
     tags: barcodebuddy
-    
+
+  - import_tasks: tasks/beets.yml
+    when: (beets_enabled | default(False))
+    tags: beets
+        

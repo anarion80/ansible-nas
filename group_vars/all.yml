@@ -51,6 +51,7 @@ lazylibrarian_enabled: false
 # Music
 airsonic_enabled: false
 mymediaforalexa_enabled: false
+beets_enabled: false
 
 # News
 miniflux_enabled: false
@@ -1590,3 +1591,15 @@ barcodebuddy_scanner: "false"
 barcodebuddy_ignore_ssl_ca: "true"
 barcodebuddy_ignore_ssl_host: "true"
 barcodebuddy_grocy_url: "https://grocy.{{ ansible_nas_domain }}"
+
+#
+# beets
+#
+beets_available_externally: "true"
+beets_watchtower_enable: "true"
+beets_data_directory: "{{ docker_home }}/beets"
+beets_music_directory: "{{ music_root }}"
+beets_downloads_directory: "{{ downloads_root }}"
+beets_port: "8337"
+beets_user_id: "999"
+beets_group_id: "1001"

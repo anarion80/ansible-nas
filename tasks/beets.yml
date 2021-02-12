@@ -1,0 +1,35 @@
+---
+- name: Create Beets Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ beets_data_directory }}/config"
+
+- name: Beets Docker Container
+  docker_container:
+    name: beets
+    image: linuxserver/beets
+    pull: true
+    volumes:
+      - "{{ beets_data_directory }}/config:/config:rw"
+      - "{{ beets_music_directory }}:/music:ro"
+      - "{{ beets_downloads_directory }}:/downloads:rw"
+    ports:
+      - "{{ beets_port }}:8337"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ beets_user_id }}"
+      PGID: "{{ beets_group_id }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ beets_available_externally }}"
+      traefik.http.services.beets.loadbalancer.server.port: "8337"
+      traefik.http.middlewares.beets-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.beets-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.beets.middlewares: "beets-whitelist"
+      traefik.http.routers.beets.rule: "Host(`beets.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ beets_watchtower_enable }}"
+

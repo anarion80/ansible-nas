@@ -78,4 +78,4 @@ ansible_nas_workgroup: ANARION
 #photostructure_enabled: true
 #librephotos_enabled: true
 #barcodebuddy_enabled: true
-
+#beets_enabled: true
