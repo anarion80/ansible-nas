@@ -57,6 +57,7 @@
     labels:
       traefik.enable: "false"
       com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
+      com.centurylinklabs.watchtower.depends-on: "ttrss-postgress"
 
 - name: Create nginx container for ttrss
   docker_container:
@@ -77,6 +78,7 @@
       traefik.http.routers.ttrss.middlewares: "ttrss-whitelist"
       traefik.http.routers.ttrss.rule: "Host(`ttrss.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
+      com.centurylinklabs.watchtower.depends-on: "ttrss"
     restart_policy: unless-stopped
 
 - name: ttrss Docker Updater Container
@@ -111,6 +113,7 @@
     labels:
       traefik.enable: "false"
       com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
+      com.centurylinklabs.watchtower.depends-on: "ttrss-postgress,ttrss"
     command: "/opt/tt-rss/updater.sh"
 
 - name: ttrss Docker Backup Container
@@ -146,5 +149,6 @@
     labels:
       traefik.enable: "false"
       com.centurylinklabs.watchtower.enable: "{{ ttrss_watchtower_enable }}"
+      com.centurylinklabs.watchtower.depends-on: "ttrss-postgress,ttrss"
     command: "/opt/tt-rss/dcron.sh -f"
 
