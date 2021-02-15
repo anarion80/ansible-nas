@@ -402,4 +402,7 @@
   - import_tasks: tasks/beets.yml
     when: (beets_enabled | default(False))
     tags: beets
-        
+
+  - import_tasks: tasks/ghost.yml
+    when: (ghost_enabled | default(False))
+    tags: ghost
