@@ -1,0 +1,27 @@
+- name: moviematch Docker Container
+  docker_container:
+    name: moviematch
+    image: lukechannings/moviematch:latest
+    pull: true
+    ports:
+      - "{{ moviematch_port }}:8000"
+
+    env:
+      PLEX_URL: "{{ moviematch_plex_url }}"
+      PLEX_TOKEN: "{{ moviematch_plex_token }}"
+      ROOT_PATH: "{{ moviematch_root_path }}"
+      LIBRARY_FILTER: "{{ moviematch_library_filter }}"
+      COLLECTION_FILTER: "{{ moviematch_collection_filter }}"
+      DEFAULT_SECTION_TYPE_FILTER: "{{ moviematch_default_section_type_filter }}"
+      LINK_TYPE: "{{ moviematch_link_type }}"
+      LOG_LEVEL: "{{ moviematch_log_level }}"
+      MOVIE_BATCH_SIZE: "{{ moviematch_movie_batch_size }}"
+    labels:
+      traefik.enable: "{{ moviematch_available_externally }}"
+      traefik.http.services.moviematch.loadbalancer.server.port: "8000"
+      traefik.http.middlewares.moviematch-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.moviematch-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.moviematch.middlewares: "moviematch-whitelist"
+      traefik.http.routers.moviematch.rule: "Host(`moviematch.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ moviematch_watchtower_enable }}"
+    restart_policy: unless-stopped

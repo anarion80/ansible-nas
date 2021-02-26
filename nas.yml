@@ -406,3 +406,7 @@
   - import_tasks: tasks/ghost.yml
     when: (ghost_enabled | default(False))
     tags: ghost
+
+  - import_tasks: tasks/moviematch.yml
+    when: (moviematch_enabled | default(False))
+    tags: moviematch

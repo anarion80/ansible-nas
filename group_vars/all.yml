@@ -30,6 +30,7 @@ tautulli_enabled: false
 booksonic_enabled: false
 booksonicair_enabled: false
 plex_autoscan_enabled: false
+moviematch_enabled: false
 
 # Media Sourcing
 sonarr_enabled: false         # tv
@@ -1628,3 +1629,19 @@ ghost_mail_options_secure: ""
 ghost_mail_options_auth: ""
 ghost_mail_options_pass: ""
 ghost_url: "https://ghost.{{ ansible_nas_domain }}"
+
+#
+# moviematch
+#
+moviematch_available_externally: "true"
+moviematch_watchtower_enable: "true"
+moviematch_plex_url: ""
+moviematch_plex_token: ""
+moviematch_port: "8221"
+moviematch_root_path: "" #The root path to use when loading resources. For example, if MovieMatch is on a sub-path, the ROOT_PATH should be set to that sub-path (without a trailing slash)
+moviematch_library_filter: "" #A list of libraries to be included in the cards, comma delimited. e.g. Films, or Films,Television, or Films,Workout Videos
+moviematch_collection_filter: "" #A list of collections to be included in the cards, comma delimited. e.g. Marvel, or Marvel,HBO
+moviematch_default_section_type_filter: "movie" #The first library with this type will be chosen as a default library
+moviematch_link_type: "app" #The method to use for opening match links
+moviematch_log_level: "INFO" #How much the server should log
+moviematch_movie_batch_size: "25" #How many movies to get from the server initially. Unless you're running out of cards really quickly you should leave this alone.
