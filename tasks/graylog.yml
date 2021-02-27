@@ -1,0 +1,94 @@
+- name: Create graylog directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "1100"
+    group: "1100"
+    mode: 0777
+  with_items:
+    - "{{ graylog_data_directory }}/elastic"
+    - "{{ graylog_data_directory }}/db"
+    - "{{ graylog_data_directory }}/data"
+    - "{{ graylog_data_directory }}/plugins"
+    - "{{ graylog_data_directory }}/journal"
+
+- name: Create MongoDB container for graylog
+  docker_container:
+    name: graylog-mongo
+    image: mongo:4.2
+    pull: true
+    volumes:
+      - "{{ graylog_data_directory }}/db:/data/db:rw"
+    labels:
+      traefik.enable: "false"
+    restart_policy: unless-stopped
+
+- name: Create Elasticsearch container
+  docker_container:
+    name: graylog-elastic
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:7.10.2
+    pull: true
+    volumes:
+      - "{{ graylog_data_directory }}/elastic:/usr/share/elasticsearch/data:rw"
+    links:
+      - graylog-mongo:mongo
+    env:
+      http.host: "0.0.0.0"
+      transport.host: "localhost"
+      network.host: "0.0.0.0"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "false"
+
+- name: Create graylog container
+  docker_container:
+    name: graylog
+    image: graylog/graylog:4.0
+    pull: true
+    volumes:
+      - graylog_data:/usr/share/graylog/data:rw
+      - graylog_journal:/usr/share/graylog/data/journal
+    links:
+      - graylog-mongo:mongo
+      - graylog-elastic:elasticsearch
+    ports:
+      # Graylog web interface and REST API
+      - "{{ graylog_web_port }}:9000"
+      # Syslog TCP
+      - "{{ graylog_syslog_tcp_port }}:1514/tcp"
+      # Syslog UDP
+      - "{{ graylog_syslog_udp_port }}:1514/udp"
+      # GELF TCP
+      - "{{ graylog_gelf_tcp_port }}:12201/tcp"
+      # GELF UDP
+      - "{{ graylog_gelf_udp_port }}:12201/udp"
+    env:
+      GRAYLOG_PASSWORD_SECRET: "{{ graylog_password_secret }}"
+      # Password: admin
+      GRAYLOG_ROOT_PASSWORD_SHA2: "{{ graylog_root_password_sha2 }}"
+      GRAYLOG_HTTP_EXTERNAL_URI: "{{ graylog_http_external_uri }}"
+      GRAYLOG_TRANSPORT_EMAIL_ENABLED: "{{ graylog_email_enabled }}"
+      GRAYLOG_TRANSPORT_EMAIL_HOSTNAME: "{{ graylog_email_hostname }}"
+      GRAYLOG_TRANSPORT_EMAIL_PORT: "{{ graylog_email_port }}"
+      GRAYLOG_TRANSPORT_EMAIL_USE_AUTH: "{{ graylog_email_use_auth }}"
+      GRAYLOG_TRANSPORT_EMAIL_USE_TLS: "{{ graylog_email_use_tls }}"
+      GRAYLOG_TRANSPORT_EMAIL_USE_SSL: "{{ graylog_email_use_ssl }}"
+      GRAYLOG_TRANSPORT_EMAIL_AUTH_USERNAME: "{{ graylog_email_auth_username }}"
+      GRAYLOG_TRANSPORT_EMAIL_AUTH_PASSWORD: "{{ graylog_email_auth_password }}"
+      GRAYLOG_TRANSPORT_EMAIL_SUBJECT_PREFIX: "{{ graylog_email_subject_prefix }}"
+      GRAYLOG_TRANSPORT_EMAIL_FROM_EMAIL: "{{ graylog_email_from_email }}"
+      GRAYLOG_ROOT_TIMEZONE: "{{ ansible_nas_timezone }}"
+      TZ: "{{ ansible_nas_timezone }}"
+    entrypoint: "/usr/bin/tini -- wait-for-it elasticsearch:9200 --  /docker-entrypoint.sh"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ graylog_available_externally }}"
+      traefik.http.services.graylog.loadbalancer.server.port: "9000"
+      traefik.http.middlewares.graylog-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.graylog-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.graylog.middlewares: "graylog-whitelist"
+      traefik.http.routers.graylog.rule: "Host(`graylog.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ graylog_watchtower_enable }}"

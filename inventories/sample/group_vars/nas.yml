@@ -81,3 +81,4 @@ ansible_nas_workgroup: ANARION
 #beets_enabled: true
 #ghost_enabled: true
 #moviematch_enabled: true
+#graylog_enabled: true

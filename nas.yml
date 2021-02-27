@@ -410,3 +410,7 @@
   - import_tasks: tasks/moviematch.yml
     when: (moviematch_enabled | default(False))
     tags: moviematch
+
+  - import_tasks: tasks/graylog.yml
+    when: (graylog_enabled | default(False))
+    tags: graylog

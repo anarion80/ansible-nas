@@ -230,6 +230,9 @@ whoogle_enabled: false
 # ghost
 ghost_enabled: false
 
+# graylog
+graylog_enabled: false
+
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
 # home static IP address, the cloudflare with the cloudflare_ddns dynamic DNS container enabled, or use a dynamic DNS provider like no-ip.
@@ -1645,3 +1648,28 @@ moviematch_default_section_type_filter: "movie" #The first library with this typ
 moviematch_link_type: "app" #The method to use for opening match links
 moviematch_log_level: "INFO" #How much the server should log
 moviematch_movie_batch_size: "25" #How many movies to get from the server initially. Unless you're running out of cards really quickly you should leave this alone.
+
+#
+# graylog
+#
+graylog_available_externally: "true"
+graylog_watchtower_enable: "true"
+graylog_data_directory: "{{ docker_home }}/graylog"
+graylog_web_port: "9010"
+graylog_syslog_tcp_port: "1514"
+graylog_syslog_udp_port: "1514"
+graylog_gelf_tcp_port: "12201"
+graylog_gelf_udp_port: "12201"
+graylog_password_secret: "super_secret_password"
+graylog_root_password_sha2: "8c6976e5b5410415bde908bd4dee15dfb167a9c873fc4bb8a81f6f2ab448a918"
+graylog_http_external_uri: "https://graylog.{{ ansible_nas_domain }}/"
+graylog_email_enabled: "false"
+graylog_email_hostname: "smtp"
+graylog_email_port: "25"
+graylog_email_use_auth: "false"
+graylog_email_use_tls: "false"
+graylog_email_use_ssl: "false"
+graylog_email_auth_username: ""
+graylog_email_auth_password: ""
+graylog_email_subject_prefix: "[graylog]"
+graylog_email_from_email: "admin@{{ ansible_nas_domain }}"
