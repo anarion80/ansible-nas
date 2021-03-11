@@ -414,3 +414,7 @@
   - import_tasks: tasks/graylog.yml
     when: (graylog_enabled | default(False))
     tags: graylog
+
+  - import_tasks: tasks/netbox.yml
+    when: (netbox_enabled | default(False))
+    tags: netbox

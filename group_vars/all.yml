@@ -200,6 +200,9 @@ shaarli_enabled: false
 # Snipe-it
 nodered_enabled: false
 
+# netbox
+netbox_enabled: false
+
 # Seafile
 seafile_enabled: false
 
@@ -1673,3 +1676,59 @@ graylog_email_auth_username: ""
 graylog_email_auth_password: ""
 graylog_email_subject_prefix: "[graylog]"
 graylog_email_from_email: "admin@{{ ansible_nas_domain }}"
+
+#
+# netbox
+#
+netbox_available_externally: "true"
+netbox_watchtower_enable: "true"
+netbox_port: "8205"
+netbox_data_directory: "{{ docker_home }}/netbox"
+netbox_user_id: "999"
+netbox_group_id: "1001"
+netbox_postgres_db: "netbox"
+netbox_postgres_password: "J5brHrAXFLQSif0K"
+netbox_postgres_user: "netbox"
+netbox_redis_password: "H733Kdjndks81"
+netbox_redis_cache_password: "t4Ph722qJ5QHeQ1qfu36"
+netbox_cors_origin_allow_all: "true"
+netbox_allowed_hosts: "localhost ::1 127.0.0.1 netbox.{{ ansible_nas_domain }}"
+netbox_db_host: "db"
+netbox_db_name: "netbox"
+netbox_db_password: "J5brHrAXFLQSif0K"
+netbox_db_user: "netbox"
+netbox_db_port: "5432"
+netbox_email_from: "netbox@{{ ansible_nas_domain }}"
+netbox_email_password: ""
+netbox_email_port: "25"
+netbox_email_server: "localhost"
+netbox_email_ssl_certfile: ""
+netbox_email_ssl_keyfile: ""
+netbox_email_timeout: "5"
+netbox_email_username: "netbox"
+# EMAIL_USE_SSL and EMAIL_USE_TLS are mutually exclusive, i.e. they can't both be `true`!
+netbox_email_use_ssl: "false"
+netbox_email_use_tls: "false"
+netbox_max_page_size: "1000"
+netbox_media_root: "/opt/netbox/netbox/media"
+netbox_metrics_enabled: "false"
+netbox_napalm_password: ""
+netbox_napalm_timeout: "30"
+netbox_napalm_username: ""
+netbox_redis_cache_database: "1"
+netbox_redis_cache_host: "redis-cache"
+netbox_redis_port: "6379"
+netbox_redis_cache_port: "6379"
+netbox_redis_cache_ssl: "false"
+netbox_redis_database: "0"
+netbox_redis_host: "redis"
+netbox_redis_ssl: "false"
+netbox_release_check_url: "https://api.github.com/repos/netbox-community/netbox/releases"
+netbox_secret_key: "r8OwDznj!!dci#P9ghmRfdu1Ysxm0AiPeDCQhKE+N_rClfWNj"
+netbox_skip_startup_scripts: "false"
+netbox_skip_superuse: "false"
+netbox_superuser_api_token: "0123456789abcdef0123456789abcdef01234567"
+netbox_superuser_email: "{{ ansible_nas_email }}"
+netbox_superuser_name: "admin"
+netbox_superuser_password: "admin"
+netbox_webhooks_enabled: "true"
