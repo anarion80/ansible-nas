@@ -129,7 +129,8 @@
       traefik.http.services.grafana.loadbalancer.server.port: "3000"
       traefik.http.middlewares.grafana-whitelist.ipwhitelist.ipstrategy.depth: "1"
       traefik.http.middlewares.grafana-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
-      traefik.http.routers.grafana.middlewares: "grafana-whitelist"
+      traefik.http.middlewares.grafana-header.headers.customFrameOptionsValue: "allow-from https://ha.{{ ansible_nas_domain }}" #for Home Assistant embedded graphs
+      traefik.http.routers.grafana.middlewares: "grafana-whitelist, grafana-header"
       traefik.http.routers.grafana.rule: "Host(`grafana.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ grafana_watchtower_enable }}"
 
