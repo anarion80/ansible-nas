@@ -206,3 +206,6 @@
       traefik.http.routers.netbox.middlewares: "netbox-whitelist"
       traefik.http.routers.netbox.rule: "Host(`netbox.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ netbox_watchtower_enable }}"
+
+- name: Fix permissions for images
+  shell: docker exec netbox chmod 777 /opt/unit/tmp
