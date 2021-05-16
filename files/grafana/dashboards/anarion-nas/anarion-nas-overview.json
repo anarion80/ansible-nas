@@ -2,13 +2,14 @@
   "annotations": {
     "list": [
       {
-        "$$hashKey": "object:933",
         "builtIn": 1,
         "datasource": "-- Grafana --",
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
+        "limit": 100,
         "name": "Annotations & Alerts",
+        "showIn": 0,
         "type": "dashboard"
       }
     ]
@@ -16,30 +17,32 @@
   "editable": true,
   "gnetId": null,
   "graphTooltip": 0,
-  "id": 4,
-  "iteration": 1587336346479,
+  "id": 3,
+  "iteration": 1621181195002,
   "links": [],
   "panels": [
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "rgba(245, 54, 54, 0.9)",
-        "rgba(237, 129, 40, 0.89)",
-        "rgba(50, 172, 45, 0.97)"
-      ],
-      "datasource": "InfluxDB",
-      "decimals": 1,
-      "editable": true,
-      "error": false,
-      "format": "s",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "datasource": "InfluxDB2",
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "fixed"
+          },
+          "mappings": [],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 4,
@@ -47,44 +50,27 @@
         "x": 0,
         "y": 0
       },
-      "height": "150",
       "id": 2,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "$$hashKey": "object:7852",
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "$$hashKey": "object:7853",
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "s",
-      "postfixFontSize": "100%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "last"
+          ],
+          "fields": "/^Uptime$/",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.5.6",
+      "repeat": null,
       "targets": [
         {
           "dsType": "influxdb",
@@ -105,6 +91,7 @@
           "measurement": "system",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"uptime_format\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:\"Uptime\"}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -130,39 +117,43 @@
           ]
         }
       ],
-      "thresholds": "",
       "title": "Uptime",
-      "type": "singlestat",
-      "valueFontSize": "100%",
-      "valueMaps": [
-        {
-          "$$hashKey": "object:7855",
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "rgba(245, 54, 54, 0.9)",
-        "rgba(237, 129, 40, 0.89)",
-        "rgba(50, 172, 45, 0.97)"
-      ],
-      "datasource": "InfluxDB",
-      "editable": true,
-      "error": false,
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "$$hashKey": "object:2892",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 4,
@@ -173,40 +164,23 @@
       "id": 24,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "$$hashKey": "object:2889",
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "$$hashKey": "object:2890",
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "dsType": "influxdb",
@@ -229,6 +203,7 @@
           "measurement": "system",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"n_cpus\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -254,23 +229,47 @@
           ]
         }
       ],
-      "thresholds": "",
       "title": "CPUs",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "$$hashKey": "object:2892",
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "datasource": "InfluxDB",
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "$$hashKey": "object:3148",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 70
+              },
+              {
+                "color": "#d44a3a",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -280,51 +279,19 @@
       "id": 4,
       "links": [],
       "options": {
-        "fieldOptions": {
+        "orientation": "horizontal",
+        "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "defaults": {
-            "mappings": [
-              {
-                "$$hashKey": "object:3148",
-                "id": 0,
-                "op": "=",
-                "text": "N/A",
-                "type": 1,
-                "value": "null"
-              }
-            ],
-            "max": 100,
-            "min": 0,
-            "nullValueMode": "connected",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "#299c46",
-                  "value": null
-                },
-                {
-                  "color": "rgba(237, 129, 40, 0.89)",
-                  "value": 70
-                },
-                {
-                  "color": "#d44a3a",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "percent"
-          },
-          "overrides": [],
+          "fields": "",
           "values": false
         },
-        "orientation": "horizontal",
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "6.7.2",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "groupBy": [
@@ -344,7 +311,7 @@
           "measurement": "cpu",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT (100 - last(\"usage_idle\")) FROM \"cpu\" WHERE (\"host\" =~ /^$server$/ AND \"cpu\" = 'cpu-total') AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\" or r[\"_measurement\"] == \"cpu\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_idle\")\r\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> map(fn: (r) => ({ r with _value: 100.0 - r._value }))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: last, createEmpty: false)\r\n  |> yield(name: \"last\")\r\n",
           "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
@@ -382,24 +349,34 @@
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "rgba(245, 54, 54, 0.9)",
-        "rgba(237, 129, 40, 0.89)",
-        "rgba(50, 172, 45, 0.97)"
-      ],
-      "datasource": "InfluxDB",
-      "decimals": null,
-      "editable": true,
-      "error": false,
-      "format": "decbytes",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "$$hashKey": "object:2892",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              }
+            ]
+          },
+          "unit": "bytes"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 4,
@@ -410,40 +387,23 @@
       "id": 25,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "$$hashKey": "object:2889",
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "$$hashKey": "object:2890",
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": false
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "dsType": "influxdb",
@@ -466,6 +426,7 @@
           "measurement": "mem",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mem\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"total\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -491,23 +452,47 @@
           ]
         }
       ],
-      "thresholds": "",
       "title": "Memory",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "$$hashKey": "object:2892",
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "cacheTimeout": null,
-      "datasource": "InfluxDB",
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "$$hashKey": "object:3098",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 70
+              },
+              {
+                "color": "#d44a3a",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -517,51 +502,19 @@
       "id": 6,
       "links": [],
       "options": {
-        "fieldOptions": {
+        "orientation": "horizontal",
+        "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "defaults": {
-            "mappings": [
-              {
-                "$$hashKey": "object:3098",
-                "id": 0,
-                "op": "=",
-                "text": "N/A",
-                "type": 1,
-                "value": "null"
-              }
-            ],
-            "max": 100,
-            "min": 0,
-            "nullValueMode": "connected",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "#299c46",
-                  "value": null
-                },
-                {
-                  "color": "rgba(237, 129, 40, 0.89)",
-                  "value": 70
-                },
-                {
-                  "color": "#d44a3a",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "percent"
-          },
-          "overrides": [],
+          "fields": "",
           "values": false
         },
-        "orientation": "horizontal",
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "6.7.2",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "groupBy": [
@@ -581,6 +534,7 @@
           "measurement": "mem",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mem\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"used_percent\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -611,7 +565,43 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "InfluxDB",
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "decimals": 2,
+          "mappings": [
+            {
+              "$$hashKey": "object:438",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "rgba(50, 172, 45, 0.97)",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 70
+              },
+              {
+                "color": "rgba(245, 54, 54, 0.9)",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -621,52 +611,19 @@
       "id": 30,
       "links": [],
       "options": {
-        "fieldOptions": {
+        "orientation": "horizontal",
+        "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "defaults": {
-            "decimals": 0,
-            "mappings": [
-              {
-                "$$hashKey": "object:438",
-                "id": 0,
-                "op": "=",
-                "text": "N/A",
-                "type": 1,
-                "value": "null"
-              }
-            ],
-            "max": 100,
-            "min": 0,
-            "nullValueMode": "connected",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "rgba(50, 172, 45, 0.97)",
-                  "value": null
-                },
-                {
-                  "color": "rgba(237, 129, 40, 0.89)",
-                  "value": 70
-                },
-                {
-                  "color": "rgba(245, 54, 54, 0.9)",
-                  "value": 80
-                }
-              ]
-            },
-            "unit": "percent"
-          },
-          "overrides": [],
+          "fields": "/^used_percent$/",
           "values": false
         },
-        "orientation": "horizontal",
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "6.7.2",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "dsType": "influxdb",
@@ -687,6 +644,7 @@
           "measurement": "disk",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"disk\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"used_percent\")\r\n  |> filter(fn: (r) => r[\"path\"] == \"/\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -723,7 +681,42 @@
     },
     {
       "cacheTimeout": null,
-      "datasource": "InfluxDB",
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {
+              "$$hashKey": "object:488",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "max": 100,
+          "min": 0,
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "#299c46",
+                "value": null
+              },
+              {
+                "color": "rgba(237, 129, 40, 0.89)",
+                "value": 50
+              },
+              {
+                "color": "#d44a3a",
+                "value": 70
+              }
+            ]
+          },
+          "unit": "percent"
+        },
+        "overrides": []
+      },
       "gridPos": {
         "h": 4,
         "w": 3,
@@ -733,51 +726,19 @@
       "id": 8,
       "links": [],
       "options": {
-        "fieldOptions": {
+        "orientation": "horizontal",
+        "reduceOptions": {
           "calcs": [
             "lastNotNull"
           ],
-          "defaults": {
-            "mappings": [
-              {
-                "$$hashKey": "object:488",
-                "id": 0,
-                "op": "=",
-                "text": "N/A",
-                "type": 1,
-                "value": "null"
-              }
-            ],
-            "max": 100,
-            "min": 0,
-            "nullValueMode": "connected",
-            "thresholds": {
-              "mode": "absolute",
-              "steps": [
-                {
-                  "color": "#299c46",
-                  "value": null
-                },
-                {
-                  "color": "rgba(237, 129, 40, 0.89)",
-                  "value": 50
-                },
-                {
-                  "color": "#d44a3a",
-                  "value": 70
-                }
-              ]
-            },
-            "unit": "percent"
-          },
-          "overrides": [],
+          "fields": "/^used_percent$/",
           "values": false
         },
-        "orientation": "horizontal",
         "showThresholdLabels": false,
-        "showThresholdMarkers": true
+        "showThresholdMarkers": true,
+        "text": {}
       },
-      "pluginVersion": "6.7.2",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "groupBy": [
@@ -796,7 +757,7 @@
           ],
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT last(\"used_percent\") FROM \"swap\" WHERE (\"host\" =~ /^$server$/) AND $timeFilter GROUP BY time($interval) fill(null)",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"swap\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"used_percent\")\r\n  |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")\r\n",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
@@ -822,23 +783,38 @@
     },
     {
       "cacheTimeout": null,
-      "colorBackground": false,
-      "colorValue": false,
-      "colors": [
-        "rgba(245, 54, 54, 0.9)",
-        "rgba(237, 129, 40, 0.89)",
-        "rgba(50, 172, 45, 0.97)"
-      ],
-      "datasource": "InfluxDB",
-      "editable": true,
-      "error": false,
-      "format": "none",
-      "gauge": {
-        "maxValue": 100,
-        "minValue": 0,
-        "show": false,
-        "thresholdLabels": false,
-        "thresholdMarkers": true
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "mappings": [
+            {
+              "$$hashKey": "object:2892",
+              "id": 0,
+              "op": "=",
+              "text": "N/A",
+              "type": 1,
+              "value": "null"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          },
+          "unit": "none"
+        },
+        "overrides": []
       },
       "gridPos": {
         "h": 4,
@@ -849,40 +825,23 @@
       "id": 10,
       "interval": null,
       "links": [],
-      "mappingType": 1,
-      "mappingTypes": [
-        {
-          "$$hashKey": "object:2889",
-          "name": "value to text",
-          "value": 1
-        },
-        {
-          "$$hashKey": "object:2890",
-          "name": "range to text",
-          "value": 2
-        }
-      ],
       "maxDataPoints": 100,
-      "nullPointMode": "connected",
-      "nullText": null,
-      "postfix": "",
-      "postfixFontSize": "50%",
-      "prefix": "",
-      "prefixFontSize": "50%",
-      "rangeMaps": [
-        {
-          "from": "null",
-          "text": "N/A",
-          "to": "null"
-        }
-      ],
-      "sparkline": {
-        "fillColor": "rgba(31, 118, 189, 0.18)",
-        "full": false,
-        "lineColor": "rgb(31, 120, 193)",
-        "show": true
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "justifyMode": "auto",
+        "orientation": "horizontal",
+        "reduceOptions": {
+          "calcs": [
+            "lastNotNull"
+          ],
+          "fields": "",
+          "values": false
+        },
+        "text": {},
+        "textMode": "auto"
       },
-      "tableColumn": "",
+      "pluginVersion": "7.5.6",
       "targets": [
         {
           "dsType": "influxdb",
@@ -905,6 +864,7 @@
           "measurement": "docker",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"n_containers_running\")\r\n  |> filter(fn: (r) => r[\"engine_host\"] == \"${server}\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -930,19 +890,8 @@
           ]
         }
       ],
-      "thresholds": "",
       "title": "Running Containers",
-      "type": "singlestat",
-      "valueFontSize": "80%",
-      "valueMaps": [
-        {
-          "$$hashKey": "object:2892",
-          "op": "=",
-          "text": "N/A",
-          "value": "null"
-        }
-      ],
-      "valueName": "current"
+      "type": "stat"
     },
     {
       "collapsed": false,
@@ -963,7 +912,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -975,21 +930,24 @@
       "hiddenSeries": false,
       "id": 17,
       "legend": {
+        "alignAsTable": true,
         "avg": false,
-        "current": false,
+        "current": true,
         "max": false,
         "min": false,
+        "rightSide": true,
         "show": true,
         "total": false,
-        "values": false
+        "values": true
       },
       "lines": true,
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -999,7 +957,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$col",
           "groupBy": [
             {
               "params": [
@@ -1014,80 +971,249 @@
               "type": "fill"
             }
           ],
-          "measurement": "cpu",
+          "hide": false,
           "orderByTime": "ASC",
           "policy": "default",
-          "refId": "A",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\r\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_idle\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n    |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "C",
           "resultFormat": "time_series",
           "select": [
             [
               {
                 "params": [
-                  "usage_user"
+                  "value"
                 ],
                 "type": "field"
               },
               {
                 "params": [],
                 "type": "mean"
-              },
-              {
-                "params": [
-                  "user"
-                ],
-                "type": "alias"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "usage_system"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [
-                  "system"
-                ],
-                "type": "alias"
-              }
-            ],
-            [
-              {
-                "params": [
-                  "usage_iowait"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [
-                  "iowait"
-                ],
-                "type": "alias"
               }
             ]
           ],
-          "tags": [
+          "tags": []
+        },
+        {
+          "groupBy": [
             {
-              "key": "cpu",
-              "operator": "=",
-              "value": "cpu-total"
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
             },
             {
-              "condition": "AND",
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
+              "params": [
+                "null"
+              ],
+              "type": "fill"
             }
-          ]
+          ],
+          "hide": false,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\r\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_iowait\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n    |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "D",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\r\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_nice\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n    |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "F",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\r\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_softirq\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n    |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "G",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\r\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_steal\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n    |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "H",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\r\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_system\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n    |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "I",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        },
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "hide": false,
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"cpu\")\r\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_user\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n    |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "J",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
         }
       ],
       "thresholds": [],
@@ -1097,7 +1223,7 @@
       "title": "CPU Utilisation",
       "tooltip": {
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1138,7 +1264,13 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
@@ -1162,9 +1294,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1192,6 +1325,7 @@
           "measurement": "system",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"load1\" or r[\"_field\"] == \"load15\" or r[\"_field\"] == \"load5\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> rename(columns: {host: \"server\"})\r\n  |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")\r\n",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1269,6 +1403,22 @@
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(load1 anarion-nas)",
+            "renamePattern": "Load1"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(load15 anarion-nas)",
+            "renamePattern": "Load15"
+          }
+        }
+      ],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1307,13 +1457,148 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "InfluxDB2 proxmox",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "celsius"
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
-        "h": 8,
-        "w": 24,
+        "h": 10,
+        "w": 12,
         "x": 0,
+        "y": 13
+      },
+      "hiddenSeries": false,
+      "id": 68,
+      "legend": {
+        "alignAsTable": true,
+        "avg": false,
+        "current": true,
+        "max": true,
+        "min": false,
+        "rightSide": true,
+        "show": true,
+        "total": false,
+        "values": true
+      },
+      "lines": true,
+      "linewidth": 1,
+      "nullPointMode": "null",
+      "options": {
+        "alertThreshold": true
+      },
+      "percentage": false,
+      "pluginVersion": "7.5.6",
+      "pointradius": 2,
+      "points": false,
+      "renderer": "flot",
+      "seriesOverrides": [],
+      "spaceLength": 10,
+      "stack": false,
+      "steppedLine": false,
+      "targets": [
+        {
+          "groupBy": [
+            {
+              "params": [
+                "$__interval"
+              ],
+              "type": "time"
+            },
+            {
+              "params": [
+                "null"
+              ],
+              "type": "fill"
+            }
+          ],
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "from(bucket: \"proxmox\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"smart_device\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"temp_c\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"pve2\")\r\n  |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r.device + \" \" + r.model}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
+          "refId": "A",
+          "resultFormat": "time_series",
+          "select": [
+            [
+              {
+                "params": [
+                  "value"
+                ],
+                "type": "field"
+              },
+              {
+                "params": [],
+                "type": "mean"
+              }
+            ]
+          ],
+          "tags": []
+        }
+      ],
+      "thresholds": [],
+      "timeFrom": null,
+      "timeRegions": [],
+      "timeShift": null,
+      "title": "Pve2 disk temperatures",
+      "tooltip": {
+        "shared": true,
+        "sort": 0,
+        "value_type": "individual"
+      },
+      "type": "graph",
+      "xaxis": {
+        "buckets": null,
+        "mode": "time",
+        "name": null,
+        "show": true,
+        "values": []
+      },
+      "yaxes": [
+        {
+          "$$hashKey": "object:10239",
+          "format": "celsius",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        },
+        {
+          "$$hashKey": "object:10240",
+          "format": "short",
+          "label": null,
+          "logBase": 1,
+          "max": null,
+          "min": null,
+          "show": true
+        }
+      ],
+      "yaxis": {
+        "align": false,
+        "alignLevel": null
+      }
+    },
+    {
+      "aliasColors": {},
+      "bars": false,
+      "dashLength": 10,
+      "dashes": false,
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
+      "fill": 1,
+      "fillGradient": 0,
+      "gridPos": {
+        "h": 7,
+        "w": 12,
+        "x": 12,
         "y": 13
       },
       "hiddenSeries": false,
@@ -1331,9 +1616,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1361,6 +1647,7 @@
           "measurement": "mem",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"mem\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"buffered\" or r[\"_field\"] == \"cached\" or r[\"_field\"] == \"used\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1438,6 +1725,29 @@
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(buffered anarion-nas)",
+            "renamePattern": "Buffered"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(cached anarion-nas)",
+            "renamePattern": "Cached"
+          }
+        },
+        {
+          "id": "renameByRegex",
+          "options": {
+            "regex": "(used anarion-nas)",
+            "renamePattern": "Used"
+          }
+        }
+      ],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1478,7 +1788,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 21
+        "y": 23
       },
       "id": 60,
       "panels": [],
@@ -1490,19 +1800,26 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB",
+      "datasource": "InfluxDB2",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 0,
-        "y": 22
+        "y": 24
       },
       "hiddenSeries": false,
       "id": 12,
+      "interval": "1m",
       "legend": {
         "alignAsTable": true,
         "avg": false,
@@ -1519,11 +1836,13 @@
       "lines": true,
       "linewidth": 1,
       "links": [],
+      "maxDataPoints": null,
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1560,6 +1879,7 @@
           "measurement": "docker_container_cpu",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_cpu\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage_percent\")\r\n  |> filter(fn: (r) => r[\"cpu\"] == \"cpu-total\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r.container_name}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")\r\n\r\n",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1593,9 +1913,24 @@
       "tooltip": {
         "msResolution": false,
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
+      "transformations": [
+        {
+          "id": "groupBy",
+          "options": {
+            "fields": {
+              "Time": {
+                "aggregations": [
+                  "lastNotNull"
+                ],
+                "operation": "aggregate"
+              }
+            }
+          }
+        }
+      ],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -1634,23 +1969,32 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB",
+      "datasource": "InfluxDB2",
       "editable": true,
       "error": false,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 2,
       "fillGradient": 0,
       "gridPos": {
         "h": 8,
         "w": 12,
         "x": 12,
-        "y": 22
+        "y": 24
       },
       "hiddenSeries": false,
       "id": 14,
+      "interval": "1m",
       "legend": {
         "alignAsTable": true,
         "avg": false,
         "current": true,
+        "hideEmpty": false,
+        "hideZero": false,
         "max": false,
         "min": false,
         "rightSide": true,
@@ -1665,9 +2009,10 @@
       "links": [],
       "nullPointMode": "connected",
       "options": {
-        "dataLinks": []
+        "alertThreshold": false
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1704,6 +2049,7 @@
           "measurement": "docker_container_mem",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"docker_container_mem\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"usage\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r.container_name}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1737,7 +2083,7 @@
       "tooltip": {
         "msResolution": false,
         "shared": true,
-        "sort": 0,
+        "sort": 2,
         "value_type": "individual"
       },
       "type": "graph",
@@ -1780,7 +2126,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 30
+        "y": 32
       },
       "id": 58,
       "panels": [],
@@ -1793,13 +2139,19 @@
       "dashLength": 10,
       "dashes": false,
       "datasource": null,
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 9,
         "w": 12,
         "x": 0,
-        "y": 31
+        "y": 33
       },
       "hiddenSeries": false,
       "id": 22,
@@ -1817,9 +2169,10 @@
       "linewidth": 1,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1928,160 +2281,13 @@
       }
     },
     {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 9,
-        "w": 12,
-        "x": 12,
-        "y": 31
-      },
-      "hiddenSeries": false,
-      "id": 27,
-      "legend": {
-        "alignAsTable": true,
-        "avg": false,
-        "current": true,
-        "hideZero": true,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": true
-      },
-      "lines": true,
-      "linewidth": 1,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "seriesOverrides": [],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$tag_device - $tag_model",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "device"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "model"
-              ],
-              "type": "tag"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "hddtemp",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "temperature"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "device",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Disk Temperature",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:7729",
-          "format": "celsius",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": "0",
-          "show": true
-        },
-        {
-          "$$hashKey": "object:7730",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": false
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
       "collapsed": false,
       "datasource": null,
       "gridPos": {
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 40
+        "y": 42
       },
       "id": 43,
       "panels": [],
@@ -2093,14 +2299,20 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "InfluxDB",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 41
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 19,
@@ -2118,21 +2330,15 @@
       "maxPerRow": 2,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
       "repeat": "zfs_pool",
       "repeatDirection": "v",
-      "scopedVars": {
-        "zfs_pool": {
-          "selected": false,
-          "text": "Volume2",
-          "value": "Volume2"
-        }
-      },
       "seriesOverrides": [
         {
           "$$hashKey": "object:6518",
@@ -2303,14 +2509,20 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "InfluxDB2 proxmox",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 41
+        "y": 43
       },
       "hiddenSeries": false,
       "id": 62,
@@ -2328,21 +2540,15 @@
       "maxPerRow": 2,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
       "repeat": "zfs_pool",
       "repeatDirection": "v",
-      "scopedVars": {
-        "zfs_pool": {
-          "selected": false,
-          "text": "Volume2",
-          "value": "Volume2"
-        }
-      },
       "seriesOverrides": [
         {
           "$$hashKey": "object:6518",
@@ -2373,7 +2579,7 @@
           "measurement": "zfs_pool",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT difference(mean(\"nread\")) AS \"Data Read\" FROM \"zfs_pool\" WHERE (\"pool\" =~ /^$zfs_pool$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "from(bucket: \"proxmox\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"zfs_pool\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"nread\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"pve2\")\r\n  |> filter(fn: (r) => r[\"pool\"] == \"storage\")\r\n  |> difference(nonNegative: false, columns: [\"_value\"])\r\n  |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "rawQuery": false,
           "refId": "A",
           "resultFormat": "time_series",
@@ -2428,7 +2634,7 @@
           "measurement": "zfs_pool",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT difference(mean(\"nread\")) AS \"Data Read\" FROM \"zfs_pool\" WHERE (\"pool\" =~ /^$zfs_pool$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "query": "from(bucket: \"proxmox\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"zfs_pool\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"nwritten\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"pve2\")\r\n  |> filter(fn: (r) => r[\"pool\"] == \"storage\")\r\n  |> difference(nonNegative: false, columns: [\"_value\"])\r\n  |> map(fn: (r) => ({_value:r._value, _time:r._time, _field:r._field}))\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "rawQuery": false,
           "refId": "B",
           "resultFormat": "time_series",
@@ -2469,431 +2675,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "Pool $zfs_pool Iops",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:5924",
-          "format": "iops",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:5925",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 48
-      },
-      "hiddenSeries": false,
-      "id": 63,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "maxPerRow": 2,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 19,
-      "scopedVars": {
-        "zfs_pool": {
-          "selected": false,
-          "text": "Volume3",
-          "value": "Volume3"
-        }
-      },
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:6518",
-          "alias": "Data Written",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "zfs_pool",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT difference(mean(\"nread\")) AS \"Data Read\" FROM \"zfs_pool\" WHERE (\"pool\" =~ /^$zfs_pool$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "nread"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Data Read"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "pool",
-              "operator": "=~",
-              "value": "/^$zfs_pool$/"
-            }
-          ]
-        },
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "zfs_pool",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT difference(mean(\"nread\")) AS \"Data Read\" FROM \"zfs_pool\" WHERE (\"pool\" =~ /^$zfs_pool$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "nwritten"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Data Written"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "pool",
-              "operator": "=~",
-              "value": "/^$zfs_pool$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Pool $zfs_pool Data I/O",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:5924",
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:5925",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 48
-      },
-      "hiddenSeries": false,
-      "id": 64,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "maxPerRow": 2,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 62,
-      "scopedVars": {
-        "zfs_pool": {
-          "selected": false,
-          "text": "Volume3",
-          "value": "Volume3"
-        }
-      },
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:6518",
-          "alias": "Data Written",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "zfs_pool",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT difference(mean(\"nread\")) AS \"Data Read\" FROM \"zfs_pool\" WHERE (\"pool\" =~ /^$zfs_pool$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "reads"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Data Read"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "pool",
-              "operator": "=~",
-              "value": "/^$zfs_pool$/"
-            }
-          ]
-        },
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "zfs_pool",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "query": "SELECT difference(mean(\"nread\")) AS \"Data Read\" FROM \"zfs_pool\" WHERE (\"pool\" =~ /^$zfs_pool$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
-          "rawQuery": false,
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "writes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Data Written"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "pool",
-              "operator": "=~",
-              "value": "/^$zfs_pool$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "Pool $zfs_pool Iops",
+      "title": "Pool storage Iops",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -2939,7 +2721,7 @@
         "h": 1,
         "w": 24,
         "x": 0,
-        "y": 55
+        "y": 50
       },
       "id": 50,
       "panels": [],
@@ -2951,14 +2733,20 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 56
+        "y": 51
       },
       "hiddenSeries": false,
       "id": 36,
@@ -2976,25 +2764,19 @@
       "maxPerRow": 2,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
       "repeat": "physical_disk",
       "repeatDirection": "v",
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sda",
-          "value": "sda"
-        }
-      },
       "seriesOverrides": [
         {
           "$$hashKey": "object:1210",
-          "alias": "Write",
+          "alias": "/write_bytes*/",
           "transform": "negative-Y"
         }
       ],
@@ -3021,6 +2803,7 @@
           "measurement": "diskio",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"write_bytes\" or r[\"_field\"] == \"read_bytes\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"anarion-nas\")\r\n  |> filter(fn: (r) => r[\"name\"] == \"sda3\" or r[\"name\"] == \"sdb1\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -3125,12 +2908,13 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "$physical_disk Data I/O",
+      "title": "Physical disk Data I/O",
       "tooltip": {
         "shared": true,
         "sort": 0,
         "value_type": "individual"
       },
+      "transformations": [],
       "type": "graph",
       "xaxis": {
         "buckets": null,
@@ -3169,14 +2953,20 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 56
+        "y": 51
       },
       "hiddenSeries": false,
       "id": 61,
@@ -3194,25 +2984,19 @@
       "maxPerRow": 2,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
       "repeat": "physical_disk",
       "repeatDirection": "v",
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sda",
-          "value": "sda"
-        }
-      },
       "seriesOverrides": [
         {
           "$$hashKey": "object:1210",
-          "alias": "Write",
+          "alias": "/writes*/",
           "transform": "negative-Y"
         }
       ],
@@ -3239,6 +3023,7 @@
           "measurement": "diskio",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"writes\" or r[\"_field\"] == \"reads\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"anarion-nas\")\r\n  |> filter(fn: (r) => r[\"name\"] == \"sda3\" or r[\"name\"] == \"sdb1\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -3298,6 +3083,7 @@
           "measurement": "diskio",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "",
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -3343,7 +3129,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "$physical_disk Disk Iops",
+      "title": "Physical disk Disk Iops",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -3387,454 +3173,20 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "InfluxDB2 proxmox",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "decbytes"
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
         "x": 0,
-        "y": 63
-      },
-      "hiddenSeries": false,
-      "id": 65,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "maxPerRow": 2,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 36,
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sdb",
-          "value": "sdb"
-        }
-      },
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1210",
-          "alias": "Write",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "read_bytes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Read"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        },
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "write_bytes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Write"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "$physical_disk Data I/O",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:566",
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:567",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 63
-      },
-      "hiddenSeries": false,
-      "id": 69,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "maxPerRow": 2,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 61,
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sdb",
-          "value": "sdb"
-        }
-      },
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1210",
-          "alias": "Write",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "reads"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Read"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        },
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "writes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Write"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "$physical_disk Disk Iops",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:566",
-          "format": "iops",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:567",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 70
+        "y": 58
       },
       "hiddenSeries": false,
       "id": 66,
@@ -3849,30 +3201,19 @@
       },
       "lines": true,
       "linewidth": 1,
-      "maxPerRow": 2,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "repeat": null,
-      "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 36,
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sdc",
-          "value": "sdc"
-        }
-      },
       "seriesOverrides": [
         {
-          "$$hashKey": "object:1210",
-          "alias": "Write",
+          "$$hashKey": "object:9357",
+          "alias": "/^diskwrite*/",
           "transform": "negative-Y"
         }
       ],
@@ -3881,7 +3222,6 @@
       "steppedLine": false,
       "targets": [
         {
-          "alias": "$col",
           "groupBy": [
             {
               "params": [
@@ -3896,114 +3236,33 @@
               "type": "fill"
             }
           ],
-          "measurement": "diskio",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"proxmox\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"system\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"diskread\" or r[\"_field\"] == \"diskwrite\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"${server}\")\r\n  |> difference(nonNegative: false, columns: [\"_value\"])\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
             [
               {
                 "params": [
-                  "read_bytes"
+                  "value"
                 ],
                 "type": "field"
               },
               {
                 "params": [],
                 "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Read"
-                ],
-                "type": "alias"
               }
             ]
           ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        },
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "write_bytes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Write"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
+          "tags": []
         }
       ],
       "thresholds": [],
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "$physical_disk Data I/O",
+      "title": "Disk Read/Write",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -4019,7 +3278,7 @@
       },
       "yaxes": [
         {
-          "$$hashKey": "object:566",
+          "$$hashKey": "object:8942",
           "format": "decbytes",
           "label": null,
           "logBase": 1,
@@ -4028,7 +3287,7 @@
           "show": true
         },
         {
-          "$$hashKey": "object:567",
+          "$$hashKey": "object:8943",
           "format": "short",
           "label": null,
           "logBase": 1,
@@ -4047,17 +3306,23 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": "InfluxDB2",
+      "fieldConfig": {
+        "defaults": {
+          "links": []
+        },
+        "overrides": []
+      },
       "fill": 1,
       "fillGradient": 0,
       "gridPos": {
         "h": 7,
         "w": 12,
         "x": 12,
-        "y": 70
+        "y": 58
       },
       "hiddenSeries": false,
-      "id": 70,
+      "id": 64,
       "legend": {
         "avg": false,
         "current": false,
@@ -4072,30 +3337,16 @@
       "maxPerRow": 2,
       "nullPointMode": "null",
       "options": {
-        "dataLinks": []
+        "alertThreshold": true
       },
       "percentage": false,
+      "pluginVersion": "7.5.6",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
-      "repeat": null,
+      "repeat": "physical_disk",
       "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 61,
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sdc",
-          "value": "sdc"
-        }
-      },
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1210",
-          "alias": "Write",
-          "transform": "negative-Y"
-        }
-      ],
+      "seriesOverrides": [],
       "spaceLength": 10,
       "stack": false,
       "steppedLine": false,
@@ -4119,6 +3370,7 @@
           "measurement": "diskio",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "from(bucket: \"anarion\")\r\n  |> range(start: v.timeRangeStart, stop: v.timeRangeStop)\r\n  |> filter(fn: (r) => r[\"_measurement\"] == \"diskio\")\r\n  |> filter(fn: (r) => r[\"_field\"] == \"iops_in_progress\")\r\n  |> filter(fn: (r) => r[\"host\"] == \"anarion-nas\")\r\n  |> filter(fn: (r) => r[\"name\"] == \"sda3\" or r[\"name\"] == \"sdb1\")\r\n  |> aggregateWindow(every: v.windowPeriod, fn: mean, createEmpty: false)\r\n  |> yield(name: \"mean\")",
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -4178,6 +3430,7 @@
           "measurement": "diskio",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "",
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -4223,887 +3476,7 @@
       "timeFrom": null,
       "timeRegions": [],
       "timeShift": null,
-      "title": "$physical_disk Disk Iops",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:566",
-          "format": "iops",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:567",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 77
-      },
-      "hiddenSeries": false,
-      "id": 67,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "maxPerRow": 2,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 36,
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sdd",
-          "value": "sdd"
-        }
-      },
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1210",
-          "alias": "Write",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "read_bytes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Read"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        },
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "write_bytes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Write"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "$physical_disk Data I/O",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:566",
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:567",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 77
-      },
-      "hiddenSeries": false,
-      "id": 71,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "maxPerRow": 2,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 61,
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sdd",
-          "value": "sdd"
-        }
-      },
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1210",
-          "alias": "Write",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "reads"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Read"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        },
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "writes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Write"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "$physical_disk Disk Iops",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:566",
-          "format": "iops",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:567",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 0,
-        "y": 84
-      },
-      "hiddenSeries": false,
-      "id": 68,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "maxPerRow": 2,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 36,
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sde",
-          "value": "sde"
-        }
-      },
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1210",
-          "alias": "Write",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "read_bytes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Read"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        },
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "write_bytes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Write"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "$physical_disk Data I/O",
-      "tooltip": {
-        "shared": true,
-        "sort": 0,
-        "value_type": "individual"
-      },
-      "type": "graph",
-      "xaxis": {
-        "buckets": null,
-        "mode": "time",
-        "name": null,
-        "show": true,
-        "values": []
-      },
-      "yaxes": [
-        {
-          "$$hashKey": "object:566",
-          "format": "decbytes",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        },
-        {
-          "$$hashKey": "object:567",
-          "format": "short",
-          "label": null,
-          "logBase": 1,
-          "max": null,
-          "min": null,
-          "show": true
-        }
-      ],
-      "yaxis": {
-        "align": false,
-        "alignLevel": null
-      }
-    },
-    {
-      "aliasColors": {},
-      "bars": false,
-      "dashLength": 10,
-      "dashes": false,
-      "datasource": null,
-      "fill": 1,
-      "fillGradient": 0,
-      "gridPos": {
-        "h": 7,
-        "w": 12,
-        "x": 12,
-        "y": 84
-      },
-      "hiddenSeries": false,
-      "id": 72,
-      "legend": {
-        "avg": false,
-        "current": false,
-        "max": false,
-        "min": false,
-        "show": true,
-        "total": false,
-        "values": false
-      },
-      "lines": true,
-      "linewidth": 1,
-      "maxPerRow": 2,
-      "nullPointMode": "null",
-      "options": {
-        "dataLinks": []
-      },
-      "percentage": false,
-      "pointradius": 2,
-      "points": false,
-      "renderer": "flot",
-      "repeat": null,
-      "repeatDirection": "v",
-      "repeatIteration": 1587336346479,
-      "repeatPanelId": 61,
-      "scopedVars": {
-        "physical_disk": {
-          "selected": false,
-          "text": "sde",
-          "value": "sde"
-        }
-      },
-      "seriesOverrides": [
-        {
-          "$$hashKey": "object:1210",
-          "alias": "Write",
-          "transform": "negative-Y"
-        }
-      ],
-      "spaceLength": 10,
-      "stack": false,
-      "steppedLine": false,
-      "targets": [
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "A",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "reads"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Read"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        },
-        {
-          "alias": "$col",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
-            },
-            {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "diskio",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "writes"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "mean"
-              },
-              {
-                "params": [],
-                "type": "difference"
-              },
-              {
-                "params": [
-                  "Write"
-                ],
-                "type": "alias"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host",
-              "operator": "=~",
-              "value": "/^$server$/"
-            },
-            {
-              "condition": "AND",
-              "key": "name",
-              "operator": "=~",
-              "value": "/^$physical_disk$/"
-            }
-          ]
-        }
-      ],
-      "thresholds": [],
-      "timeFrom": null,
-      "timeRegions": [],
-      "timeShift": null,
-      "title": "$physical_disk Disk Iops",
+      "title": "Physical disk Iops",
       "tooltip": {
         "shared": true,
         "sort": 0,
@@ -5143,8 +3516,8 @@
       }
     }
   ],
-  "refresh": "1m",
-  "schemaVersion": 22,
+  "refresh": "",
+  "schemaVersion": 27,
   "style": "dark",
   "tags": [],
   "templating": {
@@ -5152,77 +3525,36 @@
       {
         "allValue": null,
         "current": {
-          "text": "bender",
-          "value": "bender"
+          "selected": true,
+          "text": "anarion-nas",
+          "value": "anarion-nas"
         },
-        "datasource": "InfluxDB",
-        "definition": "SHOW TAG VALUES FROM system WITH KEY=host",
+        "datasource": "InfluxDB2",
+        "definition": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.tagValues(\r\n  bucket: \"anarion\",\r\n  tag: \"host\"\r\n)",
+        "description": null,
+        "error": null,
         "hide": 0,
         "includeAll": false,
-        "index": -1,
         "label": "Server",
         "multi": false,
         "name": "server",
-        "options": [],
-        "query": "SHOW TAG VALUES FROM system WITH KEY=host",
-        "refresh": 1,
+        "options": [
+          {
+            "selected": false,
+            "text": "OPNsense.lan",
+            "value": "OPNsense.lan"
+          },
+          {
+            "selected": true,
+            "text": "anarion-nas",
+            "value": "anarion-nas"
+          }
+        ],
+        "query": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.tagValues(\r\n  bucket: \"anarion\",\r\n  tag: \"host\"\r\n)",
+        "refresh": 0,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": "InfluxDB",
-        "definition": "SHOW TAG VALUES FROM zfs_pool WITH KEY=pool",
-        "hide": 0,
-        "includeAll": true,
-        "index": -1,
-        "label": "ZFS Pool",
-        "multi": false,
-        "name": "zfs_pool",
-        "options": [],
-        "query": "SHOW TAG VALUES FROM zfs_pool WITH KEY=pool",
-        "refresh": 1,
-        "regex": "",
-        "skipUrlSync": false,
-        "sort": 1,
-        "tagValuesQuery": "",
-        "tags": [],
-        "tagsQuery": "",
-        "type": "query",
-        "useTags": false
-      },
-      {
-        "allValue": null,
-        "current": {
-          "selected": false,
-          "text": "All",
-          "value": "$__all"
-        },
-        "datasource": "InfluxDB",
-        "definition": "SHOW TAG VALUES FROM diskio WITH KEY=\"name\"",
-        "hide": 0,
-        "includeAll": true,
-        "index": -1,
-        "label": "Physical Disk",
-        "multi": false,
-        "name": "physical_disk",
-        "options": [],
-        "query": "SHOW TAG VALUES FROM diskio WITH KEY=\"name\"",
-        "refresh": 1,
-        "regex": "[a-z]{3}",
-        "skipUrlSync": false,
-        "sort": 1,
         "tagValuesQuery": "",
         "tags": [],
         "tagsQuery": "",
@@ -5232,28 +3564,12 @@
     ]
   },
   "time": {
-    "from": "now-15m",
+    "from": "now-6h",
     "to": "now"
   },
-  "timepicker": {
-    "refresh_intervals": [
-      "5s",
-      "10s",
-      "30s",
-      "1m",
-      "5m",
-      "15m",
-      "30m",
-      "1h",
-      "2h",
-      "1d"
-    ]
-  },
+  "timepicker": {},
   "timezone": "",
-  "title": "Ansible-NAS Overview",
-  "uid": "NS8fBD3Zk",
-  "variables": {
-    "list": []
-  },
-  "version": 53
+  "title": "Main",
+  "uid": "T3k_2w1Gk",
+  "version": 34
 }

@@ -24,16 +24,25 @@
 
 - name: InfluxDB
   docker_container:
-    name: influxdb
-    image: influxdb
+    name: influxdb2
+    image: influxdb:latest
     pull: true
     volumes:
-      - "{{ influxdb_data_directory }}:/var/lib/influxdb:rw"
+      - "{{ influxdb_data_directory }}/data:/var/lib/influxdb2:rw"
+      - "{{ influxdb_data_directory }}/config:/etc/influxdb2:rw"
     ports:
       - "{{ grafana_influxdb_port }}:8086"
     restart_policy: unless-stopped
     env:
       INFLUXDB_LOGGING_LEVEL: "error"
+      DOCKER_INFLUXDB_INIT_MODE: "{{ influxdb_init_mode }}"
+      DOCKER_INFLUXDB_INIT_USERNAME: "{{ influxdb_init_username }}"
+      DOCKER_INFLUXDB_INIT_PASSWORD: "{{ influxdb_init_password }}"
+      DOCKER_INFLUXDB_INIT_ORG: "{{ influxdb_init_org }}"
+      DOCKER_INFLUXDB_INIT_BUCKET: "{{ influxdb_init_bucket }}"
+      DOCKER_INFLUXDB_INIT_RETENTION: "{{ influxdb_init_retention }}"
+      DOCKER_INFLUXDB_INIT_ADMIN_TOKEN: "{{ influxdb_init_admin_token }}"
+
     labels:
       com.centurylinklabs.watchtower.enable: "{{ influxdb_watchtower_enable }}"
       traefik.enable: "true"
