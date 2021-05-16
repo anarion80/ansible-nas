@@ -83,3 +83,4 @@ ansible_nas_workgroup: ANARION
 #moviematch_enabled: true
 #graylog_enabled: true
 #netbox_enabled: true
+#vaultwarden_enabled: true

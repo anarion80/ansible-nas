@@ -187,9 +187,9 @@
     when: (joomla_enabled | default(False))
     tags: joomla
 
-  - import_tasks: tasks/bitwarden.yml
-    when: (bitwarden_enabled | default(False))
-    tags: bitwarden
+  - import_tasks: tasks/vaultwarden.yml
+    when: (vaultwarden_enabled | default(False))
+    tags: vaultwarden
 
   - import_tasks: tasks/nzbget.yml
     when: (nzbget_enabled | default(False))

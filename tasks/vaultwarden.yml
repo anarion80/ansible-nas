@@ -1,0 +1,53 @@
+- name: Create Vaultwarden Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ vaultwarden_data_directory }}"
+
+- name: Template vaultwarden config.json
+  template:
+    src: vaultwarden/config.json
+    dest: "{{ vaultwarden_data_directory }}/config.json"
+
+- name: Vaultwarden Docker Container
+  docker_container:
+    name: vaultwarden
+    image: vaultwarden/server:latest
+    pull: true
+    ports:
+      - "{{ vaultwarden_port_a }}:80"
+      - "{{ vaultwarden_port_b }}:3012"
+    volumes:
+      - "{{ vaultwarden_data_directory }}:/data:rw"
+    env:
+      SIGNUPS_ALLOWED: "{{ vaultwarden_allow_signups }}"
+      ADMIN_TOKEN: "{{ vaultwarden_admin_token }}"
+      LOG_FILE: "/data/vaultwarden.log"
+      WEBSOCKET_ENABLED: "true"
+    labels:
+      traefik.enable: "{{ vaultwarden_available_externally }}"
+      traefik.http.services.vaultwarden.loadbalancer.server.port: "80"
+      traefik.http.middlewares.vaultwarden-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.vaultwarden-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.vaultwarden.middlewares: "vaultwarden-whitelist"
+      traefik.http.routers.vaultwarden.rule: "Host(`vaultwarden.{{ ansible_nas_domain }}`)"
+      traefik.http.routers.vaultwarden.service: "vaultwarden"
+      traefik.http.routers.vaultwarden-websocket.rule: "Host(`vaultwarden.{{ ansible_nas_domain }}`) && Path(`/notifications/hub`)"
+      traefik.http.routers.vaultwarden-websocket.middlewares: "vaultwarden-whitelist"
+      traefik.http.services.vaultwarden-websocket.loadbalancer.server.port: "3012"
+      traefik.http.routers.vaultwarden-websocket.service : "vaultwarden-websocket"
+      com.centurylinklabs.watchtower.enable: "{{ vaultwarden_watchtower_enable }}"
+    restart_policy: unless-stopped
+    #memory: 1g
+
+- name: Vaultwarden Backup Container
+  docker_container:
+    name: vaultwarden-backup
+    image: bruceforce/bw_backup:latest
+    pull: true
+    restart_policy: unless-stopped
+    volumes_from: vaultwarden
+    labels:
+      traefik.enable: "false"
+    memory: 1g
