@@ -84,3 +84,4 @@ ansible_nas_workgroup: ANARION
 #graylog_enabled: true
 #netbox_enabled: true
 #vaultwarden_enabled: true
+#keycloak_enabled: true

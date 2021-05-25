@@ -88,6 +88,7 @@ thelounge_enabled: false
 
 # Password Management
 vaultwarden_enabled: false
+keycloak_enabled: false
 
 # Finance
 firefly_enabled: false
@@ -1739,3 +1740,14 @@ netbox_superuser_email: "{{ ansible_nas_email }}"
 netbox_superuser_name: "admin"
 netbox_superuser_password: "admin"
 netbox_webhooks_enabled: "true"
+
+#
+# keycloak
+#
+keycloak_available_externally: "true"
+keycloak_watchtower_enable: "true"
+keycloak_data_directory: "{{ docker_home }}/keycloak"
+keycloak_user: "admin"
+keycloak_password: "password"
+keycloak_proxy_address_forwarding: "true"
+keycloak_port: "8099"

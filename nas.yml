@@ -418,3 +418,7 @@
   - import_tasks: tasks/netbox.yml
     when: (netbox_enabled | default(False))
     tags: netbox
+
+  - import_tasks: tasks/keycloak.yml
+    when: (keycloak_enabled | default(False))
+    tags: keycloak

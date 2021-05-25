@@ -1,0 +1,58 @@
+---
+- name: Create Keycloak Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ keycloak_data_directory }}"
+
+- name: Create MySQL container for Keycloak
+  docker_container:
+    name: keycloak-mysql
+    image: mysql:5.7
+    pull: true
+    volumes:
+      - "{{ keycloak_data_directory }}/mysql:/var/lib/mysql:rw"
+    env:
+      MYSQL_DATABASE: "keycloak"
+      MYSQL_USER: "keycloak"
+      MYSQL_PASSWORD: "keycloak"
+      MYSQL_ROOT_PASSWORD: "keycloak"
+    labels:
+      traefik.enable: "false"
+    restart_policy: unless-stopped
+    memory: 1g
+
+- name: keycloak
+  docker_container:
+    name: keycloak
+    image: jboss/keycloak:latest
+    pull: true
+    volumes:
+      - "{{ keycloak_data_directory }}/data:/data:rw"
+    ports:
+      - "{{ keycloak_port }}:8080"
+    links:
+      - keycloak-mysql:db
+      - openldap:openldap
+    env:
+      DB_VENDOR: "mysql"
+      DB_ADDR: "db"
+      DB_PORT: "3306"
+      DB_DATABASE: "keycloak"
+      DB_USER: "keycloak"
+      DB_PASSWORD: "keycloak"
+      KEYCLOAK_USER: "{{ keycloak_user }}"
+      KEYCLOAK_PASSWORD: "{{ keycloak_password }}"
+      KEYCLOAK_FRONTEND_URL: "https://keycloak.{{ ansible_nas_domain }}/auth"
+      PROXY_ADDRESS_FORWARDING: "{{ keycloak_proxy_address_forwarding }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ keycloak_available_externally }}"
+      traefik.http.services.keycloak.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.keycloak-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.keycloak-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.keycloak.middlewares: "keycloak-whitelist"
+      traefik.http.routers.keycloak.rule: "Host(`keycloak.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ keycloak_watchtower_enable }}"
