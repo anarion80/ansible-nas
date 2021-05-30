@@ -1,0 +1,91 @@
+- name: Create a network
+  docker_network:
+    name: traefik_internal
+
+- name: Ensure Traefik Docker Container is present
+  docker_container:
+    name: traefik
+    state: started
+    image: "{{ traefik_docker_image }}"
+    pull: true
+    recreate: true
+    networks:
+      - name: "traefik_internal"
+    volumes:
+      - "{{ traefik_data_directory }}/traefik.toml:/etc/traefik/traefik.toml:ro"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    ports:
+      - "{{ traefik_port_http }}:80"
+      - "{{ traefik_port_https }}:443"
+      - "{{ traefik_port_ui }}:8080"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ traefik_watchtower_enable }}"
+      traefik.enable: "true"
+      traefik.http.routers.traefik-secure.entrypoints: "websecure"
+      traefik.http.routers.traefik-secure.rule: "Host(`traefik.{{ ansible_nas_domain }}`)"
+      traefik.http.routers.traefik-secure.service: "api@internal"
+      traefik.http.routers.traefik-secure.middlewares: "traefik-whitelist"
+      traefik.http.routers.traefik.entrypoints: "web"
+      traefik.http.routers.traefik.rule: "Host(`traefik.{{ ansible_nas_domain }}`)"
+      traefik.http.routers.traefik.service: "api@internal"
+      traefik.http.routers.traefik.middlewares: "traefik-whitelist"
+      traefik.http.services.traefik-secure.loadbalancer.server.port: "{{ traefik_port_ui }}"
+      traefik.http.services.traefik.loadbalancer.server.port: "{{ traefik_port_ui }}"
+      traefik.http.middlewares.traefik-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.traefik-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+    restart_policy: unless-stopped
+    memory: 1g
+
+
+
+- name: Add traefik to the new internal network, leaving existing containers connected
+  docker_network:
+    name: traefik_internal
+    connected:
+      - traefik
+    appends: yes
+
+- name: Traefik Forward Auth Container
+  docker_container:
+    name: traefik-forward-auth
+    image: thomseddon/traefik-forward-auth:latest
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    ports:
+      - "{{ traefik_froward_auth_port }}:4181"
+    env:
+      PROVIDERS_OIDC_ISSUER_URL: "{{ traefik_oidc_issuer_url }}"
+      PROVIDERS_OIDC_CLIENT_ID: "{{ traefik_oidc_client_id }}"
+      PROVIDERS_OIDC_CLIENT_SECRET: "{{ traefik_oidc_client_secret }}"
+      PROVIDERS_OIDC_RESOURCE: "{{ traefik_oidc_resource }}"
+      AUTH_HOST: "{{ traefik_auth_host }}"
+      COOKIE_DOMAIN: "{{ traefik_cookie_domain }}"
+      INSECURE_COOKIE: "{{ traefik_insecure_cookie }}"
+      DEFAULT_PROVIDER: "oidc"
+      DEFAULT_ACTION: "auth"
+      DOMAIN: "{{ traefik_domain }}"
+      URL_PATH: "/_oauth"
+      SECRET: "{{ traefik_secret}}"
+      WHITELIST: "{{ traefik_whitelist }}"
+      PORT: "4181"
+
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ traefik_forward_auth_watchtower_enable }}"
+      traefik.http.routers.traefik-forward-auth.rule: "Host(`auth.{{ ansible_nas_domain }}`)"
+      traefik.http.middlewares.traefik-forward-auth.forwardauth.address: "http://traefik-forward-auth:4181"
+      traefik.http.middlewares.traefik-forward-auth.forwardauth.authResponseHeaders: "X-Forwarded-User"
+      traefik.http.services.traefik-forward-auth.loadbalancer.server.port: "4181"
+      traefik.http.middlewares.traefik-forward-auth.forwardauth.trustForwardHeader: "true"
+      traefik.http.routers.traefik-forward-auth.middlewares: "traefik-forward-auth"
+    restart_policy: unless-stopped
+    memory: 1g
+
+# - name: Whoami container
+#   docker_container:
+#     name: whoami
+#     image: containous/whoami
+#     labels:
+#       traefik.enable: "true"
+#       traefik.http.routers.whoami.rule: "Host(`whoami.{{ ansible_nas_domain }}`)"
+#       traefik.http.routers.whoami.middlewares: "traefik-forward-auth"

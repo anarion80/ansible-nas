@@ -422,3 +422,7 @@
   - import_tasks: tasks/keycloak.yml
     when: (keycloak_enabled | default(False))
     tags: keycloak
+
+  - import_tasks: tasks/traefik-forward-auth.yml
+    when: (traefik_forward_auth_enabled | default(False))
+    tags: traefik-forward-auth

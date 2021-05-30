@@ -248,6 +248,22 @@ traefik_port_https: "443"
 traefik_port_ui: "8083"
 traefik_watchtower_enable: "true"
 
+# traefik-forward-auth
+traefik_oidc_issuer_url: "https://keycloak.{{ ansible_nas_domain }}/auth/realms/homelab"
+traefik_oidc_client_id: "my-traefik-forward-auth"
+traefik_oidc_client_secret: "secret"
+traefik_oidc_resource: ""
+traefik_auth_host: "auth.{{ ansible_nas_domain }}"
+traefik_cookie_domain: "{{ ansible_nas_domain }}"
+traefik_insecure_cookie: "false"
+traefik_domain: ""
+traefik_url_path: "/_oauth"
+traefik_secret: "secret"
+traefik_whitelist: ""
+traefik_froward_auth_port: "4181"
+traefik_forward_auth_watchtower_enable: "true"
+
+
 ###
 ### General
 ###
