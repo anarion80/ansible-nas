@@ -1,0 +1,44 @@
+---
+- name: Create Authelia Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ authelia_data_directory }}/config"
+
+- name: Authelia Docker Container
+  docker_container:
+    name: authelia
+    image: authelia/authelia:latest
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    volumes:
+      - "{{ authelia_data_directory }}/config:/config:rw"
+    ports:
+      - "{{ authelia_port }}:9093"
+    restart_policy: unless-stopped
+    memory: 1g
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+    labels:
+      traefik.enable: "{{ authelia_available_externally }}"
+      traefik.http.services.authelia.loadbalancer.server.port: "9093"
+      traefik.http.middlewares.authelia-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.authelia-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.authelia.middlewares: "authelia-whitelist, authelia"
+      traefik.http.routers.authelia.rule: "Host(`authelia.{{ ansible_nas_domain }}`)"
+      traefik.http.middlewares.authelia.forwardauth.address: "http://authelia:9093"
+      traefik.http.middlewares.authelia.forwardauth.trustForwardHeader: "true"
+      traefik.http.middlewares.authelia.forwardauth.authResponseHeaders: "Remote-User,Remote-Groups,Remote-Name,Remote-Email"
+      com.centurylinklabs.watchtower.enable: "{{ authelia_watchtower_enable }}"
+
+# - name: Whoami container
+#   docker_container:
+#     name: whoami
+#     image: traefik/whoami
+#     labels:
+#       traefik.enable: "true"
+#       traefik.http.routers.whoami.rule: "Host(`whoami.{{ ansible_nas_domain }}`)"
+#       traefik.http.routers.whoami.middlewares: "authelia"

@@ -426,3 +426,8 @@
   - import_tasks: tasks/traefik-forward-auth.yml
     when: (traefik_forward_auth_enabled | default(False))
     tags: traefik-forward-auth
+
+  - import_tasks: tasks/authelia.yml
+    when: (authelia_enabled | default(False))
+    tags: authelia
+    

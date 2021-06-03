@@ -86,3 +86,4 @@ ansible_nas_workgroup: ANARION
 #vaultwarden_enabled: true
 #keycloak_enabled: true
 #traefik_forward_auth_enabled: true
+#authelia_enabled: true

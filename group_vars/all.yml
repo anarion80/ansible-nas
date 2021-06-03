@@ -263,6 +263,7 @@ traefik_whitelist: ""
 traefik_froward_auth_port: "4181"
 traefik_forward_auth_watchtower_enable: "true"
 
+authelia_enabled: false
 
 ###
 ### General
@@ -1767,3 +1768,12 @@ keycloak_user: "admin"
 keycloak_password: "password"
 keycloak_proxy_address_forwarding: "true"
 keycloak_port: "8099"
+
+
+#
+# authelia
+#
+authelia_available_externally: "true"
+authelia_watchtower_enable: "true"
+authelia_data_directory: "{{ docker_home }}/authelia"
+authelia_port: "9093"
