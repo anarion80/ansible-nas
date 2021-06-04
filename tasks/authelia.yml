@@ -7,6 +7,14 @@
   with_items:
     - "{{ authelia_data_directory }}/config"
 
+- name: Create config file
+  template:
+    src: authelia/configuration.yml
+    dest: "{{ authelia_data_directory }}/config/configuration.yml"
+    owner: "root"
+    group: "root"
+    mode: u=rw
+
 - name: Authelia Docker Container
   docker_container:
     name: authelia
