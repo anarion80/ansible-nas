@@ -31,7 +31,7 @@
       mail__options__auth__pass: "{{ ghost_mail_options_pass }}"
     labels:
       traefik.enable: "{{ ghost_available_externally }}"
-      traefik.http.services.ghost.loadbalancer.server.port: "80"
+      traefik.http.services.ghost.loadbalancer.server.port: "2368"
       traefik.http.middlewares.ghost-whitelist.ipwhitelist.ipstrategy.depth: "1"
       traefik.http.middlewares.ghost-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
       traefik.http.routers.ghost.middlewares: "ghost-whitelist"
