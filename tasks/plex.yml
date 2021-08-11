@@ -22,7 +22,6 @@
       - "{{ plex_music_directory }}:/music:{{ plex_music_permissions }}"
       - "{{ plex_anime_movies_directory }}:/anime_movies:{{ plex_movies_permissions }}"
       - "{{ plex_anime_series_directory }}:/anime_series:{{ plex_tv_permissions }}"
-    pull: true
     ports:
       - "{{ plex_port }}:32400"
       - "5353:5353/udp"
