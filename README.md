@@ -57,6 +57,7 @@ Ansible config and a bunch of Docker containers.
 * [Jackett](https://github.com/Jackett/Jackett) - API Support for your favorite torrent trackers
 * [Jellyfin](https://jellyfin.github.io) - The Free Software Media System
 * [Joomla](https://www.joomla.org/) - Open source content management system
+* [Komga](https://komga.org/) - Free and open source comics/mangas media server
 * [https://krusader.org/](https://krusader.org/) - Twin panel file management for your desktop
 * [LazyLibrarian](https://lazylibrarian.gitlab.io/) - A program to follow authors and grab metadata for all your digital reading needs
 * [Lidarr](https://github.com/lidarr/Lidarr) - Music collection manager for Usenet and BitTorrent users

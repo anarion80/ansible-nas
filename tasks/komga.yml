@@ -1,0 +1,32 @@
+---
+- name: Create Komga Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ komga_data_directory }}"
+
+- name: Komga Docker Container
+  docker_container:
+    name: komga
+    image: gotson/komga:latest
+    pull: true
+    volumes:
+      - "{{ komga_data_directory }}/config:/config:rw"
+      - "{{ komga_comics_directory }}:/data:rw"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ komga_user_id|quote }}"
+      PGID: "{{ komga_group_id|quote }}"
+      JAVA_TOOL_OPTIONS: "-Xmx4g"
+    ports:
+      - "{{ komga_port }}:8080"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "{{ komga_available_externally }}"
+      traefik.http.services.ubooquity.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.ubooquity-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.ubooquity-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.ubooquity.middlewares: "komga-whitelist"
+      traefik.http.routers.ubooquity.rule: "Host(`komga.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ komga_watchtower_enable }}"

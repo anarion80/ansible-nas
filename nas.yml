@@ -430,4 +430,8 @@
   - import_tasks: tasks/authelia.yml
     when: (authelia_enabled | default(False))
     tags: authelia
+
+  - import_tasks: tasks/komga.yml
+    when: (komga_enabled | default(False))
+    tags: komga
     
