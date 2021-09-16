@@ -24,9 +24,9 @@
     restart_policy: unless-stopped
     labels:
       traefik.enable: "{{ komga_available_externally }}"
-      traefik.http.services.ubooquity.loadbalancer.server.port: "8080"
-      traefik.http.middlewares.ubooquity-whitelist.ipwhitelist.ipstrategy.depth: "1"
-      traefik.http.middlewares.ubooquity-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
-      traefik.http.routers.ubooquity.middlewares: "komga-whitelist"
-      traefik.http.routers.ubooquity.rule: "Host(`komga.{{ ansible_nas_domain }}`)"
+      traefik.http.services.komga.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.komga-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.komga-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.komga.middlewares: "komga-whitelist"
+      traefik.http.routers.komga.rule: "Host(`komga.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ komga_watchtower_enable }}"
