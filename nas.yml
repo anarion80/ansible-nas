@@ -438,3 +438,7 @@
   - import_tasks: tasks/flame.yml
     when: (flame_enabled | default(False))
     tags: flame
+
+  - import_tasks: tasks/ghost_default.yml
+    when: (ghost_enabled | default(False))
+    tags: ghost_default
