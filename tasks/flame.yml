@@ -14,6 +14,7 @@
     pull: true
     volumes:
       - "{{ flame_data_directory }}:/app/data"
+      - /var/run/docker.sock:/var/run/docker.sock
     ports:
       - "{{ flame_port }}:5005"
     env:
