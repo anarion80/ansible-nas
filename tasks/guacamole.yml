@@ -31,7 +31,7 @@
 - name: Guacamole Container
   docker_container:
     name: guacamole
-    image: "oznu/guacamole"
+    image: "jasonbean/guacamole"
     pull: true
     volumes:
       - "{{ guacamole_data_directory }}/config:/config:rw"
@@ -51,5 +51,5 @@
 - name: Restart Guacamole Container
   docker_container:
     name: guacamole
-    image: "oznu/guacamole"
+    image: "jasonbean/guacamole"
     restart: true
