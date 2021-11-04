@@ -434,4 +434,7 @@
   - import_tasks: tasks/komga.yml
     when: (komga_enabled | default(False))
     tags: komga
-    
+
+  - import_tasks: tasks/flame.yml
+    when: (flame_enabled | default(False))
+    tags: flame

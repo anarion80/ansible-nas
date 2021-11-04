@@ -1,0 +1,33 @@
+---
+- name: Create Flame Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ flame_data_directory }}"
+
+- name: Flame Docker Container
+  docker_container:
+    name: flame
+    image: pawelmalak/flame:latest
+    pull: true
+    volumes:
+      - "{{ flame_data_directory }}:/app/data"
+    ports:
+      - "{{ flame_port }}:5005"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ flame_user_id }}"
+      PGID: "{{ flame_group_id }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ flame_available_externally }}"
+      traefik.http.services.flame.loadbalancer.server.port: "5005"
+      traefik.http.middlewares.flame-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.flame-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.flame.middlewares: "flame-whitelist"
+      traefik.http.routers.flame.rule: "Host(`flame.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ flame_watchtower_enable }}"
+

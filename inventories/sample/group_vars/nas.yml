@@ -88,3 +88,4 @@ ansible_nas_workgroup: ANARION
 #traefik_forward_auth_enabled: true
 #authelia_enabled: true
 #komga_enabled: true
+#flame_enabled: true

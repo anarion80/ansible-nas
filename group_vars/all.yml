@@ -1791,3 +1791,14 @@ authelia_available_externally: "true"
 authelia_watchtower_enable: "true"
 authelia_data_directory: "{{ docker_home }}/authelia"
 authelia_port: "9093"
+
+
+#
+# flame
+#
+flame_available_externally: "true"
+flame_watchtower_enable: "true"
+flame_data_directory: "{{ docker_home }}/flame"
+flame_port: "5005"
+flame_user_id: "999"
+flame_group_id: "1001"
