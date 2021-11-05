@@ -442,3 +442,7 @@
   - import_tasks: tasks/ghost_default.yml
     when: (ghost_enabled | default(False))
     tags: ghost_default
+
+  - import_tasks: tasks/gotify.yml
+    when: (gotify_enabled | default(False))
+    tags: gotify

@@ -89,3 +89,4 @@ ansible_nas_workgroup: ANARION
 #authelia_enabled: true
 #komga_enabled: true
 #flame_enabled: true
+#gotify_enabled: true
