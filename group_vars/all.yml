@@ -1838,3 +1838,23 @@ prowlarr_port: "9696"
 prowlarr_hostname: "prowlarr"
 # specs
 prowlarr_memory: 1g
+
+#
+# netbootxyz
+#
+netbootxyz_enabled: false
+netbootxyz_available_externally: "false"
+netbootxyz_watchtower_enable: "true"
+# directories
+netbootxyz_config_directory: "{{ docker_home }}/netbootxyz/config"
+netbootxyz_assets_directory: "{{ docker_home }}/netbootxyz/assets"
+# network
+netbootxyz_hostname: netbootxyz
+netbootxyz_port_http: "3002"
+netbootxyz_port_http2: "5803"
+netbootxyz_port_tftp: "69"
+# uid/gid
+netbootxyz_user_id: "999"
+netbootxyz_group_id: "1001"
+# specs
+netbootxyz_memory: 1g

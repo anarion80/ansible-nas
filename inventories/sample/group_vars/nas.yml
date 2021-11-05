@@ -91,3 +91,4 @@ ansible_nas_workgroup: ANARION
 #flame_enabled: true
 #gotify_enabled: true
 #prowlarr_enabled: true
+#netbootxyz_enabled: true
