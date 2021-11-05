@@ -1808,6 +1808,7 @@ flame_group_id: "1001"
 #
 gotify_enabled: false
 gotify_available_externally: "false"
+gotify_watchtower_enable: "true"
 # data directory
 gotify_data_directory: "{{ docker_home }}/gotify"
 # docker image to use
