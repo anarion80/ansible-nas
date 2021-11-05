@@ -446,3 +446,7 @@
   - import_tasks: tasks/gotify.yml
     when: (gotify_enabled | default(False))
     tags: gotify
+
+  - import_tasks: tasks/prowlarr.yml
+    when: (prowlarr_enabled | default(False))
+    tags: prowlarr

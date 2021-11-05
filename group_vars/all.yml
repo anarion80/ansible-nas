@@ -1820,3 +1820,20 @@ gotify_user_id: "999"
 gotify_group_id: "1001"
 # specs
 gotify_memory: 200m
+
+#
+# prowlarr
+#
+prowlarr_enabled: false
+prowlarr_watchtower_enable: "true"
+prowlarr_available_externally: "false"
+# directories
+prowlarr_data_directory: "{{ docker_home }}/prowlarr/config"
+# uid / gid
+prowlarr_user_id: "999"
+prowlarr_group_id: "1001"
+# network
+prowlarr_port: "9696"
+prowlarr_hostname: "prowlarr"
+# specs
+prowlarr_memory: 1g
