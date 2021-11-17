@@ -241,7 +241,7 @@ ghost_enabled: false
 graylog_enabled: false
 
 # External Access
-# Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your 
+# Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your
 # home static IP address, the cloudflare with the cloudflare_ddns dynamic DNS container enabled, or use a dynamic DNS provider like no-ip.
 # You'll also need to map ports 80 and 443 from your router to your anarion-nas server, then enable the per-app "available_externally"
 # settings.
@@ -1723,6 +1723,7 @@ netbox_available_externally: "true"
 netbox_watchtower_enable: "true"
 netbox_port: "8205"
 netbox_data_directory: "{{ docker_home }}/netbox"
+netbox_service_user: "anarion-nas"
 netbox_user_id: "999"
 netbox_group_id: "1001"
 netbox_postgres_db: "netbox"
@@ -1731,8 +1732,8 @@ netbox_postgres_user: "netbox"
 netbox_redis_password: "H733Kdjndks81"
 netbox_redis_cache_password: "t4Ph722qJ5QHeQ1qfu36"
 netbox_cors_origin_allow_all: "true"
-netbox_allowed_hosts: "localhost ::1 127.0.0.1 netbox.{{ ansible_nas_domain }}"
-netbox_db_host: "db"
+netbox_allowed_hosts: "localhost ::1 127.0.0.1 netbox.{{ ansible_nas_domain }} {{ ansible_default_ipv4.address }}"
+netbox_db_host: "netbox_netbox-postgres_1"
 netbox_db_name: "netbox"
 netbox_db_password: "J5brHrAXFLQSif0K"
 netbox_db_user: "netbox"
@@ -1755,12 +1756,12 @@ netbox_napalm_password: ""
 netbox_napalm_timeout: "30"
 netbox_napalm_username: ""
 netbox_redis_cache_database: "1"
-netbox_redis_cache_host: "redis-cache"
+netbox_redis_cache_host: "netbox_netbox-redis-cache_1"
 netbox_redis_port: "6379"
 netbox_redis_cache_port: "6379"
 netbox_redis_cache_ssl: "false"
 netbox_redis_database: "0"
-netbox_redis_host: "redis"
+netbox_redis_host: "netbox_netbox-redis_1"
 netbox_redis_ssl: "false"
 netbox_release_check_url: "https://api.github.com/repos/netbox-community/netbox/releases"
 netbox_secret_key: "r8OwDznj!!dci#P9ghmRfdu1Ysxm0AiPeDCQhKE+N_rClfWNj"
