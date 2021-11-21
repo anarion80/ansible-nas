@@ -18,9 +18,9 @@
       - "{{ photoprism_http_port }}:2342"
     env:
       TZ: "{{ ansible_nas_timezone }}"
-      UID: "{{ photoprism_user_id }}"
-      GID: "{{ photoprism_group_id }}"
-      UMASK: "{{ photoprism_umask }}"
+      PHOTOPRISM_UID: "{{ photoprism_user_id }}"
+      PHOTOPRISM_GID: "{{ photoprism_group_id }}"
+      PHOTOPRISM_UMASK: "{{ photoprism_umask }}"
       PHOTOPRISM_ADMIN_PASSWORD: "{{ photoprism_admin_password }}"
       PHOTOPRISM_HTTP_PORT: "{{ photoprism_http_port }}"
       PHOTOPRISM_HTTP_COMPRESSION: "{{ photoprism_http_compression }}"
