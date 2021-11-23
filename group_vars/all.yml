@@ -1819,6 +1819,9 @@ authentik_email_from: "authentik@{{ ansible_nas_domain }}"
 authentik_geoipupdate_account_id: ""
 authentik_geoipupdate_license_key: ""
 authentik_geoip: "/geoip/GeoLite2-City.mmdb"
+authentik_disable_update_check: "true"
+authentik_disable_startup_analytics: "true"
+authentik_avatars: "gravatar"
 
 
 #

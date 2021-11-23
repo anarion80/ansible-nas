@@ -61,12 +61,15 @@
             AUTHENTIK_EMAIL__USE_SSL: "{{ authentik_email_use_ssl }}"
             AUTHENTIK_EMAIL__TIMEOUT: "{{ authentik_email_timeout }}"
             # Email address authentik will send from, should have a correct @domain
-            AUTHENTIK_EMAIL__FROM: "{{ authentik_pg_user }}"
+            AUTHENTIK_EMAIL__FROM: "{{ authentik_email_from }}"
             # WORKERS: 2
             GEOIPUPDATE_ACCOUNT_ID: "{{ authentik_geoipupdate_account_id }}"
             GEOIPUPDATE_LICENSE_KEY: "{{ authentik_geoipupdate_license_key }}"
             AUTHENTIK_AUTHENTIK__GEOIP: "{{ authentik_geoip }}"
             AUTHENTIK_SECRET_KEY: "{{ authentik_secret_key }}"
+            AUTHENTIK_DISABLE_UPDATE_CHECK: "{{ authentik_disable_update_check }}"
+            AUTHENTIK_DISABLE_STARTUP_ANALYTICS: "{{ authentik_disable_startup_analytics }}"
+            AUTHENTIK_AVATARS: "{{ authentik_avatars }}"
           volumes:
             - media:/media
             - custom-templates:/templates
@@ -104,12 +107,12 @@
             AUTHENTIK_EMAIL__USERNAME: "{{ authentik_email_username }}"
             AUTHENTIK_EMAIL__PASSWORD: "{{ authentik_email_password}}"
             # Use StartTLS
-            AUTHENTIK_EMAIL__USE_TLS: "{{ authentik_pg_user }}"
+            AUTHENTIK_EMAIL__USE_TLS: "{{ authentik_email_use_tls }}"
             # Use SSL
-            AUTHENTIK_EMAIL__USE_SSL: "{{ authentik_pg_user }}"
-            AUTHENTIK_EMAIL__TIMEOUT: "{{ authentik_pg_user }}"
+            AUTHENTIK_EMAIL__USE_SSL: "{{ authentik_email_use_ssl }}"
+            AUTHENTIK_EMAIL__TIMEOUT: "{{ authentik_email_timeout }}"
             # Email address authentik will send from, should have a correct @domain
-            AUTHENTIK_EMAIL__FROM: "{{ authentik_pg_user }}"
+            AUTHENTIK_EMAIL__FROM: "{{ authentik_email_from }}"
             # WORKERS: 2
             GEOIPUPDATE_ACCOUNT_ID: "{{ authentik_geoipupdate_account_id }}"
             GEOIPUPDATE_LICENSE_KEY: "{{ authentik_geoipupdate_license_key }}"
