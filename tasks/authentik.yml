@@ -1,0 +1,163 @@
+---
+# - name: Create authentik Directory
+#   file:
+#     path: "{{ item }}"
+#     state: directory
+#   with_items:
+#     - "{{ authentik_data_directory }}/config"
+#     - "{{ authentik_data_directory }}/reports"
+#     - "{{ authentik_data_directory }}/scripts"
+
+- name: Create authentik
+  docker_compose:
+    project_name: authentik
+    definition:
+      version: '3.2'
+      services:
+        authentik_postgresql:
+          image: postgres:12-alpine
+          restart: unless-stopped
+          volumes:
+            - database:/var/lib/postgresql/data
+          environment:
+            POSTGRES_PASSWORD: "{{ authentik_pg_pass }}"
+            POSTGRES_USER: "{{ authentik_pg_user }}"
+            POSTGRES_DB: "{{ authentik_pg_db }}"
+          networks:
+            - authentik
+          labels:
+            traefik.enable: "false"
+            com.centurylinklabs.watchtower.enable: "{{ authentik_watchtower_enable }}"
+
+        authentik_redis:
+          image: redis:alpine
+          restart: unless-stopped
+          networks:
+            - authentik
+          labels:
+            traefik.enable: "false"
+            com.centurylinklabs.watchtower.enable: "{{ authentik_watchtower_enable }}"
+
+        authentik_server:
+          image: "{{ authentik_image }}:{{ authentik_tag }}"
+          restart: unless-stopped
+          command: server
+          environment:
+            AUTHENTIK_REDIS__HOST: authentik_redis
+            AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
+            AUTHENTIK_POSTGRESQL__USER: "{{ authentik_pg_user }}"
+            AUTHENTIK_POSTGRESQL__NAME:  "{{ authentik_pg_db }}"
+            AUTHENTIK_POSTGRESQL__PASSWORD: "{{ authentik_pg_pass }}"
+            AUTHENTIK_ERROR_REPORTING__ENABLED: "{{ authentik_error_reporting }}"
+            # SMTP Host Emails are sent to
+            AUTHENTIK_EMAIL__HOST: "{{ authentik_email_host}}"
+            AUTHENTIK_EMAIL__PORT: "{{ authentik_email_port}}"
+            # Optionally authenticate (don't add quotation marks to you password)
+            AUTHENTIK_EMAIL__USERNAME: "{{ authentik_email_username }}"
+            AUTHENTIK_EMAIL__PASSWORD: "{{ authentik_email_password}}"
+            # Use StartTLS
+            AUTHENTIK_EMAIL__USE_TLS: "{{ authentik_email_use_tls }}"
+            # Use SSL
+            AUTHENTIK_EMAIL__USE_SSL: "{{ authentik_email_use_ssl }}"
+            AUTHENTIK_EMAIL__TIMEOUT: "{{ authentik_email_timeout }}"
+            # Email address authentik will send from, should have a correct @domain
+            AUTHENTIK_EMAIL__FROM: "{{ authentik_pg_user }}"
+            # WORKERS: 2
+            GEOIPUPDATE_ACCOUNT_ID: "{{ authentik_geoipupdate_account_id }}"
+            GEOIPUPDATE_LICENSE_KEY: "{{ authentik_geoipupdate_license_key }}"
+            AUTHENTIK_AUTHENTIK__GEOIP: "{{ authentik_geoip }}"
+            AUTHENTIK_SECRET_KEY: "{{ authentik_secret_key }}"
+          volumes:
+            - media:/media
+            - custom-templates:/templates
+            - geoip:/geoip
+          ports:
+            - "{{ authentik_http_port }}:9000"
+            - "{{ authentik_https_port }}:9443"
+          networks:
+            - authentik
+            - traefik_internal
+          labels:
+            traefik.enable: "{{ authentik_available_externally }}"
+            com.centurylinklabs.watchtower.enable: "{{ authentik_watchtower_enable }}"
+            traefik.http.services.authentik.loadbalancer.server.port: "9000"
+            traefik.http.middlewares.authentik-whitelist.ipwhitelist.ipstrategy.depth: "1"
+            traefik.http.middlewares.authentik-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+            traefik.http.routers.authentik.middlewares: "authentik-whitelist"
+            traefik.http.routers.authentik.rule: "Host(`authentik.{{ ansible_nas_domain }}`)"
+
+        authentik_worker:
+          image: "{{ authentik_image }}:{{ authentik_tag }}"
+          restart: unless-stopped
+          command: worker
+          environment:
+            AUTHENTIK_REDIS__HOST: authentik_redis
+            AUTHENTIK_POSTGRESQL__HOST: authentik_postgresql
+            AUTHENTIK_POSTGRESQL__USER: "{{ authentik_pg_user }}"
+            AUTHENTIK_POSTGRESQL__NAME:  "{{ authentik_pg_db }}"
+            AUTHENTIK_POSTGRESQL__PASSWORD: "{{ authentik_pg_pass }}"
+            AUTHENTIK_ERROR_REPORTING__ENABLED: "{{ authentik_error_reporting }}"
+            # SMTP Host Emails are sent to
+            AUTHENTIK_EMAIL__HOST: "{{ authentik_email_host}}"
+            AUTHENTIK_EMAIL__PORT: "{{ authentik_email_port}}"
+            # Optionally authenticate (don't add quotation marks to you password)
+            AUTHENTIK_EMAIL__USERNAME: "{{ authentik_email_username }}"
+            AUTHENTIK_EMAIL__PASSWORD: "{{ authentik_email_password}}"
+            # Use StartTLS
+            AUTHENTIK_EMAIL__USE_TLS: "{{ authentik_pg_user }}"
+            # Use SSL
+            AUTHENTIK_EMAIL__USE_SSL: "{{ authentik_pg_user }}"
+            AUTHENTIK_EMAIL__TIMEOUT: "{{ authentik_pg_user }}"
+            # Email address authentik will send from, should have a correct @domain
+            AUTHENTIK_EMAIL__FROM: "{{ authentik_pg_user }}"
+            # WORKERS: 2
+            GEOIPUPDATE_ACCOUNT_ID: "{{ authentik_geoipupdate_account_id }}"
+            GEOIPUPDATE_LICENSE_KEY: "{{ authentik_geoipupdate_license_key }}"
+            AUTHENTIK_AUTHENTIK__GEOIP: "{{ authentik_geoip }}"
+            AUTHENTIK_SECRET_KEY: "{{ authentik_secret_key }}"
+          # This is optional, and can be removed. If you remove this, the following will happen
+          # - The permissions for the /backups and /media folders aren't fixed, so make sure they are 1000:1000
+          # - The docker socket can't be accessed anymore
+          user: root
+          volumes:
+            - backups:/backups
+            - media:/media
+            - /var/run/docker.sock:/var/run/docker.sock
+            - custom-templates:/templates
+            - geoip:/geoip
+          networks:
+            - authentik
+          labels:
+            traefik.enable: "false"
+            com.centurylinklabs.watchtower.enable: "{{ authentik_watchtower_enable }}"
+
+        geoipupdate:
+          image: "maxmindinc/geoipupdate:latest"
+          volumes:
+            - "geoip:/usr/share/GeoIP"
+          environment:
+            GEOIPUPDATE_EDITION_IDS: "GeoLite2-City"
+            GEOIPUPDATE_FREQUENCY: "8"
+            GEOIPUPDATE_ACCOUNT_ID: "{{ authentik_geoipupdate_account_id }}"
+            GEOIPUPDATE_LICENSE_KEY: "{{ authentik_geoipupdate_license_key }}"
+            AUTHENTIK_AUTHENTIK__GEOIP: "{{ authentik_geoip }}"
+          networks:
+            - authentik
+          labels:
+            traefik.enable: "false"
+            com.centurylinklabs.watchtower.enable: "{{ authentik_watchtower_enable }}"
+
+      volumes:
+        database:
+          driver: local
+        geoip:
+          driver: local
+        media:
+          driver: local
+        backups:
+          driver: local
+        custom-templates:
+          driver: local
+      networks:
+        authentik:
+        traefik_internal:

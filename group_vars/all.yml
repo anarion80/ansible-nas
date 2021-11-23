@@ -1793,6 +1793,33 @@ authelia_watchtower_enable: "true"
 authelia_data_directory: "{{ docker_home }}/authelia"
 authelia_port: "9093"
 
+#
+# authentik
+#
+authentik_image: "goauthentik.io/server"
+authentik_tag: "2021.10.4"
+authentik_available_externally: "true"
+authentik_watchtower_enable: "true"
+authentik_data_directory: "{{ docker_home }}/authentik"
+authentik_http_port: "9003"
+authentik_https_port: "9443"
+authentik_error_reporting: "false"
+authentik_pg_user: "authentik"
+authentik_pg_pass: "authentik"
+authentik_pg_db: "authentik"
+authentik_secret_key: "secret"
+authentik_email_host: "localhost"
+authentik_email_port: "25"
+authentik_email_username: ""
+authentik_email_password: ""
+authentik_email_use_tls: "false"
+authentik_email_use_ssl: "false"
+authentik_email_timeout: "10"
+authentik_email_from: "authentik@{{ ansible_nas_domain }}"
+authentik_geoipupdate_account_id: ""
+authentik_geoipupdate_license_key: ""
+authentik_geoip: "/geoip/GeoLite2-City.mmdb"
+
 
 #
 # flame

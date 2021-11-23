@@ -454,3 +454,7 @@
   - import_tasks: tasks/netbootxyz.yml
     when: (netbootxyz_enabled | default(False))
     tags: netbootxyz
+
+  - import_tasks: tasks/authentik.yml
+    when: (authentik_enabled | default(False))
+    tags: authentik
