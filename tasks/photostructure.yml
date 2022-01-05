@@ -6,8 +6,9 @@
     pull: true
     volumes:
       - "{{ photostructure_data_directory }}/library:/ps/library:rw"
-      - "{{ photostructure_data_directory }}/config:/ps/config"
-      - "{{ photostructure_data_directory }}/logs:/ps/logs"
+      - "{{ photostructure_data_directory }}/config:/ps/config:rw"
+      - "{{ photostructure_data_directory }}/logs:/ps/logs:rw"
+      - "{{ photostructure_data_directory }}/tmp:/ps/tmp:rw"
     ports:
       - "{{ photostructure_http_port }}:1787"
     env:
