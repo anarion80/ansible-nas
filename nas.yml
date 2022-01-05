@@ -284,8 +284,8 @@
     tags: booksonic
 
   - import_tasks: tasks/booksonic-air.yml
-    when: (booksonic-air_enabled | default(False))
-    tags: booksonic-air
+    when: (booksonicair_enabled | default(False))
+    tags: booksonicair
 
   - import_tasks: tasks/rclone.yml
     when: (rclone_enabled | default(False))
