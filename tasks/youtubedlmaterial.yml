@@ -28,6 +28,8 @@
     env:
       ALLOW_CONFIG_MUTATIONS: "true"
       TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ youtubedlmaterial_user_id }}"
+      PGID: "{{ youtubedlmaterial_group_id }}"
     restart_policy: always
     labels:
       traefik.enable: "{{ youtubedlmaterial_available_externally }}"
