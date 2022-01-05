@@ -14,6 +14,7 @@
     volumes:
       - "{{ lazylibrarian_downloads_directory }}:/downloads:rw"
       - "{{ lazylibrarian_books_directory }}:/books:rw"
+      - "{{ lazylibrarian_data_directory }}:/config:rw"
     ports:
       - "{{ lazylibrarian_port }}:5299"
     env:
