@@ -458,3 +458,7 @@
   - import_tasks: tasks/authentik.yml
     when: (authentik_enabled | default(False))
     tags: authentik
+
+  - import_tasks: tasks/minetest.yml
+    when: (minetest_enabled | default(False))
+    tags: minetest
