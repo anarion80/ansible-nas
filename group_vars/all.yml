@@ -445,6 +445,9 @@ samba_shares:
 
 downloads_user: "user"
 downloads_password: "password"
+cifs_username: "user"
+cifs_password: "password"
+
 
 ###
 ### NFS

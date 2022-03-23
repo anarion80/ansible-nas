@@ -5,3 +5,76 @@
     fstype: cifs
     opts: vers=1.0,user={{ downloads_user }},noserverino,dir_mode=0775,password={{ downloads_password }},file_mode=0775,uid=anarion-nas,gid=anarion-nas
     state: mounted
+
+- name: Create Omnios Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: anarion-nas
+    group: anarion-nas
+    # mode: 0755
+  with_items:
+    - /mnt/omnios
+    - /mnt/omnios/books
+    - /mnt/omnios/comics
+    - /mnt/omnios/iso
+    - /mnt/omnios/misc
+    - /mnt/omnios/media
+
+- name: Mount Omnios share books
+  ansible.posix.mount:
+    src: //omnios/books
+    path: /mnt/omnios/books
+    fstype: cifs
+    opts: iocharset=utf8,username=nas,file_mode=0775,password=nas,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
+    state: mounted
+
+- name: Mount Omnios share comics
+  ansible.posix.mount:
+    src: //omnios/comics
+    path: /mnt/omnios/comics
+    fstype: cifs
+    opts: iocharset=utf8,username=nas,file_mode=0775,password=nas,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
+    state: mounted
+
+- name: Mount Omnios share iso
+  ansible.posix.mount:
+    src: //omnios/iso
+    path: /mnt/omnios/iso
+    fstype: cifs
+    opts: iocharset=utf8,username=nas,file_mode=0775,password=nas,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
+    state: mounted
+
+- name: Mount Omnios share misc
+  ansible.posix.mount:
+    src: //omnios/misc
+    path: /mnt/omnios/misc
+    fstype: cifs
+    opts: iocharset=utf8,username=nas,file_mode=0775,password=nas,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
+    state: mounted
+
+- name: Mount Omnios share media
+  ansible.posix.mount:
+    src: //omnios/media
+    path: /mnt/omnios/media
+    fstype: cifs
+    opts: iocharset=utf8,username=nas,file_mode=0775,password=nas,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
+    state: mounted
+
+- name: Create Dell Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: anarion-nas
+    group: anarion-nas
+    # mode: 0755
+  with_items:
+    - /mnt/dell
+
+- name: Mount Dell share
+  ansible.posix.mount:
+    src: //dell/share
+    path: /mnt/dell
+    fstype: cifs
+    opts: username={{ cifs_username }},password={{ cifs_password }},iocharset=utf8,file_mode=0775,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
+    state: mounted
