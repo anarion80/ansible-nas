@@ -13,6 +13,7 @@ By default, applications can be found on the ports listed below.
 | Emby              | 8096   | HTTP         |
 | Emby              | 8920   | HTTPS        |
 | Firefly III       | 8066   |              |
+| Frigate           | 5001   | HTTP         |
 | get_iplayer       | 8182   |              |
 | Gitea             | 3001   | Web          |
 | Gitea             | 222    | SSH          |

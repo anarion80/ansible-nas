@@ -94,3 +94,4 @@ ansible_nas_workgroup: ANARION
 #netbootxyz_enabled: true
 #authentik_enabled: true
 #minetest_enabled: true
+#frigate_enabled: true

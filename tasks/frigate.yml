@@ -1,0 +1,54 @@
+---
+- name: Create Frigate Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ frigate_data_directory }}"
+    - "{{ frigate_data_directory }}/config"
+
+- name: Template Frigate config.yml
+  template:
+    src: frigate/config.yml
+    dest: "{{ frigate_data_directory }}/config/config.yml"
+    owner: anarion-nas
+    group: anarion-nas
+
+- name: Frigate Docker Container
+  docker_container:
+    name: frigate
+    image: blakeblackshear/frigate:stable-amd64
+    pull: true
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /etc/localtime:/etc/localtime:ro
+      - "{{ frigate_data_directory }}/config:/config:ro"
+      - "{{ frigate_data_directory }}/media:/media/frigate"
+      - type: tmpfs # Optional: 1GB of memory, reduces SSD/SD Card wear
+        target: /tmp/cache
+        tmpfs:
+          size: 1000000000
+    ports:
+      - "{{ frigate_port }}:5000"
+      - "{{ frigate_rtmp_port }}:1935" # RTMP feeds
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ frigate_user_id }}"
+      PGID: "{{ frigate_group_id }}"
+      FRIGATE_RTSP_PASSWORD: "{{ frigate_rtsp_password }}"
+    restart_policy: unless-stopped
+    shm_size: "340M"
+    #devices:
+    #  - /dev/bus/usb:/dev/bus/usb # passes the USB Coral, needs to be modified for other versions
+    #  - /dev/apex_0:/dev/apex_0 # passes a PCIe Coral, follow driver instructions here https://coral.ai/docs/m2/get-started/#2a-on-linux
+    #  - /dev/dri/renderD128 # for intel hwaccel, needs to be updated for your hardware
+    labels:
+      traefik.enable: "{{ frigate_available_externally }}"
+      traefik.http.services.frigate.loadbalancer.server.port: "5005"
+      traefik.http.middlewares.frigate-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.frigate-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.frigate.middlewares: "frigate-whitelist"
+      traefik.http.routers.frigate.rule: "Host(`ffrigate.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ frigate_watchtower_enable }}"
+

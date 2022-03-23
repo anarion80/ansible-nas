@@ -462,3 +462,7 @@
   - import_tasks: tasks/minetest.yml
     when: (minetest_enabled | default(False))
     tags: minetest
+
+  - import_tasks: tasks/frigate.yml
+    when: (frigate_enabled | default(False))
+    tags: frigate

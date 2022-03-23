@@ -44,6 +44,7 @@ Ansible config and a bunch of Docker containers.
 * [Duplicati](https://www.duplicati.com/) - for backing up your stuff
 * [Emby](https://emby.media/) - Media streaming and management
 * [Firefly III](https://firefly-iii.org/) - Free and open source personal finance manager
+* [Frigate](https://frigate.video/) - Frigate is an open source NVR built around real-time AI object detection
 * [get_iplayer](https://github.com/get-iplayer/get_iplayer) - download programmes from BBC iplayer
 * [Gitea](https://gitea.io/en-us/) - Simple self-hosted Github clone
 * [Gitlab](https://about.gitlab.com/features/) - Self-hosted Github clone of the highest order

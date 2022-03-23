@@ -1906,3 +1906,19 @@ minetest_port_http: "30000"
 minetest_user_id: "1001"
 minetest_group_id: "1001"
 minetest_watchtower_enable: "true"
+
+###
+### Frigate
+###
+frigate_available_externally: "false"
+frigate_data_directory: "{{ docker_home }}/frigate"
+frigate_port: "5001"
+frigate_rtmp_port: "1936"
+frigate_user_id: "1001"
+frigate_group_id: "1001"
+frigate_watchtower_enable: "true"
+frigate_rtsp_password: "password"
+frigate_camera_username: "username"
+frigate_camera_password: "password"
+frigate_mqtt_host: "{{ ansible_nas_hostname }}"
+frigate_mqtt_port: "{{ mosquitto_port_a }}"
