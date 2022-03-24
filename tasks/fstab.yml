@@ -26,7 +26,7 @@
     src: //omnios/books
     path: /mnt/omnios/books
     fstype: cifs
-    opts: iocharset=utf8,username=nas,file_mode=0775,password=nas,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
+    opts: iocharset=utf8,nobrl,username=nas,file_mode=0775,password=nas,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
     state: mounted
 
 - name: Mount Omnios share comics
@@ -34,7 +34,7 @@
     src: //omnios/comics
     path: /mnt/omnios/comics
     fstype: cifs
-    opts: iocharset=utf8,username=nas,file_mode=0775,password=nas,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
+    opts: iocharset=utf8,nobrl,username=nas,file_mode=0775,password=nas,dir_mode=0775,uid=anarion-nas,gid=anarion-nas
     state: mounted
 
 - name: Mount Omnios share iso
