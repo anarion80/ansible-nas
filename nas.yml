@@ -466,3 +466,7 @@
   - import_tasks: tasks/frigate.yml
     when: (frigate_enabled | default(False))
     tags: frigate
+
+  - import_tasks: tasks/kavita.yml
+    when: (kavita_enabled | default(False))
+    tags: kavita
