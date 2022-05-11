@@ -49,6 +49,6 @@
       traefik.http.middlewares.frigate-whitelist.ipwhitelist.ipstrategy.depth: "1"
       traefik.http.middlewares.frigate-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
       traefik.http.routers.frigate.middlewares: "frigate-whitelist"
-      traefik.http.routers.frigate.rule: "Host(`ffrigate.{{ ansible_nas_domain }}`)"
+      traefik.http.routers.frigate.rule: "Host(`frigate.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ frigate_watchtower_enable }}"
 
