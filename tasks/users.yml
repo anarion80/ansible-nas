@@ -3,15 +3,17 @@
   group:
     name: anarion-nas
     state: present
+    gid: 1001
 
 - name: Create anarion-nas user
   user:
     name: anarion-nas
     state: present
-    system: yes
+    system: no
     update_password: on_create
     create_home: yes
     group: anarion-nas
+    uid: 1001
     shell: /bin/bash
 
 - name: add user account to anarion-nas group
