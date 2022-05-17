@@ -111,6 +111,9 @@ ubooquity_enabled: false
 # Komga
 komga_enabled: false
 
+# Komga
+kavita_enabled: false
+
 # Joomla
 joomla_enabled: false
 
@@ -1295,6 +1298,17 @@ komga_user_id: "1001"
 komga_group_id: "1001"
 komga_port: "8095"
 komga_watchtower_enable: "true"
+
+###
+### Kavita
+###
+kavita_available_externally: "false"
+kavita_data_directory: "{{ docker_home }}/kavita"
+kavita_comics_directory: "{{ comics_root }}"
+kavita_user_id: "1001"
+kavita_group_id: "1001"
+kavita_port: "5002"
+kavita_watchtower_enable: "true"
 
 ###
 ### Serposcope

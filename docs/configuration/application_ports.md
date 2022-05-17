@@ -29,6 +29,7 @@ By default, applications can be found on the ports listed below.
 | Jackett           | 9117   |              |
 | Jellyfin          | 8896   | HTTP         |
 | Jellyfin          | 8928   | HTTPS        |
+| Kavita            | 5002   |              |
 | Komga             | 8095   |              |
 | Krusader          | 5800   | HTTP         |
 | Krusader          | 5900   | VNC          |
@@ -72,5 +73,6 @@ By default, applications can be found on the ports listed below.
 | Vaultwarden "hub" | 3012   | Web Not.     |
 | Vaultwarden       | 19080  | HTTP         |
 | Wallabag          | 7780   |              |
+| Whoogle           | 5000   |              |
 | YouTubeDL-Mater   | 8998   | HTTP         |
 | ZNC               | 6677   |              |
