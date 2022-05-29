@@ -116,10 +116,21 @@
     src: grafana/provisioning/dashboards/anarion-nas.yml
     dest: "{{ grafana_data_directory }}/config/provisioning/dashboards/anarion-nas.yml"
 
-- name: Copy Anarion-NAS Dashboard
+# - name: Copy Anarion-NAS Dashboard
+#   copy:
+#     src: grafana/dashboards/anarion-nas/anarion-nas-overview.json
+#     dest: "{{ grafana_data_directory }}/data/dashboards/anarion-nas/anarion-nas-overview.json"
+
+
+- name: Copy all dashboards
   copy:
-    src: grafana/dashboards/anarion-nas/anarion-nas-overview.json
-    dest: "{{ grafana_data_directory }}/data/dashboards/anarion-nas/anarion-nas-overview.json"
+      src: {{ items }}
+      dest: "{{ grafana_data_directory }}/data/dashboards/anarion-nas/"
+      #owner: root
+      #group: root
+      mode: u=rw, g=rw, o=r
+  With_fileglob:
+      - "grafana/dashboards/anarion-nas /*"
 
 - name: Grafana
   docker_container:

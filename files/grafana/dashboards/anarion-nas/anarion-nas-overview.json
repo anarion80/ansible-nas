@@ -3,27 +3,39 @@
     "list": [
       {
         "builtIn": 1,
-        "datasource": "-- Grafana --",
+        "datasource": {
+          "type": "datasource",
+          "uid": "grafana"
+        },
         "enable": true,
         "hide": true,
         "iconColor": "rgba(0, 211, 255, 1)",
         "limit": 100,
         "name": "Annotations & Alerts",
         "showIn": 0,
+        "target": {
+          "limit": 100,
+          "matchAny": false,
+          "tags": [],
+          "type": "dashboard"
+        },
         "type": "dashboard"
       }
     ]
   },
   "editable": true,
-  "gnetId": null,
+  "fiscalYearStartMonth": 0,
   "graphTooltip": 0,
   "id": 3,
-  "iteration": 1621181195002,
+  "iteration": 1652783412404,
   "links": [],
+  "liveNow": false,
   "panels": [
     {
-      "cacheTimeout": null,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "description": "",
       "fieldConfig": {
         "defaults": {
@@ -51,7 +63,6 @@
         "y": 0
       },
       "id": 2,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -69,8 +80,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
-      "repeat": null,
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "dsType": "influxdb",
@@ -121,8 +131,10 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -130,12 +142,13 @@
           },
           "mappings": [
             {
-              "$$hashKey": "object:2892",
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "thresholds": {
@@ -162,7 +175,6 @@
         "y": 0
       },
       "id": 24,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -180,7 +192,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "dsType": "influxdb",
@@ -233,18 +245,21 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [
             {
-              "$$hashKey": "object:3148",
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "max": 100,
@@ -291,7 +306,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "groupBy": [
@@ -348,8 +363,10 @@
       "type": "gauge"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -357,12 +374,13 @@
           },
           "mappings": [
             {
-              "$$hashKey": "object:2892",
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "thresholds": {
@@ -385,7 +403,6 @@
         "y": 0
       },
       "id": 25,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -403,7 +420,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "dsType": "influxdb",
@@ -456,18 +473,21 @@
       "type": "stat"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [
             {
-              "$$hashKey": "object:3098",
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "max": 100,
@@ -514,7 +534,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "groupBy": [
@@ -564,19 +584,22 @@
       "type": "gauge"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "decimals": 2,
           "mappings": [
             {
-              "$$hashKey": "object:438",
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "max": 100,
@@ -623,7 +646,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "dsType": "influxdb",
@@ -680,18 +703,21 @@
       "type": "gauge"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "mappings": [
             {
-              "$$hashKey": "object:488",
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "max": 100,
@@ -738,7 +764,7 @@
         "showThresholdMarkers": true,
         "text": {}
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "groupBy": [
@@ -782,8 +808,10 @@
       "type": "gauge"
     },
     {
-      "cacheTimeout": null,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "color": {
@@ -791,12 +819,13 @@
           },
           "mappings": [
             {
-              "$$hashKey": "object:2892",
-              "id": 0,
-              "op": "=",
-              "text": "N/A",
-              "type": 1,
-              "value": "null"
+              "options": {
+                "match": "null",
+                "result": {
+                  "text": "N/A"
+                }
+              },
+              "type": "special"
             }
           ],
           "thresholds": {
@@ -823,7 +852,6 @@
         "y": 0
       },
       "id": 10,
-      "interval": null,
       "links": [],
       "maxDataPoints": 100,
       "options": {
@@ -841,7 +869,7 @@
         "text": {},
         "textMode": "auto"
       },
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "targets": [
         {
           "dsType": "influxdb",
@@ -895,7 +923,10 @@
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -912,7 +943,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -947,7 +981,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1217,9 +1251,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "CPU Utilisation",
       "tooltip": {
         "shared": true,
@@ -1228,9 +1260,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -1238,25 +1268,18 @@
         {
           "$$hashKey": "object:4658",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:4659",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1264,7 +1287,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1297,7 +1323,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1394,9 +1420,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "CPU Load",
       "tooltip": {
         "shared": true,
@@ -1421,9 +1445,7 @@
       ],
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -1431,25 +1453,18 @@
         {
           "$$hashKey": "object:4658",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:4659",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1457,7 +1472,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2 proxmox",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "unit": "celsius"
@@ -1492,7 +1510,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1502,6 +1520,10 @@
       "steppedLine": false,
       "targets": [
         {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "PC003803D09A91473"
+          },
           "groupBy": [
             {
               "params": [
@@ -1539,9 +1561,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Pve2 disk temperatures",
       "tooltip": {
         "shared": true,
@@ -1550,9 +1570,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -1560,25 +1578,18 @@
         {
           "$$hashKey": "object:10239",
           "format": "celsius",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:10240",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1586,7 +1597,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -1619,7 +1633,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -1716,9 +1730,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Memory Usage",
       "tooltip": {
         "shared": true,
@@ -1750,9 +1762,7 @@
       ],
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -1760,30 +1770,26 @@
         {
           "$$hashKey": "object:3940",
           "format": "decbytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:3941",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -1800,7 +1806,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
@@ -1836,13 +1845,12 @@
       "lines": true,
       "linewidth": 1,
       "links": [],
-      "maxDataPoints": null,
       "nullPointMode": "connected",
       "options": {
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -1906,9 +1914,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Container CPU Usage",
       "tooltip": {
         "msResolution": false,
@@ -1933,9 +1939,7 @@
       ],
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -1943,25 +1947,18 @@
         {
           "$$hashKey": "object:3503",
           "format": "percent",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:3504",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -1969,7 +1966,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "editable": true,
       "error": false,
       "fieldConfig": {
@@ -2012,7 +2012,7 @@
         "alertThreshold": false
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.5.2",
       "pointradius": 5,
       "points": false,
       "renderer": "flot",
@@ -2076,9 +2076,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Container Memory usage",
       "tooltip": {
         "msResolution": false,
@@ -2088,9 +2086,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2098,30 +2094,26 @@
         {
           "$$hashKey": "object:3943",
           "format": "bytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:3944",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": false
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2138,7 +2130,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": null,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2172,7 +2167,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.4.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2238,9 +2233,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "System Temperature",
       "tooltip": {
         "shared": true,
@@ -2249,9 +2242,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2259,30 +2250,26 @@
         {
           "$$hashKey": "object:7729",
           "format": "celsius",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:7730",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2299,7 +2286,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "aT8eChcMk"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2333,7 +2323,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.4.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2462,9 +2452,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Pool $zfs_pool Data I/O",
       "tooltip": {
         "shared": true,
@@ -2473,9 +2461,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2483,25 +2469,18 @@
         {
           "$$hashKey": "object:5924",
           "format": "decbytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:5925",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -2509,7 +2488,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2 proxmox",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "bwq0u88Mz"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2543,7 +2525,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.4.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2672,9 +2654,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Pool storage Iops",
       "tooltip": {
         "shared": true,
@@ -2683,9 +2663,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2693,30 +2671,26 @@
         {
           "$$hashKey": "object:5924",
           "format": "iops",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:5925",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
       "collapsed": false,
-      "datasource": null,
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "gridPos": {
         "h": 1,
         "w": 24,
@@ -2733,7 +2707,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2767,7 +2744,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.4.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -2905,9 +2882,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Physical disk Data I/O",
       "tooltip": {
         "shared": true,
@@ -2917,9 +2892,7 @@
       "transformations": [],
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -2927,25 +2900,18 @@
         {
           "$$hashKey": "object:566",
           "format": "decbytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:567",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -2953,7 +2919,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -2987,7 +2956,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.4.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3126,9 +3095,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Physical disk Disk Iops",
       "tooltip": {
         "shared": true,
@@ -3137,9 +3104,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -3147,25 +3112,18 @@
         {
           "$$hashKey": "object:566",
           "format": "iops",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:567",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -3173,7 +3131,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2 proxmox",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "bwq0u88Mz"
+      },
       "fieldConfig": {
         "defaults": {
           "unit": "decbytes"
@@ -3206,7 +3167,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.4.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3259,9 +3220,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Disk Read/Write",
       "tooltip": {
         "shared": true,
@@ -3270,9 +3229,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -3280,25 +3237,18 @@
         {
           "$$hashKey": "object:8942",
           "format": "decbytes",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:8943",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     },
     {
@@ -3306,7 +3256,10 @@
       "bars": false,
       "dashLength": 10,
       "dashes": false,
-      "datasource": "InfluxDB2",
+      "datasource": {
+        "type": "influxdb",
+        "uid": "PC003803D09A91473"
+      },
       "fieldConfig": {
         "defaults": {
           "links": []
@@ -3340,7 +3293,7 @@
         "alertThreshold": true
       },
       "percentage": false,
-      "pluginVersion": "7.5.6",
+      "pluginVersion": "8.4.4",
       "pointradius": 2,
       "points": false,
       "renderer": "flot",
@@ -3473,9 +3426,7 @@
         }
       ],
       "thresholds": [],
-      "timeFrom": null,
       "timeRegions": [],
-      "timeShift": null,
       "title": "Physical disk Iops",
       "tooltip": {
         "shared": true,
@@ -3484,9 +3435,7 @@
       },
       "type": "graph",
       "xaxis": {
-        "buckets": null,
         "mode": "time",
-        "name": null,
         "show": true,
         "values": []
       },
@@ -3494,69 +3443,50 @@
         {
           "$$hashKey": "object:566",
           "format": "iops",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         },
         {
           "$$hashKey": "object:567",
           "format": "short",
-          "label": null,
           "logBase": 1,
-          "max": null,
-          "min": null,
           "show": true
         }
       ],
       "yaxis": {
-        "align": false,
-        "alignLevel": null
+        "align": false
       }
     }
   ],
   "refresh": "",
-  "schemaVersion": 27,
+  "schemaVersion": 36,
   "style": "dark",
   "tags": [],
   "templating": {
     "list": [
       {
-        "allValue": null,
         "current": {
-          "selected": true,
+          "selected": false,
           "text": "anarion-nas",
           "value": "anarion-nas"
         },
-        "datasource": "InfluxDB2",
+        "datasource": {
+          "type": "influxdb",
+          "uid": "PC003803D09A91473"
+        },
         "definition": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.tagValues(\r\n  bucket: \"anarion\",\r\n  tag: \"host\"\r\n)",
-        "description": null,
-        "error": null,
         "hide": 0,
         "includeAll": false,
         "label": "Server",
         "multi": false,
         "name": "server",
-        "options": [
-          {
-            "selected": false,
-            "text": "OPNsense.lan",
-            "value": "OPNsense.lan"
-          },
-          {
-            "selected": true,
-            "text": "anarion-nas",
-            "value": "anarion-nas"
-          }
-        ],
+        "options": [],
         "query": "import \"influxdata/influxdb/schema\"\r\n\r\nschema.tagValues(\r\n  bucket: \"anarion\",\r\n  tag: \"host\"\r\n)",
-        "refresh": 0,
+        "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 0,
         "tagValuesQuery": "",
-        "tags": [],
         "tagsQuery": "",
         "type": "query",
         "useTags": false
@@ -3571,5 +3501,6 @@
   "timezone": "",
   "title": "Main",
   "uid": "T3k_2w1Gk",
-  "version": 34
+  "version": 45,
+  "weekStart": ""
 }
