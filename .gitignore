@@ -4,6 +4,7 @@ site
 roles
 *.retry
 *.log
+*.code-workspace
 
 # Vim
 [._]sw[a-p]
