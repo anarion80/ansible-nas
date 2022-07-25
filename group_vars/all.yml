@@ -30,6 +30,7 @@ tautulli_enabled: false
 booksonic_enabled: false
 booksonicair_enabled: false
 plex_autoscan_enabled: false
+plex_meta_enabled: false
 moviematch_enabled: false
 
 # Media Sourcing
@@ -663,6 +664,25 @@ plex_autoscan_user_id: "1001"
 plex_autoscan_group_id: "1001"
 plex_autoscan_port: "3030"
 plex_autoscan_watchtower_enable: "true"
+
+###
+### Plex Meta Manager
+###
+plex_meta_config_directory: "{{ docker_home }}/plex_meta/config"
+plex_meta_movies_directory: "{{ movies_root }}"
+plex_meta_movies_permissions: "ro"
+plex_meta_tv_directory: "{{ tv_root }}"
+plex_meta_tv_permissions: "ro"
+plex_meta_photos_directory: "{{ photos_root }}"
+plex_meta_photos_permissions: "ro"
+plex_meta_podcasts_directory: "{{ podcasts_root }}"
+plex_meta_podcasts_permissions: "ro"
+plex_meta_music_directory: "{{ music_root }}"
+plex_meta_music_permissions: "ro"
+plex_meta_user_id: "1001"
+plex_meta_group_id: "1001"
+plex_meta_port: "3030"
+plex_meta_watchtower_enable: "true"
 
 ###
 ### PyTivo

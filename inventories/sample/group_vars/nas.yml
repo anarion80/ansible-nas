@@ -95,3 +95,4 @@ ansible_nas_workgroup: ANARION
 #authentik_enabled: true
 #minetest_enabled: true
 #frigate_enabled: true
+#plex_meta_enabled: true

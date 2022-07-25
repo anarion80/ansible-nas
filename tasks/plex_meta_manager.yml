@@ -1,0 +1,39 @@
+- name: Create Plex Meta Manager Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    # mode: 0755
+  with_items:
+    - "{{ plex_meta_config_directory }}"
+
+- name: Create config file
+  template:
+    src: plex/config.yml
+    dest: "{{ plex_meta_config_directory }}/config.yml"
+    owner: "{{ plex_meta_user_id }}"
+    group: "{{ plex_meta_group_id }}"
+    mode: u=rwx,g=rx,o=r
+
+- name: plex meta Docker Container
+  docker_container:
+    name: plex-meta-manager
+    image: meisnate12/plex-meta-manager
+    pull: true
+    volumes:
+      - "{{ plex_meta_config_directory }}:/config:rw"
+      - "{{ plex_meta_movies_directory }}:/movies:{{ plex_meta_movies_permissions }}"
+      - "{{ plex_meta_tv_directory }}:/tv:{{ plex_meta_tv_permissions }}"
+      - "{{ plex_meta_photos_directory }}:/photos:{{ plex_meta_photos_permissions }}"
+      - "{{ plex_meta_podcasts_directory }}:/podcasts:{{ plex_meta_podcasts_permissions }}"
+      - "{{ plex_meta_music_directory }}:/music:{{ plex_meta_music_permissions }}"
+    ports:
+      - "{{ plex_meta_port }}:3030"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ plex_meta_user_id }}"
+      PGID: "{{ plex_meta_group_id }}"
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ plex_meta_watchtower_enable }}"
+      traefik.enable: "false"
+    restart_policy: unless-stopped
+

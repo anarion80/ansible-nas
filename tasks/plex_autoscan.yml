@@ -8,7 +8,7 @@
 
 - name: Create config file
   template:
-    src: plex/config.yml
+    src: plex/autoscan_config.yml
     dest: "{{ plex_autoscan_config_directory }}/config.yml"
     owner: "{{ plex_autoscan_user_id }}"
     group: "{{ plex_autoscan_group_id }}"
