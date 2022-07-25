@@ -10,18 +10,19 @@
 - name: OpenLDAP
   docker_container:
     name: openldap
-    image: osixia/openldap
+    image: bitnami/openldap
     pull: true
+    networks:
+      - name: "traefik_internal"
     volumes:
-      - "{{ openldap_data_directory }}/lib:/var/lib/ldap:rw"
-      - "{{ openldap_data_directory }}/config:/etc/ldap/slapd.d:rw"
+      - "{{ openldap_data_directory }}:/bitnami/openldap"
     ports:
-      - "{{ openldap_port }}:389"
-      - "{{ openldap_port_ssl }}:636"
+      - '{{ openldap_port }}:1389'
+      - '{{ openldap_port_ssl }}:1636'
     env:
       TZ: "{{ ansible_nas_timezone }}"
-      LDAP_ORGANISATION: "{{ openldap_organization }}"
-      LDAP_DOMAIN: "{{ openldap_domain }}"
+      LDAP_ROOT: "{{ openldap_ldap_root }}"
+      LDAP_ADMIN_USERNAME: "{{ openldap_admin_username }}"
       LDAP_ADMIN_PASSWORD: "{{ openldap_admin_password }}"
     restart_policy: unless-stopped
     memory: 1g
@@ -33,17 +34,17 @@
   docker_container:
     name: phpldapadmin
     image: osixia/phpldapadmin
+    networks:
+      - name: "traefik_internal"
     pull: true
     volumes:
       - "{{ openldap_data_directory }}/lib:/var/lib/ldap:rw"
       - "{{ openldap_data_directory }}/config:/etc/ldap/slapd.d:rw"
     ports:
       - "{{ phpldapadmin_port }}:443"
-    links:
-      - openldap:openldap
     env:
       TZ: "{{ ansible_nas_timezone }}"
-      PHPLDAPADMIN_LDAP_HOSTS: "openldap"
+      PHPLDAPADMIN_LDAP_HOSTS: "#PYTHON2BASH:[{'openldap': [{'server': [{'port': 1389 }]}]}]"
     restart_policy: unless-stopped
     memory: 1g
     labels:
@@ -53,4 +54,4 @@
       traefik.http.middlewares.phpldapadmin-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
       traefik.http.routers.phpldapadmin.middlewares: "phpldapadmin-whitelist"
       traefik.http.routers.phpldapadmin.rule: "Host(`phpldapadmin.{{ ansible_nas_domain }}`)"
-      com.centurylinklabs.watchtower.enable: "{{ phpldapadmin_watchtower_enable }}"      
+      com.centurylinklabs.watchtower.enable: "{{ phpldapadmin_watchtower_enable }}"
