@@ -24,6 +24,12 @@
       LDAP_ROOT: "{{ openldap_ldap_root }}"
       LDAP_ADMIN_USERNAME: "{{ openldap_admin_username }}"
       LDAP_ADMIN_PASSWORD: "{{ openldap_admin_password }}"
+      LDAP_USERS: "{{ openldap_ldap_users }}"
+      LDAP_PASSWORDS: "{{ openldap_ldap_passwords }}"
+      LDAP_USER_DC: "{{ openldap_ldap_user_dc }}"
+      LDAP_GROUP: "{{ openldap_ldap_group }}"
+      LDAP_SKIP_DEFAULT_TREE: "{{ openldap_ldap_skip_default_tree }}"
+      LDAP_ALLOW_ANON_BINDING: "{{ openldap_ldap_allow_anon_binding }}"
     restart_policy: unless-stopped
     memory: 1g
     labels:

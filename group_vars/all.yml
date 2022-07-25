@@ -1545,6 +1545,12 @@ openldap_organization: "My Organization"
 openldap_domain: "my-organization.com"
 openldap_watchtower_enable: "true"
 phpldapadmin_watchtower_enable: "true"
+openldap_ldap_users: "anarion,anarion-nas"
+openldap_ldap_passwords: "password1, password2"
+openldap_ldap_user_dc: "People"
+openldap_ldap_group: "Group"
+openldap_ldap_skip_default_tree: "no"
+openldap_ldap_allow_anon_binding: "yes"
 
 #
 # speedtest
