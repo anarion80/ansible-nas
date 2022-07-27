@@ -13,6 +13,8 @@
     pull: true
     volumes:
       - "{{ keycloak_data_directory }}/mysql:/var/lib/mysql:rw"
+    networks:
+      - name: "traefik_internal"
     env:
       MYSQL_DATABASE: "keycloak"
       MYSQL_USER: "keycloak"
@@ -32,12 +34,11 @@
       - "{{ keycloak_data_directory }}/data:/data:rw"
     ports:
       - "{{ keycloak_port }}:8080"
-    links:
-      - keycloak-mysql:db
-      - openldap:openldap
+    networks:
+      - name: "traefik_internal"
     env:
       DB_VENDOR: "mysql"
-      DB_ADDR: "db"
+      DB_ADDR: "keycloak-mysql"
       DB_PORT: "3306"
       DB_DATABASE: "keycloak"
       DB_USER: "keycloak"
