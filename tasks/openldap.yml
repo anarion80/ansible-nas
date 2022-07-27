@@ -61,3 +61,23 @@
       traefik.http.routers.phpldapadmin.middlewares: "phpldapadmin-whitelist"
       traefik.http.routers.phpldapadmin.rule: "Host(`phpldapadmin.{{ ansible_nas_domain }}`)"
       com.centurylinklabs.watchtower.enable: "{{ phpldapadmin_watchtower_enable }}"
+
+# - name: Create PLA template directory
+#   ansible.builtin.file:
+#     path: "{{ openldap_data_directory }}/config/templates"
+#     state: directory
+#     mode: '0755'
+
+# - name: Copy all templates
+#   copy:
+#     src: "{{ item }}"
+#     dest: "{{ openldap_data_directory }}/config/templates"
+#     #mode: u=rw, g=rw, o=r
+#   with_fileglob:
+#     - "phpldapadmin/templates/*"
+
+- name: Copy PLA templates to container
+  shell: docker cp files/phpldapadmin/templates/* phpldapadmin:/var/www/phpldapadmin/templates/creation/
+
+- name: Update template permissions
+  shell: docker exec phpldapadmin chown -R www-data:www-data /var/www/phpldapadmin/templates/creation/
