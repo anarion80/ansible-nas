@@ -1,0 +1,74 @@
+- name: Create claper Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ claper_user_id }}"
+    group: "{{ claper_group_id }}"
+    mode: 0755
+  with_items:
+    - "{{ claper_data_directory }}"
+
+- name: Create PostgreSQL container for claper
+  docker_container:
+    name: claper-db
+    image: postgres:9
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    volumes:
+      - "{{ claper_data_directory }}/data:/var/lib/postgresql/data:rw"
+    ports:
+      - "5432:5432"
+    env:
+      POSTGRES_PASSWORD: "{{ claper_db_pass }}"
+      POSTGRES_USER: "{{ claper_db_user }}"
+      POSTGRES_DB: "{{ claper_db_name }}"
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ claper_watchtower_enable }}"
+    restart_policy: unless-stopped
+    memory: 1g
+
+- name: claper Docker Container
+  docker_container:
+    name: claper
+    image: ghcr.io/claperco/claper:latest
+    pull: true
+    tty: true
+    networks:
+      - name: "traefik_internal"
+    volumes:
+      - "{{ claper_data_directory }}/data:/data:ro"
+    ports:
+      - "{{ claper_port }}:4000"
+    env:
+      DATABASE_URL: postgres://claper:claper@claper-db:5432/claper
+      SECRET_KEY_BASE: 0LZiQBLw4WvqPlz4cz8RsHJlxNiSqM9B48y4ChyJ5v1oA0L/TPIqRjQNdPZN3iEG
+      MAIL_TRANSPORT: "{{ claper_mail_transport }}"
+      MAIL_FROM: "{{ claper_mail_from }}"
+      MAIL_FROM_NAME: "{{claper_mail_from_name }}"
+      SMTP_RELAY: "{{ claper_smtp_relay }}"
+      SMTP_USERNAME: "{{ claper_smtp_username }}"
+      SMTP_PASSWORD: "{{ claper_smtp_password }}"
+      SMTP_PORT: "{{ claper_smtp_port }}"
+      SMTP_TLS: "{{ claper_smtp_tls }}"
+      SMTP_AUTH: "{{ claper_smtp_auth }}"
+      SMTP_SSL: "{{ claper_smtp_ssl}}"
+      PRESENTATION_STORAGE: "{{ claper_presentation_storage }}"
+      AWS_ACCESS_KEY_ID: "{{ claper_aws_access_key_id }}"
+      AWS_SECRET_ACCESS_KEY: "{{ claper_aws_secret_access_key }}"
+      AWS_S3_BUCKET: "{{ claper_aws_s3_bucket }}"
+      AWS_S3_REGION: "{{ claper_aws_s3_region }}"
+      ENDPOINT_HOST: "{{ claper_endpoint_host }}"
+      ENDPOINT_PORT: "{{ claper_endpoint_port }}"
+      PORT: "{{ claper_port }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ claper_available_externally }}"
+      traefik.http.services.claper.loadbalancer.server.port: "4000"
+      traefik.http.middlewares.claper-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.claper-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.claper.middlewares: "claper-whitelist"
+      traefik.http.routers.claper.rule: "Host(`claper.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ claper_watchtower_enable }}"

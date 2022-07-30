@@ -96,3 +96,4 @@ ansible_nas_workgroup: ANARION
 #minetest_enabled: true
 #frigate_enabled: true
 #plex_meta_enabled: true
+#claper_enabled: true

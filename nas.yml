@@ -470,3 +470,7 @@
   - import_tasks: tasks/kavita.yml
     when: (kavita_enabled | default(False))
     tags: kavita
+
+  - import_tasks: tasks/claper.yml
+    when: (claper_enabled | default(False))
+    tags: claper
