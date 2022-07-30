@@ -71,6 +71,7 @@
       # WORKERS: 2
       GEOIPUPDATE_ACCOUNT_ID: "{{ authentik_geoipupdate_account_id }}"
       GEOIPUPDATE_LICENSE_KEY: "{{ authentik_geoipupdate_license_key }}"
+      GEOIPUPDATE_EDITION_IDS: "{{ authentik_geoipupdate_edition_ids }}"
       AUTHENTIK_AUTHENTIK__GEOIP: "{{ authentik_geoip }}"
       AUTHENTIK_SECRET_KEY: "{{ authentik_secret_key }}"
       AUTHENTIK_DISABLE_UPDATE_CHECK: "{{ authentik_disable_update_check }}"
@@ -123,6 +124,7 @@
       # WORKERS: 2
       GEOIPUPDATE_ACCOUNT_ID: "{{ authentik_geoipupdate_account_id }}"
       GEOIPUPDATE_LICENSE_KEY: "{{ authentik_geoipupdate_license_key }}"
+      GEOIPUPDATE_EDITION_IDS: "{{ authentik_geoipupdate_edition_ids }}"
       AUTHENTIK_AUTHENTIK__GEOIP: "{{ authentik_geoip }}"
       AUTHENTIK_SECRET_KEY: "{{ authentik_secret_key }}"
     # This is optional, and can be removed. If you remove this, the following will happen
@@ -148,7 +150,7 @@
     volumes:
       - "geoip:/usr/share/GeoIP"
     env:
-      GEOIPUPDATE_EDITION_IDS: "GeoLite2-City"
+      GEOIPUPDATE_EDITION_IDS: "{{ authentik_geoipupdate_edition_ids }}"
       GEOIPUPDATE_FREQUENCY: "8"
       GEOIPUPDATE_ACCOUNT_ID: "{{ authentik_geoipupdate_account_id }}"
       GEOIPUPDATE_LICENSE_KEY: "{{ authentik_geoipupdate_license_key }}"
