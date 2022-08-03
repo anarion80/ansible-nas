@@ -1,0 +1,58 @@
+---
+- name: Gather the package facts
+  ansible.builtin.package_facts:
+    manager: auto
+
+- name: Check whether curl installed
+  ansible.builtin.debug:
+    msg: "{{ ansible_facts.packages['curl'] | length }} versions of curl are installed!"
+  when: "'curl' in ansible_facts.packages"
+
+- name: Install curl if absent
+  ansible.builtin.apt:
+    name: curl
+    update_cache: yes
+  when: '"curl" not in ansible_facts.packages'
+
+
+- name: Create ssh login notification script
+  template:
+    src: ssh_login_notification/sshnotif
+    dest: "/usr/local/bin/sshnotif"
+    owner: root
+    group: root
+    mode: 0774
+
+- name: Add the script to /etc/pam.d/sshd
+  ansible.builtin.lineinfile:
+    path: /etc/pam.d/sshd
+    insertafter: EOF
+    line: session optional pam_exec.so /usr/local/bin/sshnotif
+    create: yes
+
+# - name: Add the script to /etc/pam.d/sshd, validating it
+#   block:
+#     - name: Add the script to /etc/pam.d/sshd
+#       ansible.builtin.lineinfile:
+#         path: /etc/pam.d/sshd
+#         insertafter: EOF
+#         line: session optional pam_exec.so /usr/local/bin/sshnotif
+#         backup: yes
+#         create: yes
+
+#     - name: run validation
+#       shell: sudo sshd -t
+#       become: yes
+#       become_user: root
+
+#   rescue:
+#       - name: restore backup file to original, in the hope the previous configuration was working.
+#         copy:
+#           remote_src: yes
+#           dest: /etc/pam.d/sshd
+#           src: "{{ updated['backup_file'] }}"
+#   always:
+#       - name: We choose to always delete backup, but could copy or move, or only delete in rescue.
+#         file:
+#           path: "{{ updated['backup_file'] }}"
+#           state: absen

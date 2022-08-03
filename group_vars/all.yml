@@ -250,6 +250,9 @@ minetest_enabled: false
 # claper
 claper_enabled: false
 
+# ssh login notification
+ssh_login_notification_enabled: false
+
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your
 # home static IP address, the cloudflare with the cloudflare_ddns dynamic DNS container enabled, or use a dynamic DNS provider like no-ip.
@@ -2001,3 +2004,10 @@ claper_aws_access_key_id: ""
 claper_aws_secret_access_key: ""
 claper_aws_s3_bucket: ""
 claper_aws_s3_region: ""
+
+#
+# ssh login notification
+#
+pushover_url: "https://api.pushover.net/1/messages.json"
+pushover_token: "token"
+pushover_user_key: "user_key"

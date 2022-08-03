@@ -474,3 +474,7 @@
   - import_tasks: tasks/claper.yml
     when: (claper_enabled | default(False))
     tags: claper
+
+  - import_tasks: tasks/ssh_login_notification.yml
+    when: (ssh_login_notification_enabled | default(False))
+    tags: ssh_login_notification
