@@ -478,3 +478,7 @@
   - import_tasks: tasks/ssh_login_notification.yml
     when: (ssh_login_notification_enabled | default(False))
     tags: ssh_login_notification
+
+  - import_tasks: tasks/codex.yml
+    when: (codex_enabled | default(False))
+    tags: codex

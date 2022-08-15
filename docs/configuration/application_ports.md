@@ -8,6 +8,7 @@ By default, applications can be found on the ports listed below.
 | Bazarr            | 6767   |              |
 | Calibre           | 8084   | HTTP         |
 | Cloud Commander   | 7373   |              |
+| Codex             | 9810   |              |
 | Couchpotato       | 5050   |              |
 | Duplicati         | 8200   |              |
 | Emby              | 8096   | HTTP         |

@@ -1,0 +1,37 @@
+---
+- name: Create Codex Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ codex_user_id }}"
+    group: "{{ codex_group_id }}"
+    mode: 0777
+    # mode: 0755
+  with_items:
+    - "{{ codex_data_directory }}/data"
+
+- name: Codex Docker Container
+  docker_container:
+    name: codex
+    image: ajslater/codex:latest
+    pull: true
+    volumes:
+      - "{{ codex_data_directory }}/data:/config:rw"
+      - "{{ codex_comics_directory }}:/comics:ro"
+    ports:
+      - "{{ codex_port }}:9810"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ codex_user_id }}"
+      PGID: "{{ codex_group_id }}"
+    restart_policy: unless-stopped
+    memory: 1g
+    labels:
+      traefik.enable: "{{ codex_available_externally }}"
+      traefik.http.services.codex.loadbalancer.server.port: "9810"
+      traefik.http.middlewares.codex-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.codex-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.codex.middlewares: "codex-whitelist"
+      traefik.http.routers.codex.rule: "Host(`codex.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ codex_watchtower_enable }}"
+

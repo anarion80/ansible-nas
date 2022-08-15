@@ -98,3 +98,4 @@ ansible_nas_workgroup: ANARION
 #plex_meta_enabled: true
 #claper_enabled: true
 #ssh_login_notification_enabled: true
+#codex_enabled: true

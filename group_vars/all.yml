@@ -281,6 +281,9 @@ traefik_forward_auth_watchtower_enable: "true"
 
 authelia_enabled: false
 
+# codex
+codex_enabled: false
+
 ###
 ### General
 ###
@@ -2011,3 +2014,14 @@ claper_aws_s3_region: ""
 pushover_url: "https://api.pushover.net/1/messages.json"
 pushover_token: "token"
 pushover_user_key: "user_key"
+
+###
+### codex
+###
+codex_available_externally: "false"
+codex_data_directory: "{{ docker_home }}/codex"
+codex_port: "9810"
+codex_comics_directory: "{{ comics_root }}"
+codex_user_id: "501"
+codex_group_id: "20"
+codex_watchtower_enable: "true"
