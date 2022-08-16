@@ -26,6 +26,8 @@
     name: phpmyadmin
     image: phpmyadmin
     pull: true
+    networks:
+      - name: "traefik_internal"
     volumes:
       - "{{ phpmyadmin_data_directory }}:/etc/phpmyadmin:rw"
     env:

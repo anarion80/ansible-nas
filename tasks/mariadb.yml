@@ -11,6 +11,8 @@
     name: mariadb
     image: mariadb
     pull: true
+    networks:
+      - name: "traefik_internal"
     volumes:
       - "{{ mariadb_data_directory }}/data:/var/lib/mysql:rw"
     ports:
