@@ -1,0 +1,48 @@
+---
+- name: Create Release Bell Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ releasebell_data_directory }}"
+
+- name: Release Bell Docker Container
+  docker_container:
+    name: releasebell
+    image: cloudron/io.cloudron.releasebell:20220810-091246-6110d4bb2
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    volumes:
+      - "{{ releasebell_data_directory }}/config:/config:rw"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ releasebell_user_id|quote }}"
+      PGID: "{{ releasebell_group_id|quote }}"
+      CLOUDRON_LDAP_URL: "{{ releasebell_ldap_url }}"
+      CLOUDRON_LDAP_USERS_BASE_DN: "{{ releasebell_ldap_users_base_dn }}"
+      CLOUDRON_LDAP_BIND_DN: "{{ releasebell_ldap_bind_dn }}"
+      CLOUDRON_LDAP_BIND_PASSWORD: "{{ releasebell_ldap_bind_password }}"
+      CLOUDRON_MAIL_SMTP_SERVER: "{{ releasebell_mail_smtp_server }}"
+      CLOUDRON_MAIL_SMTP_PORT: "{{ releasebell_mail_smtp_port }}"
+      CLOUDRON_MAIL_SMTP_USERNAME: "{{ releasebell_mail_smtp_username }}"
+      CLOUDRON_MAIL_SMTP_PASSWORD: "{{ releasebell_mail_smtp_password }}"
+      CLOUDRON_MAIL_FROM: "{{ releasebell_mail_from }}"
+      CLOUDRON_MAIL_DOMAIN: "{{ releasebell_mail_domain }}"
+      CLOUDRON_APP_ORIGIN: "{{ releasebell_app_origin }}"
+      CLOUDRON_MYSQL_HOST: "{{ releasebell_mysql_host }}"
+      CLOUDRON_MYSQL_PORT: "{{ releasebell_mysql_port }}"
+      CLOUDRON_MYSQL_USERNAME: "{{ releasebell_mysql_username }}"
+      CLOUDRON_MYSQL_PASSWORD: "{{ releasebell_mysql_password }}"
+      CLOUDRON_MYSQL_DATABASE: "{{ releasebell_mysql_database }}"
+    ports:
+      - "{{ releasebell_port }}:3000"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "{{ releasebell_available_externally }}"
+      traefik.http.services.releasebell.loadbalancer.server.port: "3000"
+      traefik.http.middlewares.releasebell-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.releasebell-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.releasebell.middlewares: "releasebell-whitelist"
+      traefik.http.routers.releasebell.rule: "Host(`releasebell.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ releasebell_watchtower_enable }}"

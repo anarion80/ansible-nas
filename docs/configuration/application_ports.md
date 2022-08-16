@@ -56,6 +56,7 @@ By default, applications can be found on the ports listed below.
 | PyTivo            | 9032   | HTTP         |
 | PyTivo            | 2190   | UDP          |
 | Radarr            | 7878   |              |
+| Release Bell      | 9094   |              |
 | Serposcope        | 7134   |              |
 | Sickchill         | 8081   |              |
 | Sonarr            | 8989   |              |

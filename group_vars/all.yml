@@ -284,6 +284,9 @@ authelia_enabled: false
 # codex
 codex_enabled: false
 
+# releaesbell
+releasebell_enabled: false
+
 ###
 ### General
 ###
@@ -2025,3 +2028,29 @@ codex_comics_directory: "{{ comics_root }}"
 codex_user_id: "501"
 codex_group_id: "20"
 codex_watchtower_enable: "true"
+
+###
+### releasebell
+###
+releasebell_available_externally: "false"
+releasebell_data_directory: "{{ docker_home }}/releasebell"
+releasebell_port: "9094"
+releasebell_user_id: "1001"
+releasebell_group_id: "1001"
+releasebell_watchtower_enable: "true"
+releasebell_ldap_url: "ldaps://127.0.0.1:3002"
+releasebell_ldap_users_base_dn: "ou=users,dc=example"
+releasebell_ldap_bind_dn: "CN=admin,ou=users,dc=example"
+releasebell_ldap_bind_password: "adminpassword"
+releasebell_mail_smtp_server: "smtp.example.com"
+releasebell_mail_smtp_port: "25"
+releasebell_mail_smtp_username: ""
+releasebell_mail_smtp_password: ""
+releasebell_mail_from: "releasebell@{{ ansible_nas_domain }}"
+releasebell_mail_domain: "example.com"
+releasebell_app_origin: "example.com"
+releasebell_mysql_host: "mysql"
+releasebell_mysql_port: "3306"
+releasebell_mysql_username: ""
+releasebell_mysql_password: ""
+releasebell_mysql_database: ""

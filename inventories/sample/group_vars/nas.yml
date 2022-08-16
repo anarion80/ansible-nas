@@ -99,3 +99,4 @@ ansible_nas_workgroup: ANARION
 #claper_enabled: true
 #ssh_login_notification_enabled: true
 #codex_enabled: true
+#releasebell_enabled: true
