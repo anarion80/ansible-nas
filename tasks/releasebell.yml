@@ -9,7 +9,7 @@
 - name: Release Bell Docker Container
   docker_container:
     name: releasebell
-    image: cloudron/io.cloudron.releasebell:20220810-091246-6110d4bb2
+    image: anarion/releasebell:{{ releasebell_image_version }}
     pull: true
     networks:
       - name: "traefik_internal"

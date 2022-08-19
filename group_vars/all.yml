@@ -2034,6 +2034,7 @@ codex_watchtower_enable: "true"
 ###
 releasebell_available_externally: "false"
 releasebell_data_directory: "{{ docker_home }}/releasebell"
+releasebell_image_version: "v1"
 releasebell_port: "9094"
 releasebell_user_id: "1001"
 releasebell_group_id: "1001"
