@@ -490,3 +490,7 @@
   - import_tasks: tasks/trilium.yml
     when: (trilium_enabled | default(False))
     tags: trilium
+
+  - import_tasks: tasks/immich.yml
+    when: (immich_enabled | default(False))
+    tags: immich

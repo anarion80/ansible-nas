@@ -101,3 +101,4 @@ ansible_nas_workgroup: ANARION
 #codex_enabled: true
 #releasebell_enabled: true
 #trilium_enabled: true
+#immich_enabled: true

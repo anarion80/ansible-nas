@@ -27,6 +27,7 @@ By default, applications can be found on the ports listed below.
 | Heimdall          | 10080  |              |
 | Home Assistant    | 8123   |              |
 | Homebridge        | 8087   |              |
+| Immich            | 8089   |              |
 | Jackett           | 9117   |              |
 | Jellyfin          | 8896   | HTTP         |
 | Jellyfin          | 8928   | HTTPS        |

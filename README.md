@@ -55,6 +55,7 @@ Ansible config and a bunch of Docker containers.
 * [Guacamole](https://guacamole.apache.org/) - Web based remote desktop gateway, supports VNC, RDP and SSH
 * [Heimdall](https://heimdall.site/) - Home server dashboard
 * [Home Assistant](https://www.home-assistant.io) - Open source home automation
+* [Immich](https://www.immich.app/) - An open source, high performance self-hosted backup solution for videos and photos on your mobile phone
 * [InfluxDB](https://github.com/influxdata/influxdb) - Time series database used for stats collection
 * [Jackett](https://github.com/Jackett/Jackett) - API Support for your favorite torrent trackers
 * [Jellyfin](https://jellyfin.github.io) - The Free Software Media System

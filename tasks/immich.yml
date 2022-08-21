@@ -1,0 +1,216 @@
+---
+- name: Create immich Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ immich_data_directory }}"
+    - "{{ immich_upload_directory }}"
+
+- name: immich-server Docker Container
+  docker_container:
+    name: immich-server
+    image: altran1502/immich-server:release
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ immich_data_directory }}/data:/data:rw"
+      - "{{ immich_upload_directory }}:/usr/src/app/upload:rw"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ immich_user_id|quote }}"
+      PGID: "{{ immich_group_id|quote }}"
+      NODE_ENV: "production"
+      REDIS_HOSTNAME: "immich_redis"
+      DB_HOSTNAME: "{{ immich_db_hostname }}"
+      DB_USERNAME: "{{ immich_db_username }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "{{ immich_db_name }}"
+      DB_PORT: "{{ immich_db_port }}"
+      JWT_SECRET: "{{ immich_jwt_secret }}"
+      ENABLE_MAPBOX: "{{ immich_enable_mapbox }}"
+      MAPBOX_KEY: "{{ immich_mapbox_key }}"
+      VITE_LOGIN_PAGE_MESSAGE: "Welcome to Immich!"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ immich_watchtower_enable }}"
+    entrypoint: "/bin/sh ./start-server.sh"
+
+- name: immich-microservices Docker Container
+  docker_container:
+    name: immich-microservices
+    image: altran1502/immich-server:release
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ immich_data_directory }}/data:/data:rw"
+      - "{{ immich_upload_directory }}:/usr/src/app/upload:rw"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ immich_user_id|quote }}"
+      PGID: "{{ immich_group_id|quote }}"
+      NODE_ENV: "production"
+      REDIS_HOSTNAME: "immich_redis"
+      DB_HOSTNAME: "{{ immich_db_hostname }}"
+      DB_USERNAME: "{{ immich_db_username }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "{{ immich_db_name }}"
+      DB_PORT: "{{ immich_db_port }}"
+      JWT_SECRET: "{{ immich_jwt_secret }}"
+      ENABLE_MAPBOX: "{{ immich_enable_mapbox }}"
+      MAPBOX_KEY: "{{ immich_mapbox_key }}"
+      VITE_LOGIN_PAGE_MESSAGE: "Welcome to Immich!"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ immich_watchtower_enable }}"
+    entrypoint: "/bin/sh ./start-microservices.sh"
+
+- name: immich-machine-learning Docker Container
+  docker_container:
+    name: immich-machine-learning
+    image: altran1502/immich-machine-learning:release
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ immich_data_directory }}/data:/data:rw"
+      - "{{ immich_upload_directory }}:/usr/src/app/upload:rw"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ immich_user_id|quote }}"
+      PGID: "{{ immich_group_id|quote }}"
+      NODE_ENV: "production"
+      REDIS_HOSTNAME: "immich_redis"
+      DB_HOSTNAME: "{{ immich_db_hostname }}"
+      DB_USERNAME: "{{ immich_db_username }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "{{ immich_db_name }}"
+      DB_PORT: "{{ immich_db_port }}"
+      JWT_SECRET: "{{ immich_jwt_secret }}"
+      ENABLE_MAPBOX: "{{ immich_enable_mapbox }}"
+      MAPBOX_KEY: "{{ immich_mapbox_key }}"
+      VITE_LOGIN_PAGE_MESSAGE: "Welcome to Immich!"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ immich_watchtower_enable }}"
+    entrypoint: "/bin/sh ./entrypoint.sh"
+
+- name: immich-web Docker Container
+  docker_container:
+    name: immich-web
+    image: altran1502/immich-web:release
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ immich_user_id|quote }}"
+      PGID: "{{ immich_group_id|quote }}"
+      NODE_ENV: "production"
+      REDIS_HOSTNAME: "immich_redis"
+      DB_HOSTNAME: "{{ immich_db_hostname }}"
+      DB_USERNAME: "{{ immich_db_username }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "{{ immich_db_name }}"
+      DB_PORT: "{{ immich_db_port }}"
+      JWT_SECRET: "{{ immich_jwt_secret }}"
+      ENABLE_MAPBOX: "{{ immich_enable_mapbox }}"
+      MAPBOX_KEY: "{{ immich_mapbox_key }}"
+      VITE_LOGIN_PAGE_MESSAGE: "Welcome to Immich!"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ immich_watchtower_enable }}"
+    entrypoint: "/bin/sh ./entrypoint.sh"
+
+- name: immich_redis Docker Container
+  docker_container:
+    name: immich_redis
+    image: redis:6.2
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ authentik_watchtower_enable }}"
+    restart_policy: unless-stopped
+
+- name: immich_postgres Docker Container
+  docker_container:
+    name: immich_postgres
+    image: postgres:14
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ immich_data_directory }}/data:/data:rw"
+      - "{{ immich_data_directory }}/postgress:/var/lib/postgresql/data"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ immich_user_id|quote }}"
+      PGID: "{{ immich_group_id|quote }}"
+      NODE_ENV: "production"
+      POSTGRES_PASSWORD: "{{ immich_db_password }}"
+      POSTGRES_USER: "{{ immich_db_username }}"
+      POSTGRES_DB: "{{ immich_db_name }}"
+      POSTGRES_DB_HOST: "{{ immich_db_hostname }}"
+      POSTGRES_DB_PORT: "{{ immich_db_port }}"
+      PG_DATA: /var/lib/postgresql/data
+      REDIS_HOSTNAME: "immich_redis"
+      DB_HOSTNAME: "{{ immich_db_hostname }}"
+      DB_USERNAME: "{{ immich_db_username }}"
+      DB_PASSWORD: "{{ immich_db_password }}"
+      DB_DATABASE_NAME: "{{ immich_db_name }}"
+      DB_PORT: "{{ immich_db_port }}"
+      JWT_SECRET: "{{ immich_jwt_secret }}"
+      ENABLE_MAPBOX: "{{ immich_enable_mapbox }}"
+      MAPBOX_KEY: "{{ immich_mapbox_key }}"
+      VITE_LOGIN_PAGE_MESSAGE: "Welcome to Immich!"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ immich_watchtower_enable }}"
+
+- name: immich-proxy Docker Container
+  docker_container:
+    name: immich-proxy
+    image: altran1502/immich-proxy:release
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    ports:
+      - "{{ immich_port }}:80"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ immich_user_id|quote }}"
+      PGID: "{{ immich_group_id|quote }}"
+      NODE_ENV: "production"
+    restart_policy: unless-stopped
+    log_driver: none
+    labels:
+      traefik.enable: "{{ immich_available_externally }}"
+      traefik.http.services.immich.loadbalancer.server.port: "80"
+      traefik.http.middlewares.immich-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.immich-whitelist.ipwhitelist.sourcerange: "{{ immich_traefik_whitelist }}"
+      traefik.http.routers.immich.middlewares: "immich-whitelist"
+      traefik.http.routers.immich.rule: "Host(`immich.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ immich_watchtower_enable }}"

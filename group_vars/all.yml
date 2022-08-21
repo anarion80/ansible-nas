@@ -290,6 +290,8 @@ releasebell_enabled: false
 # trilium
 trilium_enabled: false
 
+# immich
+immich_enabled: false
 
 ###
 ### General
@@ -2070,3 +2072,24 @@ trilium_user_id: "1001"
 trilium_group_id: "1001"
 trilium_watchtower_enable: "true"
 trilium_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"
+
+###
+### immich
+###
+immich_available_externally: "false"
+immich_data_directory: "{{ docker_home }}/immich"
+immich_port: "8089"
+immich_user_id: "1001"
+immich_group_id: "1001"
+immich_watchtower_enable: "true"
+immich_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"
+immich_upload_directory: "{{ docker_home }}/immich/upload"
+immich_db_password: "postgres"
+immich_db_username: "postgres"
+immich_db_name: "immich"
+immich_db_hostname: "immich_postgres"
+immich_db_port: "5432"
+immich_jwt_secret: "verylongandsecrettext"
+immich_enable_mapbox: "false"
+immich_mapbox_key: ""
+immich_vite_login_message: "Welcome to Immich!"
