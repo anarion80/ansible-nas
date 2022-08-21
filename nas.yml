@@ -486,3 +486,7 @@
   - import_tasks: tasks/releasebell.yml
     when: (releasebell_enabled | default(False))
     tags: releasebell
+
+  - import_tasks: tasks/trilium.yml
+    when: (trilium_enabled | default(False))
+    tags: trilium

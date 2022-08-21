@@ -287,6 +287,10 @@ codex_enabled: false
 # releaesbell
 releasebell_enabled: false
 
+# trilium
+trilium_enabled: false
+
+
 ###
 ### General
 ###
@@ -2055,3 +2059,14 @@ releasebell_mysql_port: "3306"
 releasebell_mysql_username: ""
 releasebell_mysql_password: ""
 releasebell_mysql_database: ""
+
+###
+### Trilium
+###
+trilium_available_externally: "false"
+trilium_data_directory: "{{ docker_home }}/trilium"
+trilium_port: "8088"
+trilium_user_id: "1001"
+trilium_group_id: "1001"
+trilium_watchtower_enable: "true"
+trilium_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"

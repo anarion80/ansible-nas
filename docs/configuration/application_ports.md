@@ -67,6 +67,7 @@ By default, applications can be found on the ports listed below.
 | Transmission      | 9091   | with VPN     |
 | Transmission      | 3128   | http proxy   |
 | Transmission      | 9092   |              |
+| Trilium           | 8088   |              |
 | Ubooquity         | 2202   |              |
 | Ubooquity         | 2203   | Admin        |
 | uTorrent          | 8111   | HTTP         |

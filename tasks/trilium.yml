@@ -1,0 +1,34 @@
+---
+- name: Create trilium Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ trilium_data_directory }}"
+
+- name: trilium Docker Container
+  docker_container:
+    name: trilium
+    image: zadam/trilium:latest
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ trilium_data_directory }}/data:/data:rw"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ trilium_user_id|quote }}"
+      PGID: "{{ trilium_group_id|quote }}"
+    ports:
+      - "{{ trilium_port }}:8080"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "{{ trilium_available_externally }}"
+      traefik.http.services.trilium.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.trilium-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.trilium-whitelist.ipwhitelist.sourcerange: "{{ trilium_traefik_whitelist }}"
+      traefik.http.routers.trilium.middlewares: "trilium-whitelist"
+      traefik.http.routers.trilium.rule: "Host(`trilium.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ trilium_watchtower_enable }}"
