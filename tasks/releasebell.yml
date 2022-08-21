@@ -13,6 +13,8 @@
     pull: true
     networks:
       - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
     volumes:
       - "{{ releasebell_data_directory }}/config:/config:rw"
     env:
