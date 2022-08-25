@@ -1731,6 +1731,7 @@ ghost_watchtower_enable: "true"
 ghost_data_directory: "{{ docker_home }}/ghost"
 ghost_port: "8400"
 ghost_db_client: "sqlite3"
+ghost_db_filename: content/data/ghost.db
 ghost_db_host: ""
 ghost_db_user: ""
 ghost_db_password: ""

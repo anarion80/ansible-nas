@@ -10,6 +10,7 @@
     name: ghost
     image: ghost
     pull: true
+    container_default_behavior: no_defaults
     ports:
       - "{{ ghost_port }}:2368"
     volumes:
@@ -17,6 +18,7 @@
     env:
       url: "{{ ghost_url }}"
       database__client: "{{ ghost_db_client }}"
+      database__connection__filename: "{{ ghost_db_filename }}"
       database__connection__host: "{{ ghost_db_host }}"
       database__connection__user: "{{ ghost_db_user }}"
       database__connection__password: "{{ ghost_db_password }}"
