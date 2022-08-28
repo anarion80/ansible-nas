@@ -65,6 +65,7 @@ organizr_enabled: false
 portainer_enabled: false
 glances_enabled: false
 stats_enabled: false
+loki_enabled: false
 guacamole_enabled: false
 netdata_enabled: false
 watchtower_enabled: false
@@ -2094,3 +2095,14 @@ immich_jwt_secret: "verylongandsecrettext"
 immich_enable_mapbox: "false"
 immich_mapbox_key: ""
 immich_vite_login_message: "Welcome to Immich!"
+
+###
+### Loki
+###
+loki_available_externally: "false"
+loki_data_directory: "{{ docker_home }}/loki"
+loki_port: "3100"
+loki_user_id: "1001"
+loki_group_id: "1001"
+loki_watchtower_enable: "true"
+loki_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"

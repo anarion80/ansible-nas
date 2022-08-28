@@ -23,6 +23,7 @@ By default, applications can be found on the ports listed below.
 | Gitlab            | 422    | SSH          |
 | Glances           | 61208  | SSH          |
 | Grafana           | 3000   |              |
+| Grafana Loki      | 3100   |              |
 | Guacamole         | 8090   |              |
 | Heimdall          | 10080  |              |
 | Home Assistant    | 8123   |              |

@@ -1,0 +1,77 @@
+---
+- name: Create Loki Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ loki_data_directory }}"
+
+- name: Create Grafana Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    recurse: yes
+  with_items:
+    - "{{ loki_data_directory }}"
+    - "{{ loki_data_directory }}/data"
+    - "{{ loki_data_directory }}/data/loki"
+    - "{{ loki_data_directory }}/data/promtail/"
+
+
+- name: Loki Docker Container
+  docker_container:
+    name: loki
+    image: grafana/loki:2.6.0
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ loki_data_directory }}/data/loki:/data:rw"
+    ports:
+      - "{{ loki_port }}:3100"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ loki_user_id|quote }}"
+      PGID: "{{ loki_group_id|quote }}"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "{{ loki_available_externally }}"
+      traefik.http.services.loki.loadbalancer.server.port: "3100"
+      traefik.http.middlewares.loki-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.loki-whitelist.ipwhitelist.sourcerange: "{{ loki_traefik_whitelist }}"
+      traefik.http.routers.loki.middlewares: "loki-whitelist"
+      traefik.http.routers.loki.rule: "Host(`loki.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ loki_watchtower_enable }}"
+
+- name: Copy loki config file
+  copy:
+    src: loki/loki-config.yaml
+    dest: "{{ loki_data_directory }}/data/loki/loki-config.yaml"
+
+- name: Copy promtail config file
+  copy:
+    src: loki/promtail-config.yaml
+    dest: "{{ loki_data_directory }}/data/promtail/promtail-config.yaml"
+
+- name: Promtail Docker Container
+  docker_container:
+    name: promtail
+    image: grafana/promtail:2.6.0
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ loki_data_directory }}/data/promtail:/data:rw"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ loki_user_id|quote }}"
+      PGID: "{{ loki_group_id|quote }}"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ loki_watchtower_enable }}"
+

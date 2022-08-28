@@ -102,3 +102,4 @@ ansible_nas_workgroup: ANARION
 #releasebell_enabled: true
 #trilium_enabled: true
 #immich_enabled: true
+#loki_enabled: true

@@ -494,3 +494,7 @@
   - import_tasks: tasks/immich.yml
     when: (immich_enabled | default(False))
     tags: immich
+
+  - import_tasks: tasks/loki.yml
+    when: (loki_enabled | default(False))
+    tags: loki
