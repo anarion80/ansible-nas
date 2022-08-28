@@ -4,6 +4,7 @@
     name: snipeit-mysql
     image: mysql:5.7
     pull: true
+    container_default_behavior: no_defaults
     volumes:
       - "{{ snipeit_data_directory }}/mysql:/var/lib/mysql:rw"
     env:
@@ -21,6 +22,7 @@
     name: snipeit
     image: snipe/snipe-it
     pull: true
+    container_default_behavior: no_defaults
     links:
         - snipeit-mysql:mysql
     volumes:
@@ -47,12 +49,13 @@
       # SMTP username and password
       MAIL_ENV_USERNAME: "{{ snipeit_mail_username }}"
       MAIL_ENV_PASSWORD: "{{ snipeit_mail_password }}"
+      MAIL_REPLYTO_ADDR: "{{ snipeit_replyto_addr }}"
 
       # Snipe-IT Settings
       APP_ENV: "production"
       APP_DEBUG: "false"
       APP_KEY: "{{ snipeit_app_key }}"
-      APP_URL: "http://snipeit.{{ ansible_nas_domain }}"
+      APP_URL: "https://snipeit.{{ ansible_nas_domain }}"
       APP_TIMEZONE: "{{ ansible_nas_timezone }}"
       APP_LOCALE: "en"
     restart_policy: unless-stopped
