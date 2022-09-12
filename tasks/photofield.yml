@@ -1,0 +1,43 @@
+---
+- name: Create photofield Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ photofield_data_directory }}"
+    - "{{ photofield_data_directory }}/data"
+    - "{{ photofield_photos_directory }}"
+
+- name: Copy config file
+  copy:
+    src: photofield/configuration.yaml
+    dest: "{{ photofield_data_directory }}/data/configuration.yaml"
+
+- name: photofield Docker Container
+  docker_container:
+    name: photofield
+    image: ghcr.io/smilyorg/photofield
+    pull: true
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    container_default_behavior: no_defaults
+    ports:
+      - "{{ photofield_port }}:8080"
+    volumes:
+      - "{{ photofield_data_directory }}/data:/app/data:rw"
+      - "{{ photofield_photos_directory }}:/app/photos:ro"
+      - "{{ photofield_data_directory }}/data/configuration.yaml:/app/data/configuration.yaml:ro"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ photofield_user_id|quote }}"
+      PGID: "{{ photofield_group_id|quote }}"
+    restart_policy: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ photofield_watchtower_enable }}"
+      traefik.enable: "{{ photofield_available_externally }}"
+      traefik.http.services.photofield.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.photofield-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.photofield-whitelist.ipwhitelist.sourcerange: "{{ photofield_traefik_whitelist }}"
+      traefik.http.routers.photofield.middlewares: "photofield-whitelist"
+      traefik.http.routers.photofield.rule: "Host(`photofield.{{ ansible_nas_domain }}`)"

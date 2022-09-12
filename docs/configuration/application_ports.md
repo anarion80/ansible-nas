@@ -52,6 +52,7 @@ By default, applications can be found on the ports listed below.
 | openHAB           | 7778   | HTTPS        |
 | Organizr          | 10081  | HTTP         |
 | Organizr          | 10444  | HTTPS        |
+| Photofield        | 8082   |              |
 | Plex              | 32400  |              |
 | Portainer         | 9000   |              |
 | pyload            | 8000   |              |

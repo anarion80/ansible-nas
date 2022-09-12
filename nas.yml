@@ -498,3 +498,7 @@
   - import_tasks: tasks/loki.yml
     when: (loki_enabled | default(False))
     tags: loki
+
+  - import_tasks: tasks/photofield.yml
+    when: (photofield_enabled | default(False))
+    tags: photofield

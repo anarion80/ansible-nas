@@ -103,3 +103,4 @@ ansible_nas_workgroup: ANARION
 #trilium_enabled: true
 #immich_enabled: true
 #loki_enabled: true
+#photofield_enabled: true

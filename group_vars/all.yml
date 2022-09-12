@@ -254,6 +254,9 @@ claper_enabled: false
 # ssh login notification
 ssh_login_notification_enabled: false
 
+# photofield
+photofield_enabled: false
+
 # External Access
 # Traefik will allow access to certain applications externally. To enable this you'll either; a domain name that points to your
 # home static IP address, the cloudflare with the cloudflare_ddns dynamic DNS container enabled, or use a dynamic DNS provider like no-ip.
@@ -2107,3 +2110,15 @@ loki_user_id: "1001"
 loki_group_id: "1001"
 loki_watchtower_enable: "true"
 loki_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"
+
+###
+### photofield
+###
+photofield_available_externally: "false"
+photofield_data_directory: "{{ docker_home }}/photofield"
+photofield_port: "8082"
+photofield_user_id: "1001"
+photofield_group_id: "1001"
+photofield_watchtower_enable: "true"
+photofield_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"
+photofield_photos_directory: "{{ docker_home }}/photofield/photos"
