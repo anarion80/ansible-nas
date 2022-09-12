@@ -1,4 +1,13 @@
 ---
+- name: Create rclone mount directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ rclone_service_user }}"
+    group: "{{ rclone_service_group }}"
+  with_items:
+    - "{{ rclone_mount }}"
+
 - name: Create Rclone service
   template:
     src: rclone/rclone.service
