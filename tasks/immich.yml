@@ -198,7 +198,7 @@
     network_mode: "traefik_internal"
     container_default_behavior: no_defaults
     ports:
-      - "{{ immich_port }}:80"
+      - "{{ immich_port }}:8080"
     env:
       TZ: "{{ ansible_nas_timezone }}"
       PUID: "{{ immich_user_id|quote }}"
@@ -208,7 +208,7 @@
     log_driver: none
     labels:
       traefik.enable: "{{ immich_available_externally }}"
-      traefik.http.services.immich.loadbalancer.server.port: "80"
+      traefik.http.services.immich.loadbalancer.server.port: "8080"
       traefik.http.middlewares.immich-whitelist.ipwhitelist.ipstrategy.depth: "1"
       traefik.http.middlewares.immich-whitelist.ipwhitelist.sourcerange: "{{ immich_traefik_whitelist }}"
       traefik.http.routers.immich.middlewares: "immich-whitelist"
