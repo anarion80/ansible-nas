@@ -9,7 +9,7 @@ datasources:
   # <string, required> datasource type. Required
   type: influxdb
   # <string, required> access mode. direct or proxy. Required
-  access: direct
+  access: proxy
   # <string> url
   #url: http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:8086
   url: https://influxdb.{{ ansible_nas_domain }}
