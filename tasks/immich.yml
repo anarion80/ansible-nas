@@ -204,6 +204,8 @@
       PUID: "{{ immich_user_id|quote }}"
       PGID: "{{ immich_group_id|quote }}"
       NODE_ENV: "production"
+      IMMICH_SERVER_URL: "http://immich-server:3001"
+      IMMICH_WEB_URL: "http://immich-web:3000"
     restart_policy: unless-stopped
     log_driver: none
     labels:
