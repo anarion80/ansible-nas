@@ -297,6 +297,9 @@ trilium_enabled: false
 # immich
 immich_enabled: false
 
+# wger
+wger_enabled: false
+
 ###
 ### General
 ###
@@ -2122,3 +2125,26 @@ photofield_group_id: "1001"
 photofield_watchtower_enable: "true"
 photofield_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"
 photofield_photos_directory: "{{ docker_home }}/photofield/photos"
+
+###
+### wger
+###
+wger_available_externally: "false"
+wger_data_directory: "{{ docker_home }}/wger"
+wger_port: "8003"
+wger_user_id: "1001"
+wger_group_id: "1001"
+wger_watchtower_enable: "true"
+wger_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"
+wger_secret_key: "wger-docker-supersecret-key-1234567890!@#$%^&*(-_)"
+wger_signing_key: "wger-docker-secret-jwtkey-1234567890!@#$%^&*(-_=+)"
+wger_email_from: "wger@{{ ansible_nas_domain }}"
+wger_email_enable: "true"
+wger_email_host: ""
+wger_email_port: ""
+wger_email_user: ""
+wger_email_password: ""
+wger_email_use_tls: "false"
+wger_email_use_ssl: "false"
+wger_csrf_trusted_origins: "https://wger.{{ ansible_nas_domain}},https://118.999.881.119"
+wger_django_debug: "false"

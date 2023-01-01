@@ -502,3 +502,7 @@
   - import_tasks: tasks/photofield.yml
     when: (photofield_enabled | default(False))
     tags: photofield
+
+  - import_tasks: tasks/wger.yml
+    when: (wger_enabled | default(False))
+    tags: wger

@@ -79,6 +79,7 @@ By default, applications can be found on the ports listed below.
 | Vaultwarden "hub" | 3012   | Web Not.     |
 | Vaultwarden       | 19080  | HTTP         |
 | Wallabag          | 7780   |              |
+| Wger              | 8003   |              |
 | Whoogle           | 5000   |              |
 | YouTubeDL-Mater   | 8998   | HTTP         |
 | ZNC               | 6677   |              |

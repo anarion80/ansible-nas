@@ -1,0 +1,241 @@
+- name: Create wger directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ wger_user_id }}"
+    group: "{{ wger_group_id }}"
+    mode: 0755
+  with_items:
+    - "{{ wger_data_directory }}"
+
+- name: Create wger mount directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ wger_user_id }}"
+    group: "{{ wger_group_id }}"
+    mode: 0777
+  with_items:
+    - "{{ wger_data_directory }}/static"
+    - "{{ wger_data_directory }}/config"
+    - "{{ wger_data_directory }}/media"
+
+- name: Copy Wger Nginx config
+  copy:
+    src: wger/nginx.conf
+    dest: "{{ wger_data_directory }}/config/nginx.conf"
+
+- name: wger db Docker Container
+  docker_container:
+    name: wger_db
+    image: postgres:12-alpine
+    pull: true
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ wger_data_directory }}/postgres-data:/var/lib/postgresql/data/:rw"
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    exposed_ports:
+      - 5432
+    env:
+      POSTGRES_USER: "wger"
+      POSTGRES_PASSWORD: "wger"
+      POSTGRES_DB: "wger"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ wger_watchtower_enable }}"
+    healthcheck:
+      test: "pg_isready -U wger"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+- name: wger Docker Container
+  docker_container:
+    name: wger_server
+    image: wger/server:latest
+    pull: true
+    container_default_behavior: no_defaults
+    ports:
+      - "8000"
+    volumes:
+      - "{{ wger_data_directory }}/static:/home/wger/static:rw"
+      - "{{ wger_data_directory }}/media:/home/wger/media:rw"
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    env:
+      PUID: "{{ wger_user_id }}"
+      PGID: "{{ wger_group_id }}"
+      # Django's secret key, change to a 50 character random string if you are running
+      # this instance publicly. For an online generator, see e.g. https://djecrety.ir/
+      SECRET_KEY: "{{ wger_secret_key }}"
+
+      # Signing key used for JWT, use something different than the secret key
+      SIGNING_KEY: "{{ wger_signing_key }}"
+
+      # The 'from' address used when sending emails
+      FROM_EMAIL: "{{ wger_email_from }}"
+
+      # The server's timezone, for a list of possible names:
+      # https://en.wikipedia.org/wiki/List_of_tz_database_time_zones
+      TIME_ZONE: "{{ ansible_nas_timezone }}"
+
+
+      #
+      # Consult the deployment section in the readme if you are running this behind a
+      # reverse proxy with HTTPS enabled
+      #
+
+      CSRF_TRUSTED_ORIGINS: "{{ wger_csrf_trusted_origins }}"
+      X_FORWARDED_PROTO_HEADER_SET: "True"
+
+
+      #
+      # These settings usually don't need changing
+      #
+
+
+      #
+      # Application
+      ALLOW_REGISTRATION: "True"
+      ALLOW_GUEST_USERS: "True"
+      ALLOW_UPLOAD_VIDEOS: "True"
+      # Users won't be able to contribute to exercises if their account age is
+      # lower than this amount in days.
+      MIN_ACCOUNT_AGE_TO_TRUST: "21"
+      # Note that setting these to true will always perform a sync during startup,
+      # even if the data is already current and will take some time. Usually you don't
+      # need to perform these steps so often and a manual trigger (see README) is
+      # usually enough.
+      SYNC_EXERCISES_ON_STARTUP: "True"
+      DOWNLOAD_EXERCISE_IMAGES_ON_STARTUP: "True"
+
+
+      #
+      # Database
+      DJANGO_DB_ENGINE: "django.db.backends.postgresql"
+      DJANGO_DB_DATABASE: "wger"
+      DJANGO_DB_USER: "wger"
+      DJANGO_DB_PASSWORD: "wger"
+      DJANGO_DB_HOST: "wger_db"
+      DJANGO_DB_PORT: "5432"
+      # Perform any new database migrations on startup
+      DJANGO_PERFORM_MIGRATIONS: "True"
+
+
+      #
+      # Cache
+      DJANGO_CACHE_BACKEND: "django_redis.cache.RedisCache"
+      DJANGO_CACHE_LOCATION: "redis://wger_cache:6379/1"
+      # 60*60*24*15, 15 Days
+      DJANGO_CACHE_TIMEOUT: "12"
+      DJANGO_CACHE_CLIENT_CLASS: "django_redis.client.DefaultClient"
+
+      #
+      # Brute force login attacks
+      # https://django-axes.readthedocs.io/en/latest/index.html
+      AXES_ENABLED: "True"
+      AXES_FAILURE_LIMIT: "10"
+      # in minutes
+      AXES_COOLOFF_TIME: "30"
+      AXES_HANDLER: "axes.handlers.cache.AxesCacheHandler"
+
+      #
+      # Others
+      DJANGO_DEBUG: "{{ wger_django_debug }}"
+      WGER_USE_GUNICORN: "True"
+      EXERCISE_CACHE_TTL: "10"
+      SITE_URL: "https://wger.{{ ansible_nas_domain }}"
+
+
+      #
+      # JWT auth
+      # The lifetime duration of the access token, in minutes
+      ACCESS_TOKEN_LIFETIME: "10"
+      # The lifetime duration of the refresh token, in hours
+      REFRESH_TOKEN_LIFETIME: "24"
+
+
+      #
+      # Other possible settings
+
+      # RECAPTCHA_PUBLIC_KEY
+      # RECAPTCHA_PRIVATE_KEY
+      # NOCAPTCHA
+
+      # https://docs.djangoproject.com/en/4.1/topics/email/#smtp-backend
+      ENABLE_EMAIL: "{{ wger_email_enable }}"
+      EMAIL_HOST: "{{ wger_email_host }}"
+      EMAIL_PORT: "{{ wger_email_port }}"
+      EMAIL_HOST_USER: "{{ wger_email_user }}"
+      EMAIL_HOST_PASSWORD: "{{ wger_email_password }}"
+      EMAIL_USE_TLS: "{{ wger_email_use_tls }}"
+      EMAIL_USE_SSL: "{{ wger_email_use_ssl }}"
+
+      # DJANGO_MEDIA_ROOT
+      # DJANGO_STATIC_ROOT
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ wger_watchtower_enable }}"
+    restart_policy: unless-stopped
+    healthcheck:
+      test: "wget --no-verbose --tries=1 --spider http://localhost:8000"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    #memory: 1g
+
+- name: wger nginx Docker Container
+  docker_container:
+    name: wger_nginx
+    image: nginx:stable
+    pull: true
+    container_default_behavior: no_defaults
+    ports:
+      - "{{ wger_port }}:80"
+    volumes:
+      - "{{ wger_data_directory }}/config/nginx.conf:/etc/nginx/conf.d/default.conf:rw"
+      - "{{ wger_data_directory }}/static:/wger/static:ro"
+      - "{{ wger_data_directory }}/media:/wger/media:ro"
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    restart_policy: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ wger_watchtower_enable }}"
+      traefik.enable: "{{ wger_available_externally }}"
+      traefik.http.services.wger.loadbalancer.server.port: "80"
+      traefik.http.middlewares.wger-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.wger-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.wger.middlewares: "wger-whitelist"
+      traefik.http.routers.wger.rule: "Host(`wger.{{ ansible_nas_domain }}`)"
+    healthcheck:
+      test: "service nginx status"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+- name: wger cache Docker Container
+  docker_container:
+    name: wger_cache
+    image: redis
+    pull: true
+    container_default_behavior: no_defaults
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    exposed_ports:
+      - 6379
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ wger_watchtower_enable }}"
+    healthcheck:
+      test: "redis-cli ping"
+      interval: 10s
+      timeout: 5s
+      retries: 5
