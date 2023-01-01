@@ -15,10 +15,12 @@
       - "{{ ghost_port }}:2368"
     volumes:
       - "{{ ghost_data_directory }}/content:/var/lib/ghost/content:rw"
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
     env:
       url: "{{ ghost_url }}"
       database__client: "{{ ghost_db_client }}"
-      database__connection__filename: "{{ ghost_db_filename }}"
       database__connection__host: "{{ ghost_db_host }}"
       database__connection__user: "{{ ghost_db_user }}"
       database__connection__password: "{{ ghost_db_password }}"
@@ -41,3 +43,21 @@
       com.centurylinklabs.watchtower.enable: "{{ ghost_watchtower_enable }}"
     restart_policy: unless-stopped
     #memory: 1g
+
+- name: ghost db Docker Container
+  docker_container:
+    name: ghost_db
+    image: mysql:8.0
+    pull: true
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ ghost_data_directory }}/db:/var/lib/mysql:rw"
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    env:
+      MYSQL_ROOT_PASSWORD: "{{ ghost_mysql_root_password }}"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ ghost_watchtower_enable }}"
