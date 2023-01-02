@@ -506,3 +506,7 @@
   - import_tasks: tasks/wger.yml
     when: (wger_enabled | default(False))
     tags: wger
+
+  - import_tasks: tasks/memos.yml
+    when: (memos_enabled | default(False))
+    tags: memos

@@ -300,6 +300,10 @@ immich_enabled: false
 # wger
 wger_enabled: false
 
+# memos
+memos_enabled: false
+
+
 ###
 ### General
 ###
@@ -2148,3 +2152,14 @@ wger_email_use_tls: "false"
 wger_email_use_ssl: "false"
 wger_csrf_trusted_origins: "https://wger.{{ ansible_nas_domain}},https://118.999.881.119"
 wger_django_debug: "false"
+
+###
+### memos
+###
+memos_available_externally: "false"
+memos_data_directory: "{{ docker_home }}/memos"
+memos_port: "5230"
+memos_user_id: "1001"
+memos_group_id: "1001"
+memos_watchtower_enable: "true"
+memos_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"

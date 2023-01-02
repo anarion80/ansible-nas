@@ -1,0 +1,31 @@
+---
+- name: Create memos Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ memos_data_directory }}"
+
+- name: memos Docker Container
+  docker_container:
+    name: memos
+    image: neosmemo/memos:latest
+    pull: true
+    container_default_behavior: no_defaults
+    ports:
+      - "{{ memos_port }}:5230"
+    volumes:
+      - "{{ memos_data_directory }}:/var/opt/memos:rw"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      PUID: "{{ memos_user_id|quote }}"
+      PGID: "{{ memos_group_id|quote }}"
+    restart_policy: unless-stopped
+    labels:
+      com.centurylinklabs.watchtower.enable: "{{ memos_watchtower_enable }}"
+      traefik.enable: "{{ memos_available_externally }}"
+      traefik.http.services.memos.loadbalancer.server.port: "5230"
+      traefik.http.middlewares.memos-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.memos-whitelist.ipwhitelist.sourcerange: "{{ memos_traefik_whitelist }}"
+      traefik.http.routers.memos.middlewares: "memos-whitelist"
+      traefik.http.routers.memos.rule: "Host(`memos.{{ ansible_nas_domain }}`)"

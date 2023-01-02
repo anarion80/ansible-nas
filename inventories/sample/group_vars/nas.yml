@@ -105,3 +105,4 @@ ansible_nas_workgroup: ANARION
 #loki_enabled: true
 #photofield_enabled: true
 #wger_enabled: true
+#memos_enabled: true
