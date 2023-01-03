@@ -106,3 +106,4 @@ ansible_nas_workgroup: ANARION
 #photofield_enabled: true
 #wger_enabled: true
 #memos_enabled: true
+#libreddit_enabled: true

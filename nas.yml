@@ -510,3 +510,7 @@
   - import_tasks: tasks/memos.yml
     when: (memos_enabled | default(False))
     tags: memos
+
+  - import_tasks: tasks/libreddit.yml
+    when: (libreddit_enabled | default(False))
+    tags: libreddit

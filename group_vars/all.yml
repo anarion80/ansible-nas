@@ -303,6 +303,8 @@ wger_enabled: false
 # memos
 memos_enabled: false
 
+# libreddit
+libreddit_enabled: false
 
 ###
 ### General
@@ -2163,3 +2165,25 @@ memos_user_id: "1001"
 memos_group_id: "1001"
 memos_watchtower_enable: "true"
 memos_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"
+
+###
+### libreddit
+###
+libreddit_available_externally: "false"
+libreddit_data_directory: "{{ docker_home }}/libreddit"
+libreddit_port: "8091"
+libreddit_user_id: "1001"
+libreddit_group_id: "1001"
+libreddit_watchtower_enable: "true"
+libreddit_traefik_whitelist: "127.0.0.1/32, 192.168.0.0/16"
+libreddit_theme: "system"
+libreddit_front_page: "default"
+libreddit_layout: "card"
+libreddit_wide: "off"
+libreddit_post_sort: "host"
+libreddit_comment_sort: "confidence"
+libreddit_show_nsfw: "off"
+libreddit_blur_nsfw: "off"
+libreddit_use_hls: "off"
+libreddit_hide_hls: "off"
+libreddit_autoplay: "off"

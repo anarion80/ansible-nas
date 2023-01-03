@@ -37,6 +37,7 @@ By default, applications can be found on the ports listed below.
 | Krusader          | 5800   | HTTP         |
 | Krusader          | 5900   | VNC          |
 | Lidarr            | 8686   |              |
+| Libreddit         | 8091   |              |
 | Memos             | 5230   |              |
 | Minetest          | 30000  | TCP/UDP      |
 | MiniDLNA          | 8201   |              |

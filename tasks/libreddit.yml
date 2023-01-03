@@ -1,0 +1,39 @@
+- name: Create libreddit Directories
+  file:
+    path: "{{ item }}"
+    state: directory
+  with_items:
+    - "{{ libreddit_data_directory }}"
+
+- name: libreddit Docker Container
+  docker_container:
+    name: libreddit
+    image: libreddit/libreddit
+    pull: true
+    container_default_behavior: no_defaults
+    ports:
+      - "{{ libreddit_port }}:8080"
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    env:
+      THEME: "{{ libreddit_theme }}"
+      FRONT_PAGE: "{{ libreddit_front_page }}"
+      LAYOUT: "{{ libreddit_layout }}"
+      WIDE: "{{ libreddit_wide }}"
+      POST_SORT: "{{ libreddit_post_sort }}"
+      COMMENT_SORT: "{{ libreddit_comment_sort}}"
+      SHOW_NSFW: "{{ libreddit_show_nsfw }}"
+      BLUR_NSFW : "{{ libreddit_blur_nsfw }}"
+      USE_HLS: "{{ libreddit_use_hls}}"
+      HIDE_HLS_NOTIFICATION: "{{ libreddit_hide_hls}}"
+      AUTOPLAY_VIDEOS: "{{ libreddit_autoplay }}"
+    labels:
+      traefik.enable: "{{ libreddit_available_externally }}"
+      traefik.http.services.libreddit.loadbalancer.server.port: "8080"
+      traefik.http.middlewares.libreddit-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.libreddit-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.libreddit.middlewares: "libreddit-whitelist"
+      traefik.http.routers.libreddit.rule: "Host(`libreddit.{{ ansible_nas_domain }}`)"
+      com.centurylinklabs.watchtower.enable: "{{ libreddit_watchtower_enable }}"
+    restart_policy: unless-stopped
