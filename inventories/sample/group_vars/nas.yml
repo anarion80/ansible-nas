@@ -107,3 +107,4 @@ ansible_nas_workgroup: ANARION
 #wger_enabled: true
 #memos_enabled: true
 #libreddit_enabled: true
+#mattermost_enabled: true

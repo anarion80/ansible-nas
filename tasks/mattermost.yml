@@ -1,0 +1,160 @@
+- name: Create mattermost directory
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ mattermost_user_id }}"
+    group: "{{ mattermost_group_id }}"
+    mode: 0755
+  with_items:
+    - "{{ mattermost_data_directory }}"
+
+- name: Create mattermost mount directories
+  file:
+    path: "{{ item }}"
+    state: directory
+    owner: "2000"
+    group: "2000"
+    mode: 0755
+  with_items:
+    - "{{ mattermost_data_directory }}/config"
+    - "{{ mattermost_data_directory }}/data"
+    - "{{ mattermost_data_directory }}/logs"
+    - "{{ mattermost_data_directory }}/plugins"
+    - "{{ mattermost_data_directory }}/client_plugins"
+    - "{{ mattermost_data_directory }}/bleve_indexes"
+
+- name: mattermost db Docker Container
+  docker_container:
+    name: mattermost_db
+    image: postgres:{{ mattermost_postgress_image_tag }}
+    pull: true
+    container_default_behavior: no_defaults
+    volumes:
+      - "{{ mattermost_data_directory }}/postgres-data:/var/lib/postgresql/data/:rw"
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    exposed_ports:
+      - 5432
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+      POSTGRES_USER: "mmuser"
+      POSTGRES_PASSWORD: "mmuser_password"
+      POSTGRES_DB: "mattermost"
+    restart_policy: unless-stopped
+    labels:
+      traefik.enable: "false"
+      com.centurylinklabs.watchtower.enable: "{{ mattermost_watchtower_enable }}"
+    healthcheck:
+      test: "pg_isready -U mmuser -d mattermost || exit 1"
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+- name: mattermost Docker Container
+  docker_container:
+    name: mattermost_server
+    image: mattermost/{{ mattermost_image }}:{{ mattermost_image_tag }}
+    pull: true
+    container_default_behavior: no_defaults
+    ports:
+      - "{{ mattermost_app_port }}:8065"
+      - "{{ mattermost_calls_port }}:8443/udp"
+    volumes:
+      - "{{ mattermost_data_directory }}/config:/mattermost/config:rw"
+      - "{{ mattermost_data_directory }}/data:/mattermost/data:rw"
+      - "{{ mattermost_data_directory }}/logs:/mattermost/logs:rw"
+      - "{{ mattermost_data_directory }}/plugins:/mattermost/plugins:rw"
+      - "{{ mattermost_data_directory }}/client_plugins:/mattermost/client/plugins:rw"
+      - "{{ mattermost_data_directory }}/bleve_indexes:/mattermost/bleve-indexes:rw"
+      # When you want to use SSO with GitLab, you have to add the cert pki chain of GitLab inside Alpine
+      # to avoid Token request failed: certificate signed by unknown authority
+      # (link: https://github.com/mattermost/mattermost-server/issues/13059 and https://github.com/mattermost/docker/issues/34)
+      # - ${GITLAB_PKI_CHAIN_PATH}:/etc/ssl/certs/pki_chain.pem:ro
+    networks:
+      - name: "traefik_internal"
+    network_mode: "traefik_internal"
+    env:
+      TZ: "{{ ansible_nas_timezone }}"
+
+      ## Bleve index (inside the container)
+      MM_BLEVESETTINGS_INDEXDIR: "/mattermost/bleve-indexes"
+
+      ## Configuration settings for Mattermost. Documentation on the variables and the settings itself can be found at
+      ## https://docs.mattermost.com/administration/config-settings.html
+      ## Keep in mind that variables set here will take precedence over the same setting in config.json. This includes
+      ## the system console as well and settings set with env variables will be greyed out.
+
+      ## Below one can find necessary settings to spin up the Mattermost container
+      MM_SQLSETTINGS_DRIVERNAME: "postgres"
+      MM_SQLSETTINGS_DATASOURCE: "postgres://mmuser:mmuser_password@mattermost_db:5432/mattermost?sslmode=disable&connect_timeout=10"
+
+      ## Example settings (any additional setting added here also needs to be introduced in the docker-compose.yml)
+      MM_SERVICESETTINGS_SITEURL: "https://mattermost.{{ ansible_nas_domain }}"
+      MM_SERVICESETTINGS.LISTENADDRESS: "8065"
+      MM_LICENSE: "{{ mattermost_license }}"
+      MM_EMAILSETTINGS_SMTPSERVER: "{{ mattermost_smtpserver }}"
+      MM_EMAILSETTINGS_SMTPPORT: "{{ mattermost_smtpport }}"
+      MM_EMAILSETTINGS_ENABLESMTPAUTH: "{{ mattermost_smtpauth }}"
+      MM_EMAILSETTINGS_SMTPUSERNAME: "{{ mattermost_smtpuser }}"
+      MM_EMAILSETTINGS_SMTPPASSWORD: "{{ mattermost_smtppassword }}"
+      MM_EMAILSETTINGS_CONNECTIONSECURITY: "{{ mattermost_smtp_connection_security }}"
+      MM_EMAILSETTINGS_SKIPSERVERCERTIFICATEVERIFICATION: "{{ mattermost_smtp_skip_certs }}"
+      MM_EMAILSETTINGS_ENABLESECURITYFIXALERT: "{{ mattermost_smtp_enable_security_alert }}"
+      MM_EMAILSETTINGS_SMTPSERVERTIMEOUT: "{{ mattermost_smtp_timeout }}"
+      MM_EMAILSETTINGS_SENDPUSHNOTIFICATIONS: "{{ mattermost_smtp_push }}"
+      MM_EMAILSETTINGS_PUSHNOTIFICATIONSERVER: "{{ mattermost_smtp_push_server }}"
+      MM_SERVICESETTINGS_ALLOWUNTRUSTEDINTERNALCONNECTIONS: "{{ mattermost_untrusted_internal }}"
+      MM_EMAILSETTINGS_FEEDBACKNAME: "{{ mattermost_email_name }}"
+      MM_EMAILSETTINGS_FEEDBACKEMAIL: "{{ mattermost_email_email }}"
+      MM_SUPPORTSETTINGS_SUPPORTEMAIL: "{{ mattermost_email_support }}"
+      MM_EMAILSETTINGS_REPLYTOADDRESS: "{{ mattermost_email_replyto }}"
+    labels:
+      traefik.enable: "{{ mattermost_available_externally }}"
+      com.centurylinklabs.watchtower.enable: "{{ mattermost_watchtower_enable }}"
+      traefik.http.services.mattermost.loadbalancer.server.port: "8065"
+      traefik.http.middlewares.mattermost-whitelist.ipwhitelist.ipstrategy.depth: "1"
+      traefik.http.middlewares.mattermost-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+      traefik.http.routers.mattermost.middlewares: "mattermost-whitelist"
+      traefik.http.routers.mattermost.rule: "Host(`mattermost.{{ ansible_nas_domain }}`)"
+    restart_policy: unless-stopped
+    healthcheck:
+      test: "curl --fail http://localhost:8065 || exit 1"
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    read_only: false
+
+# - name: mattermost nginx Docker Container
+#   docker_container:
+#     name: mattermost_nginx
+#     image: nginx:alpine
+#     pull: true
+#     container_default_behavior: no_defaults
+#     ports:
+#       - "{{ mattermost_http_port }}:80"
+#       - "{{ mattermost_https_port }}:443"
+#     volumes:
+#       - "{{ mattermost_data_directory }}/config/nginx/conf.d:/etc/nginx/conf.d:ro"
+#       - "{{ mattermost_data_directory }}/config/nginx/dhparams4096.pem:/dhparams4096.pem"
+#       - "{{ mattermost_data_directory }}/config/nginx/cert/cert.pem:/cert.pem:ro"
+#       - "{{ mattermost_data_directory }}/config/nginx/cert/key-no-password.pem:/key.pem:ro"
+#       - "{{ mattermost_data_directory }}/config/nginx/webroot:/usr/share/nginx/html"
+#     networks:
+#       - name: "traefik_internal"
+#     network_mode: "traefik_internal"
+#     restart_policy: unless-stopped
+#     labels:
+#       com.centurylinklabs.watchtower.enable: "{{ mattermost_watchtower_enable }}"
+#       traefik.enable: "{{ mattermost_available_externally }}"
+#       traefik.http.services.mattermost.loadbalancer.server.port: "80"
+#       traefik.http.middlewares.mattermost-whitelist.ipwhitelist.ipstrategy.depth: "1"
+#       traefik.http.middlewares.mattermost-whitelist.ipwhitelist.sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+#       traefik.http.routers.mattermost.middlewares: "mattermost-whitelist"
+#       traefik.http.routers.mattermost.rule: "Host(`mattermost.{{ ansible_nas_domain }}`)"
+#     healthcheck:
+#       test: "service nginx status"
+#       interval: 10s
+#       timeout: 5s
+#       retries: 5

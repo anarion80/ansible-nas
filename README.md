@@ -65,6 +65,7 @@ Ansible config and a bunch of Docker containers.
 * [https://krusader.org/](https://krusader.org/) - Twin panel file management for your desktop
 * [LazyLibrarian](https://lazylibrarian.gitlab.io/) - A program to follow authors and grab metadata for all your digital reading needs
 * [Lidarr](https://github.com/lidarr/Lidarr) - Music collection manager for Usenet and BitTorrent users
+* [Mattermost](https://mattermost.com/) - Mattermost is an open source platform for secure communication, collaboration, and orchestration of work across tools and teams.
 * [Minetest](https://www.minetest.net/) - An open source voxel game engine
 * [MiniDLNA](https://sourceforge.net/projects/minidlna/) - simple media server which is fully compliant with DLNA/UPnP-AV clients
 * [Miniflux](https://miniflux.app/) - An RSS news reader

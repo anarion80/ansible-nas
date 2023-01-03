@@ -514,3 +514,7 @@
   - import_tasks: tasks/libreddit.yml
     when: (libreddit_enabled | default(False))
     tags: libreddit
+
+  - import_tasks: tasks/mattermost.yml
+    when: (mattermost_enabled | default(False))
+    tags: mattermost
