@@ -1,0 +1,65 @@
+---
+- name: Test
+  block:
+
+  # - name: Create and Add items to dictionary
+  #   set_fact:
+  #       userdata: "{{ userdata | default({}) | combine ({ item.key : item.value }) }}"
+  #   with_items:
+  #     - { 'key': 'Name' , 'value': 'SaravAK'}
+  #     - { 'key': 'Email' , 'value': 'sarav@gritfy.com'}
+  #     - { 'key': 'Location' , 'value': 'Coimbatore'}
+  #     - { 'key': 'Nationality' , 'value': 'Indian'}
+  # - name: Display the List
+  #   debug: var=test_traefik_labels_list
+
+  # - name: Display the String
+  #   debug: var=test_traefik_labels_string
+
+  - name: Display the Dictionary
+    debug: var=test_traefik_labels_dict
+
+  # - name: Display the userdata
+  #   debug: var=userdata
+  # when: test_enabled is true
+
+  - name: Template Traefik config.toml
+    template:
+      src: traefik.toml.j2
+      dest: "/tmp/traefik.toml"
+    register: template_config
+
+# - name: Start Airsonic
+#   block:
+#     - name: Create Airsonic Directories
+#       file:
+#         path: "{{ item }}"
+#         state: directory
+#       with_items:
+#         - "{{ airsonic_data_directory }}/data"
+#         - "{{ airsonic_data_directory }}/playlists"
+
+#     - name: Airsonic Docker Container
+#       docker_container:
+#         name: "{{ airsonic_container_name }}"
+#         image: airsonic/airsonic:latest
+#         pull: true
+#         volumes:
+#           - "{{ airsonic_data_directory }}/data:/airsonic/data:rw"
+#           - "{{ airsonic_data_directory }}/playlists:/airsonic/playlists:rw"
+#           - "{{ airsonic_music_directory }}:/airsonic/music:rw"
+#           - "{{ airsonic_podcasts_directory }}:/airsonic/podcasts:rw"
+#         ports:
+#           - "{{ airsonic_port }}:4040"
+#         restart_policy: unless-stopped
+#         memory: "{{ airsonic_memory }}"
+#         labels: "{{ test_traefik_labels_dict }}"
+#   when: airsonic_enabled is true
+
+# - name: Stop Airsonic
+#   block:
+#     - name: Stop Airsonic
+#       docker_container:
+#         name: "{{ airsonic_container_name }}"
+#         state: absent
+#   when: airsonic_enabled is false

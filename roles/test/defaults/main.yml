@@ -1,0 +1,41 @@
+test_traefik_labels_list: |
+  {{
+    ['docker.service']
+    +
+    ['matrix.service']
+    +
+    (['devture_postgres_identifier' ~ '.service'] if ansible_nas_use_tls else [])
+    +
+    (['matrix-nginx-proxy.tls'] if ansible_nas_use_tls else ['matrix-nginx-proxy.nontls'])
+  }}
+
+test_traefik_labels_string: |-
+  {{
+    'http://matrix-nginx-proxy:12080' if ansible_nas_use_tls else {
+      'synapse': ('http://matrix-synapse-reverse-proxy-companion:8008' if ansible_nas_use_tls else 'http://matrix-synapse:'+ 'matrix_synapse_container_client_api_port'),
+      'dendrite': ('http://matrix-dendrite:' + 'matrix_dendrite_http_bind_port'),
+      'conduit': ('http://matrix-conduit:' + 'matrix_conduit_port_number'),
+    }['synapse']
+  }}
+
+test_traefik_labels_dict: |
+  {{
+    {
+      'traefik.enable': airsonic_available_externally | string,
+      'traefik.http.services.' + airsonic_container_name + '.loadbalancer.server.port': "8337",
+      'traefik.http.routers.' + airsonic_container_name + '.tls.certresolver': "letsencrypt",
+      'traefik.http.routers.' + airsonic_container_name + '.tls.domains[0].main': ansible_nas_domain,
+      'traefik.http.routers.' + airsonic_container_name + '.tls.domains[0].sans': '*.' + ansible_nas_domain,
+      'traefik.http.middlewares.' + airsonic_container_name + '-whitelist.ipwhitelist.ipstrategy.depth': "1",
+      'traefik.http.middlewares.' + airsonic_container_name + '-whitelist.ipwhitelist.sourcerange': "127.0.0.1/32, 192.168.0.0/16",
+      'traefik.http.routers.' + airsonic_container_name + '.middlewares': "airsonic-whitelist",
+      'traefik.http.routers.' + airsonic_container_name + '.rule': 'Host(`airsonic.' + ansible_nas_domain + '`)',
+    } if ansible_nas_use_tls else {
+      'traefik.enable': airsonic_available_externally | string,
+      'traefik.http.services.' + airsonic_container_name + '.loadbalancer.server.port': "8337",
+      'traefik.http.middlewares.' + airsonic_container_name + '-whitelist.ipwhitelist.ipstrategy.depth': "1",
+      'traefik.http.middlewares.' + airsonic_container_name + '-whitelist.ipwhitelist.sourcerange': "127.0.0.1/32, 192.168.0.0/16",
+      'traefik.http.routers.' + airsonic_container_name + '.middlewares': "airsonic-whitelist",
+      'traefik.http.routers.' + airsonic_container_name + '.rule': 'Host(`airsonic.'+ ansible_nas_domain + '`)',
+    }
+  }}

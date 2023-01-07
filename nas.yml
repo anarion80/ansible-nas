@@ -45,6 +45,10 @@
       tags:
         - airsonic
 
+    - role: test
+      tags:
+        - test
+
     - role: bazarr
       tags:
         - bazarr
