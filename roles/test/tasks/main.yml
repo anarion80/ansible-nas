@@ -16,8 +16,17 @@
   # - name: Display the String
   #   debug: var=test_traefik_labels_string
 
-  - name: Display the Dictionary
+  - name: Display the Dictionary 1
     debug: var=test_traefik_labels_dict
+
+  - name: Display the Dictionary 3
+    debug: var=test_traefik_labels_dict2
+
+  - name: Display the Dictionary 3
+    debug: var=test_traefik_labels_dict3
+
+  - name: Display the Dictionary
+    debug: var=test_traefik
 
   # - name: Display the userdata
   #   debug: var=userdata
