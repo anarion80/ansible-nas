@@ -45,17 +45,19 @@
       tags:
         - airsonic
 
+    - role: authentik
+      tags:
+        - authentik
+        
     - role: barcodebuddy
       tags:
         - barcodebuddy
 
     - role: bazarr
+
+    - role: bazarr
       tags:
         - bazarr
-
-    - role: bitwarden
-      tags:
-        - bitwarden
 
     - role: booksonic
       tags:
@@ -117,6 +119,10 @@
       tags:
         - firefly
 
+    - role: flame
+      tags:
+        - flame
+
     - role: freshrss
       tags:
         - freshrss
@@ -145,6 +151,10 @@
       tags:
         - gotify
       when: (gotify_enabled | default(False))
+
+    - role: grocy
+      tags:
+        - grocy
 
     - role: guacamole
       tags:
@@ -423,6 +433,10 @@
       tags:
         - utorrent
       when: (utorrent_enabled | default(False))
+
+    - role: vaultwarden
+      tags:
+        - vaultwarden
 
     - role: virtual_desktop
       tags:

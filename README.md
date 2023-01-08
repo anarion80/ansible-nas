@@ -17,9 +17,9 @@ If you have a spare domain name you can configure applications to be accessible 
 ## Available Applications
 
 * [Airsonic](https://airsonic.github.io/) - catalog and stream music
+* [Authentik](https://goauthentik.io/) - an open-source Identity Provider focused on flexibility and versatility
 * [Barcode Buddy](https://github.com/Forceu/barcodebuddy/) - Barcode system for Grocy
 * [Bazarr](https://github.com/morpheus65535/bazarr) - companion to Radarr and Sonarr for downloading subtitles
-* [Bitwarden_rs](https://github.com/dani-garcia/bitwarden_rs) - Self-Hosting port of password manager
 * [Booksonic](https://booksonic.org/) - The selfhosted audiobook server
 * [Calibre-web](https://github.com/janeczku/calibre-web) - Provides a clean interface for browsing, reading and downloading eBooks using an existing Calibre database.
 * [Code Server](https://code.visualstudio.com/) - Powerful IDE from Microsoft accessible through the browser
@@ -35,6 +35,7 @@ If you have a spare domain name you can configure applications to be accessible 
 * [Emby](https://emby.media/) - Media streaming and management
 * [ESPHome](https://esphome.io/) - ESP8266/ESP32 programming and management for home automation
 * [Firefly III](https://firefly-iii.org/) - Free and open source personal finance manager
+* [Flame](https://github.com/pawelmalak/flame/) - Self-hosted startpage for your server
 * [Fresh RSS](https://freshrss.org/) - Self-hosted RSS feed aggregator like Leed or Kriss Feed
 * [get_iplayer](https://github.com/get-iplayer/get_iplayer) - download programmes from BBC iplayer
 * [Gitea](https://gitea.io/en-us/) - Simple self-hosted GitHub clone
@@ -42,6 +43,7 @@ If you have a spare domain name you can configure applications to be accessible 
 * [Glances](https://nicolargo.github.io/glances/) - for seeing the state of your system via a web browser
 * [Gotify](https://gotify.net/) - Self-hosted server for sending push notifications
 * [Grafana](https://grafana.com/) - Query, visualize, alert on, and understand your data no matter where it’s stored (via stats role).
+* [Grocy](https://grocy.info/) - web-based self-hosted groceries & household management solution for your home
 * [Guacamole](https://guacamole.apache.org/) - Web based remote desktop gateway, supports VNC, RDP and SSH
 * [healthchecks.io](https://healthchecks.io/) - Ensure your NAS is online and get notified otherwise
 * [Heimdall](https://heimdall.site/) - Home server dashboard
@@ -97,6 +99,7 @@ If you have a spare domain name you can configure applications to be accessible 
 * [Transmission](https://transmissionbt.com/) - BitTorrent client (with OpenVPN if you have a supported VPN provider)
 * [Ubooquity](http://vaemendis.net/ubooquity/) - Book and comic server
 * [uTorrent](https://www.utorrent.com/) - The best torrent downloading app for beginners
+* [Vaultwarden](https://github.com/dani-garcia/vaultwarden) - Self-Hosting port of password manager
 * [Virtual Desktop](https://github.com/RattyDAVE/docker-ubuntu-xrdp-mate-custom) - A virtual desktop running on your NAS.
 * [Wallabag](https://wallabag.org/) - Save and classify articles. Read them later.
 * [Watchtower](https://github.com/v2tec/watchtower) - Monitor your Docker containers and update them if a new version is available
