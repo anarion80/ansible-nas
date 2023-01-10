@@ -1,12 +1,12 @@
 test_traefik_labels_list: |
   {{
-    ['docker.service']
+    [("traefik.enable", airsonic_available_externally | string)]
     +
-    ['matrix.service']
+    [('traefik.http.services.' + airsonic_container_name + '.loadbalancer.server.port', "8337")]
     +
-    (['devture_postgres_identifier' ~ '.service'] if ansible_nas_use_tls else [])
+    ([('traefik.http.middlewares.' + airsonic_container_name + '-whitelist.ipwhitelist.ipstrategy.depth', "1")] if ansible_nas_use_tls else [])
     +
-    (['matrix-nginx-proxy.tls'] if ansible_nas_use_tls else ['matrix-nginx-proxy.nontls'])
+    ([('traefik.http.routers.' + airsonic_container_name + '.middlewares', "airsonic-whitelist")] if ansible_nas_use_tls else [("traefik.enable", airsonic_available_externally | string)])
   }}
 
 test_traefik_labels_string: |-

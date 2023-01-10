@@ -10,11 +10,11 @@
   #     - { 'key': 'Email' , 'value': 'sarav@gritfy.com'}
   #     - { 'key': 'Location' , 'value': 'Coimbatore'}
   #     - { 'key': 'Nationality' , 'value': 'Indian'}
-  # - name: Display the List
-  #   debug: var=test_traefik_labels_list
+  - name: Display the List
+    debug: var=test_traefik_labels_list
 
-  # - name: Display the String
-  #   debug: var=test_traefik_labels_string
+  - name: Display the String
+    debug: var=test_traefik_labels_string
 
   - name: Display the Dictionary 1
     debug: var=test_traefik_labels_dict
@@ -27,6 +27,9 @@
 
   - name: Display the Dictionary
     debug: var=test_traefik
+
+  - name: Display the Dictionary with combine
+    debug: var={{ test_traefik_labels_list | items2dict }}
 
   # - name: Display the userdata
   #   debug: var=userdata
