@@ -10,13 +10,16 @@
   #     - { 'key': 'Email' , 'value': 'sarav@gritfy.com'}
   #     - { 'key': 'Location' , 'value': 'Coimbatore'}
   #     - { 'key': 'Nationality' , 'value': 'Indian'}
+  - name: Display the List of Dicts
+    debug: var=test_traefik_labels_list_of_dicts
+
   - name: Display the List
     debug: var=test_traefik_labels_list
 
   - name: Display the String
     debug: var=test_traefik_labels_string
 
-  - name: Display the Dictionary 1
+  - name: Display the Dictionary 
     debug: var=test_traefik_labels_dict
 
   - name: Display the Dictionary 3
@@ -28,18 +31,31 @@
   - name: Display the Dictionary
     debug: var=test_traefik
 
+  - name: Display the Dictionary with items2dict
+    debug:
+      msg: "{{ test_traefik_labels_list_of_dicts | items2dict }}"
+
   - name: Display the Dictionary with combine
-    debug: var={{ test_traefik_labels_list | items2dict }}
+    debug:
+      msg: "{{ test_traefik | combine( optional_labels | default({})) }}"
+
+  - name: Display the Dictionary with combine 3
+    debug:
+      msg: "{{ test_traefik_labels_dict3 | combine(optional_labels | default({})) }}"
+
+  # - name: Display the Dictionary with +
+  #   debug:
+  #     msg: "{{ test_traefik + optional_labels }}"
 
   # - name: Display the userdata
   #   debug: var=userdata
   # when: test_enabled is true
 
-  - name: Template Traefik config.toml
-    template:
-      src: traefik.toml.j2
-      dest: "/tmp/traefik.toml"
-    register: template_config
+  # - name: Template Traefik config.toml
+  #   template:
+  #     src: traefik.toml.j2
+  #     dest: "/tmp/traefik.toml"
+  #   register: template_config
 
 # - name: Start Airsonic
 #   block:
@@ -65,7 +81,7 @@
 #           - "{{ airsonic_port }}:4040"
 #         restart_policy: unless-stopped
 #         memory: "{{ airsonic_memory }}"
-#         labels: "{{ test_traefik_labels_dict }}"
+#         labels: "{{ test_traefik_labels_dict3 | combine(optional_labels | default({})) }}"
 #   when: airsonic_enabled is true
 
 # - name: Stop Airsonic
