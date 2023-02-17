@@ -1,0 +1,30 @@
+---
+provisioner:
+  inventory:
+    group_vars:
+      all:
+        rclone_enabled: true
+        rclone_config_folder: /home/ansible-nas/.config/rclone
+        rclone_config_location: "{{ rclone_config_folder }}/rclone.conf"
+        rclone_config_owner:
+          OWNER: ansible-nas
+          GROUP: ansible-nas
+        rclone_configs:
+          - name: local
+            properties:
+              type: local
+        rclone_remote_to_mount: local
+        rclone_remote_path_to_mount: "/tmp"
+platforms:
+  - name: instance
+    image: geerlingguy/docker-ubuntu2204-ansible:latest
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp
+      - /run:/run
+    cgroupns_mode: host
+    command: "/usr/sbin/init"
+    # environment: { container: docker }
+    privileged: true
+    pre_build_image: true

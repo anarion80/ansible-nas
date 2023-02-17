@@ -1,0 +1,26 @@
+---
+# This is a Hello World playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get Rclone service state
+      ansible.builtin.systemd:
+        name: rclone
+        state: stopped
+        enabled: false
+      register: service_result
+
+    - name: Check that Rclone service is stopped
+      assert:
+        that:
+          # - service_result.status['ActiveState'] === "active"
+          - service_result.status['Result'] == "success"
+          - service_result.status['ActiveState'] == "inactive"
+          - service_result.state == "stopped"
+          # - service_result.enabled == "false"
