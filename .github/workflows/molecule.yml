@@ -48,7 +48,10 @@ jobs:
         run: molecule --version
       - name: Install requirements
         run: ansible-galaxy install -r requirements.yml
-
+      - name: Check user
+        run: id -u
+      - name: Check pwd
+        run: pwd
       - name: Run tests
         run: |
           cd ./roles/rclone \
