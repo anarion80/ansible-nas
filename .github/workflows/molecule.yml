@@ -23,7 +23,7 @@ jobs:
 
   test:
     # name: "Test ${{ matrix.role }}"
-    name: "Test Rclone}"
+    name: "Test Rclone"
     # needs: generate-matrix
     runs-on: ubuntu-latest
     # strategy:
@@ -43,9 +43,11 @@ jobs:
       - name: Validate that ansible works
         run: ansible --version
       - name: Validate that molecule works
-        run: ansible --version
+        run: molecule --version
+      - name: Install requirements
+        run: ansible-galaxy install -r requirements.yml
 
       - name: Run tests
         run: |
           cd ./roles/rclone \
-          && molecule -c ../../tests/molecule/base.yml test
+          && molecule -c ../../tests/molecule/base.yml test --debug -vvv
