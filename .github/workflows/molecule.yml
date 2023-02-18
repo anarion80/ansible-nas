@@ -34,8 +34,6 @@ jobs:
       - name: Check init system
         run: ps -p 1 -o comm=
       - name: Install system dependencies
-        # remove broken .deb ansible and replace with pip version:
-        # https://github.com/actions/virtual-environments/issues/3001
         run: |
           sudo apt update \
           && sudo apt install -y python3-pip libssl-dev \
@@ -52,10 +50,18 @@ jobs:
         run: id -u
       - name: Check pwd
         run: pwd
+      - name: Check /tmp
+        run: ls -al /tmp
+      - name: Enter target dir
+        run: cd ./roles/rclone
+      - name: Check molecule create
+        run: molecule --debug -vvvv -c ../../tests/molecule/base.yml create
+      - name: Check molecule list
+        run: molecule --debug -vvvv -c ../../tests/molecule/base.yml list
       - name: Run tests
         run: |
           cd ./roles/rclone \
-          && sudo molecule --debug -vvvv -c ../../tests/molecule/base.yml test
+          && molecule --debug -vvvv -c ../../tests/molecule/base.yml test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
