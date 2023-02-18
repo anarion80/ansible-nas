@@ -3,6 +3,9 @@ name: Molecule
 
 # Controls when the action will run.
 on:
+  push:
+    branches:
+      - "add_rclone"
   workflow_dispatch:
 
 jobs:
