@@ -33,7 +33,7 @@ jobs:
       - name: Molecule Test
         uses: gofrolist/molecule-action@dfbfd1af6a77523c8a937a1532f92808065a00a4
         with:
-          molecule_options: --base-config ../../tests/molecule/base.yml --debug -vvv
+          molecule_options: --base-config ../../tests/molecule/base.yml
           molecule_command: test
           molecule_working_dir: ${{ matrix.role }}
         env:
