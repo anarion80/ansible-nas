@@ -50,4 +50,4 @@ jobs:
       - name: Run tests
         run: |
           cd ./roles/rclone \
-          && molecule -c ../../tests/molecule/base.yml test --debug -vvv
+          && molecule --debug -vvv -c ../../tests/molecule/base.yml test
