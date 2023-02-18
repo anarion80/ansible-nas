@@ -1,4 +1,10 @@
 ---
+dependency:
+  name: galaxy
+  options:
+    ignore-certs: True
+    ignore-errors: True
+    role-file: main/requirements.yml
 provisioner:
   inventory:
     group_vars:
@@ -16,14 +22,29 @@ provisioner:
               type: local
         rclone_remote_to_mount: local
         rclone_remote_path_to_mount: "/tmp"
-# platforms:
-#   - name: instance
-#     image: geerlingguy/docker-ubuntu2204-ansible:latest
-#     volumes:
-#       - /sys/fs/cgroup:/sys/fs/cgroup:ro
-#       - /var/run/docker.sock:/var/run/docker.sock
-#       - /tmp:/tmp:rw
-#     cgroupns_mode: host
-#     command: "/usr/sbin/init"
-#     privileged: true
-#     pre_build_image: true
+scenario:
+  test_sequence:
+    - cleanup
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - side_effect
+    - verify verify_stopped.yml
+    - cleanup
+    - destroy
+platforms:
+  - name: instance
+    image: geerlingguy/docker-ubuntu2204-ansible:latest
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp:rw
+    cgroupns_mode: host
+    command: "/usr/sbin/init"
+    privileged: true
+    pre_build_image: true
