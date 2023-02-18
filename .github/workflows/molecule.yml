@@ -19,7 +19,8 @@ jobs:
   #       run: "tests/github-test-matrix.sh"
 
   test:
-    name: "Test ${{ matrix.role }}"
+    # name: "Test ${{ matrix.role }}"
+    name: "Test Rclone}"
     # needs: generate-matrix
     runs-on: ubuntu-latest
     # strategy:
