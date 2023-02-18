@@ -1,5 +1,6 @@
 ---
 rclone_enabled: false
+rclone_mount_enabled: false
 rclone_cloud_upload_enabled: false
 rclone_remote_to_mount: gscrypt_sa
 rclone_remote_path_to_mount: ""

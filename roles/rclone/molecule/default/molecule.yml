@@ -4,6 +4,7 @@ provisioner:
     group_vars:
       all:
         rclone_enabled: true
+        rclone_mount_enabled: true
         rclone_config_folder: /home/ansible-nas/.config/rclone
         rclone_config_location: "{{ rclone_config_folder }}/rclone.conf"
         rclone_config_owner:
