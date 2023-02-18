@@ -55,9 +55,13 @@ jobs:
       - name: Enter target dir
         run: cd ./roles/rclone
       - name: Check molecule create
-        run: molecule --debug -vvvv -c ../../tests/molecule/base.yml create
+        run: |
+          cd ./roles/rclone \
+          && molecule --debug -vvvv -c ../../tests/molecule/base.yml create
       - name: Check molecule list
-        run: molecule --debug -vvvv -c ../../tests/molecule/base.yml list
+        run: |
+          cd ./roles/rclone \
+          && molecule --debug -vvvv -c ../../tests/molecule/base.yml list
       - name: Run tests
         run: |
           cd ./roles/rclone \
