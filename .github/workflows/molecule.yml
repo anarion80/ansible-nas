@@ -52,7 +52,7 @@ jobs:
       - name: Run tests
         run: |
           cd ./roles/rclone \
-          && molecule --debug -vvv -c ../../tests/molecule/base.yml test
+          && molecule --debug -vvvv -c ../../tests/molecule/base.yml test
         env:
           PY_COLORS: '1'
           ANSIBLE_FORCE_COLOR: '1'
