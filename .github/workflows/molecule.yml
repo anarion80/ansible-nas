@@ -1,0 +1,47 @@
+---
+name: Molecule
+
+# Controls when the action will run.
+on:
+  workflow_dispatch:
+
+jobs:
+  # generate-matrix:
+  #   name: Generate test matrix
+  #   runs-on: ubuntu-latest
+  #   outputs:
+  #     matrix: ${{ steps.set-matrix.outputs.matrix }}
+  #   steps:
+  #     - uses: actions/checkout@v3
+  #     - name: Generate Test Matrix
+  #       id: set-matrix
+  #       shell: bash
+  #       run: "tests/github-test-matrix.sh"
+
+  test:
+    name: "Test ${{ matrix.role }}"
+    # needs: generate-matrix
+    runs-on: ubuntu-latest
+    # strategy:
+    #     matrix:
+    #         role: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Install system dependencies
+        # remove broken .deb ansible and replace with pip version:
+        # https://github.com/actions/virtual-environments/issues/3001
+        run: |
+          sudo apt update \
+          && sudo apt install -y python3-pip libssl-dev \
+          && python3 -m pip install molecule ansible-core "molecule-plugins[docker]" \
+          && echo "$HOME/.local/bin" >> $GITHUB_PATH
+        # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
+      - name: Validate that ansible works
+        run: ansible --version
+      - name: Validate that molecule works
+        run: ansible --version
+
+      - name: Run tests
+        run: |
+          cd ./roles/rclone \
+          && molecule -c ../../tests/molecule/base.yml test
