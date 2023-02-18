@@ -43,11 +43,10 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:rw
       - /var/run/docker.sock:/var/run/docker.sock
-      # - /tmp:/tmp:rw
-    tmpfs:
-      - /tmp
-      - /run
-      - /run/lock
+    # tmpfs:
+    #   - /tmp
+    #   - /run
+    #   - /run/lock
     cgroupns_mode: host
     command: "/usr/sbin/init"
     privileged: true
