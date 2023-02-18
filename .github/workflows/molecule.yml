@@ -37,7 +37,7 @@ jobs:
         run: |
           sudo apt update \
           && sudo apt install -y python3-pip libssl-dev \
-          && python3 -m pip install molecule ansible-core "molecule-plugins[docker]" \
+          && python3 -m pip install docker molecule ansible "molecule-plugins[docker]" \
           && echo "$HOME/.local/bin" >> $GITHUB_PATH
         # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
       - name: Validate that ansible works
