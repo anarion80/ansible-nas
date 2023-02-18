@@ -43,8 +43,8 @@ platforms:
     volumes:
       - /sys/fs/cgroup:/sys/fs/cgroup:ro
       - /var/run/docker.sock:/var/run/docker.sock
-      - /tmp:/tmp:rw
+      # - /tmp:/tmp:rw
     cgroupns_mode: host
-    command: "/usr/sbin/init"
+    # command: "/usr/sbin/init"
     privileged: true
     pre_build_image: true
