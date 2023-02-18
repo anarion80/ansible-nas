@@ -46,7 +46,7 @@ platforms:
     # tmpfs:
     #   - /run
     #   - /tmp
-    cgroupns_mode: host
+    # cgroupns_mode: host
     command: "/usr/sbin/init"
     privileged: true
     pre_build_image: true
