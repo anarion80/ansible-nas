@@ -31,6 +31,8 @@ jobs:
     #         role: ${{ fromJson(needs.generate-matrix.outputs.matrix) }}
     steps:
       - uses: actions/checkout@v3
+      - name: Check init system
+        run: ps -p 1 -o comm=
       - name: Install system dependencies
         # remove broken .deb ansible and replace with pip version:
         # https://github.com/actions/virtual-environments/issues/3001
@@ -51,3 +53,6 @@ jobs:
         run: |
           cd ./roles/rclone \
           && molecule --debug -vvv -c ../../tests/molecule/base.yml test
+        env:
+          PY_COLORS: '1'
+          ANSIBLE_FORCE_COLOR: '1'
