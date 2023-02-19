@@ -32,7 +32,7 @@
             +
             [stats_telegraf_port + ':9273']
           }}
-        ansible.builtin.user: "telegraf:{{ docker_uid.stdout }}"
+        user: "telegraf:{{ docker_uid.stdout }}"
         volumes:
           - "{{ stats_telegraf_config_directory }}:/etc/telegraf/:ro"
           - "/var/run/docker.sock:/var/run/docker.sock:ro"

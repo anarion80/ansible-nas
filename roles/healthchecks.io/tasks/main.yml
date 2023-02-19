@@ -3,5 +3,5 @@
   ansible.builtin.cron:
     name: healthchecks.io
     minute: "*/{{ healthchecks_ping_minutes }}"
-    ansible.builtin.user: root
+    user: root
     job: "curl -m 10 --retry 5 {{ healthchecks_url }}"
