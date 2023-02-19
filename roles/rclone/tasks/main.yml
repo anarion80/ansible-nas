@@ -34,7 +34,7 @@
         group: "{{ rclone_service_group }}"
 
     - name: Include Rclone role
-      ansible_builtin.include_role:
+      ansible.builtin.include_role:
         name: stefangweichinger.ansible_rclone
 
     - name: Install Rclone mount service
