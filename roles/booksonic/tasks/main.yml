@@ -48,7 +48,7 @@
       tags: molecule-idempotence-notest
 
     - name: Add server.use-forward-headers to config file
-      lineinansible.builtin.file:
+      nansible.builtin.lineinfile:
         path: "{{ booksonic_data_directory }}/config/airsonic.properties"
         line: 'server.use-forward-headers=true'
         insertbefore: BOF
