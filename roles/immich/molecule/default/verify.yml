@@ -5,7 +5,7 @@
   tasks:
     - name: Include vars
       ansible.builtin.include_vars:
-        ansible.builtin.file: ../../defaults/main.yml
+        file: ../../defaults/main.yml
 
     - name: Get Immich Postgres container state
       docker_container_info:

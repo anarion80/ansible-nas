@@ -5,10 +5,10 @@
   tasks:
     - name: Include vars
       ansible.builtin.include_vars:
-        ansible.builtin.file: ../../defaults/main.yml
+        file: ../../defaults/main.yml
 
     - name: Stop Rclone service state
-      ansible.builtin:systemd:
+      ansible.builtin.systemd:
         name: rclone
         enabled: false
         masked: true
