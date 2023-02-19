@@ -1,13 +1,13 @@
 ---
 - name: Create jackett Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ jackett_data_directory }}"
 
 - name: Jackett Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: jackett
     image: linuxserver/jackett
     volumes:

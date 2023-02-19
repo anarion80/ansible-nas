@@ -1,6 +1,6 @@
 ---
 - name: Create Plex Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     # mode: 0755
@@ -9,7 +9,7 @@
     - "{{ plex_logs }}"
 
 - name: Create Plex Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: plex
     image: linuxserver/plex
     pull: true

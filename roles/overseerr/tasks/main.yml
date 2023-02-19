@@ -1,6 +1,6 @@
 ---
 - name: Create overseerr Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -8,7 +8,7 @@
     - "{{ overseerr_data_directory }}/config"
 
 - name: Overseerr
-  docker_container:
+  community.docker.docker_container:
     name: overseerr
     image: sctx/overseerr:latest
     pull: true

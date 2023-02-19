@@ -1,12 +1,12 @@
 ---
 - name: Create openHAB group
-  group:
+  ansible.builtin.group:
     name: openhab
     gid: 9001
     state: present
 
 - name: Create openHAB user
-  user:
+  ansible.builtin.user:
     name: openhab
     uid: 9001
     state: present
@@ -16,7 +16,7 @@
     group: openhab
 
 - name: Create openHAB Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: openhab
@@ -28,7 +28,7 @@
     - "{{ openhab_data_directory }}/addons"
 
 - name: Create openHAB container
-  docker_container:
+  community.docker.docker_container:
     name: openHAB
     image: openhab/openhab
     pull: true

@@ -1,13 +1,13 @@
 ---
 - name: Create Octoprint Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ octoprint_data_directory }}"
 
 - name: Octoprint Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: octoprint
     image: octoprint/octoprint
     pull: true

@@ -1,6 +1,6 @@
 ---
 - name: Create Mylar Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     # mode: 0755
@@ -8,7 +8,7 @@
     - "{{ mylar_data_directory }}/config"
 
 - name: Mylar Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: mylar
     image: linuxserver/mylar
     pull: true

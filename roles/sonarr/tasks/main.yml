@@ -1,13 +1,13 @@
 ---
 - name: Create Sonarr Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ sonarr_data_directory }}"
 
 - name: Sonarr
-  docker_container:
+  community.docker.docker_container:
     name: sonarr
     image: linuxserver/sonarr
     pull: true

@@ -1,11 +1,11 @@
 ---
 - name: Create Tiddlywiki Directory
-  file:
+  ansible.builtin.file:
     path: "{{ tiddlywiki_data_directory }}"
     state: directory
 
 - name: Create Tiddlywiki Container
-  docker_container:
+  community.docker.docker_container:
     name: tiddlywiki
     image: wmudge/tiddlywiki:latest
     ports:

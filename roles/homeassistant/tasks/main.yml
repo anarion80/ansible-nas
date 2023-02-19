@@ -1,13 +1,13 @@
 ---
 - name: Create Home Assistant Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ homeassistant_data_directory }}/config"
 
 - name: Home Assistant Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: homeassistant
     image: homeassistant/home-assistant
     pull: true

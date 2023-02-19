@@ -1,13 +1,13 @@
 ---
 - name: Create Minecraft Server Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ minecraft_server_data_directory }}"
 
 - name: Minecraft Server Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: minecraft-server
     image: itzg/minecraft-server:latest
     pull: true

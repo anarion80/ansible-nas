@@ -1,13 +1,13 @@
 ---
 - name: Create Gotify Data Directory
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ gotify_data_directory }}"
 
 - name: Gotify Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: gotify
     image: "{{ gotify_docker_image }}"
     pull: true

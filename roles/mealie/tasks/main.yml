@@ -1,13 +1,13 @@
 ---
 - name: Create Mealie Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ mealie_data_directory }}/data"
 
 - name: Mealie Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: mealie
     image: hkotel/mealie:latest
     pull: true

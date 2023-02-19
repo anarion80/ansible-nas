@@ -1,6 +1,6 @@
 ---
 - name: Create Mymediaforalexa Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -8,7 +8,7 @@
     - "{{ mymediaforalexa_data_directory }}"
 
 - name: Mymediaforalexa Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: mymediaforalexa
     image: bizmodeller/mymediaforalexa
     pull: true

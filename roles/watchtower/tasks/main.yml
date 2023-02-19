@@ -1,6 +1,6 @@
 ---
 - name: Watchtower Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: watchtower
     image: containrrr/watchtower
     pull: true

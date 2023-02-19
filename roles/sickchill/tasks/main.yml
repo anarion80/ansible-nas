@@ -1,6 +1,6 @@
 ---
 - name: Create Sickchill Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     # mode: 0755
@@ -8,7 +8,7 @@
     - "{{ sickchill_config_directory }}"
 
 - name: Sickchill Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: sickchill
     image: linuxserver/sickchill
     pull: true

@@ -1,6 +1,6 @@
 ---
 - name: Create Pytivo Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     mode: 0777
@@ -8,7 +8,7 @@
     - "{{ pytivo_config_directory }}"
 
 - name: Pytivo
-  docker_container:
+  community.docker.docker_container:
     name: pytivo
     image: pinion/docker-pytivo
     pull: true

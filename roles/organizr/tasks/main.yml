@@ -1,13 +1,13 @@
 ---
 - name: Create Organizr Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ organizr_data_directory }}"
 
 - name: Create Organizr container
-  docker_container:
+  community.docker.docker_container:
     name: organizr
     image: organizr/organizr:latest
     pull: true

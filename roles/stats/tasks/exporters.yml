@@ -2,7 +2,7 @@
 - name: Start Exporters
   block:
     - name: Smartctl Exporter Docker Container
-      docker_container:
+      community.docker.docker_container:
         name: "{{ stats_smartctl_container_name }}"
         image: matusnovak/prometheus-smartctl:latest
         pull: true
@@ -13,7 +13,7 @@
         memory: "{{ stats_prometheus_smartctl_memory }}"
 
     - name: Speedtest Exporter Docker Container
-      docker_container:
+      community.docker.docker_container:
         name: "{{ stats_speedtest_container_name }}"
         image: miguelndecarvalho/speedtest-exporter
         pull: true
@@ -27,11 +27,11 @@
 - name: Stop Exporters
   block:
     - name: Stop Smartctl Exporter
-      docker_container:
+      community.docker.docker_container:
         name: "{{ stats_smartctl_container_name }}"
         state: absent
     - name: Stop Speedtest Exporter
-      docker_container:
+      community.docker.docker_container:
         name: "{{ stats_speedtest_container_name }}"
         state: absent
   when: stats_enabled is false

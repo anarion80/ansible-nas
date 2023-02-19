@@ -1,6 +1,6 @@
 ---
 - name: Create Homebridge Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     # mode: 0755
@@ -8,7 +8,7 @@
     - "{{ homebridge_config_directory }}"
 
 - name: Create Homebridge Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: homebridge
     image: oznu/homebridge
     pull: true

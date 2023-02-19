@@ -1,6 +1,6 @@
 ---
 - name: Create Glances Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: glances
     image: nicolargo/glances
     pull: true

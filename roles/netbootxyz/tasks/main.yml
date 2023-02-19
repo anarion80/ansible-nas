@@ -1,6 +1,6 @@
 ---
 - name: Netbootxyz Directory
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -8,7 +8,7 @@
     - "{{ netbootxyz_assets_directory }}"
 
 - name: Netbootxyz Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: netbootxyz
     image: linuxserver/netbootxyz:latest
     pull: true

@@ -1,11 +1,11 @@
 ---
 - name: Time Machine Directories
-  file:
+  ansible.builtin.file:
     path: "{{ timemachine_data_directory }}"
     state: directory
 
 - name: Time Machine Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: timemachine
     image: awlnx/samba-timemachine:latest
     pull: true
@@ -24,18 +24,18 @@
     memory: "{{ timemachine_memory }}"
 
 - name: Install avahi
-  apt:
+  ansible.builtin.apt:
     name: "avahi-daemon"
     state: present
   register: result
   until: result is succeeded
 
 - name: Setup timemachine service for avahi
-  template:
+  ansible.builtin.template:
     src: timemachine.service
     dest: "/etc/avahi/services/timemachine.service"
 
 - name: Reload avahi configuration
-  service:
+  ansible.builtin.service:
     name: avahi-daemon
     state: reloaded

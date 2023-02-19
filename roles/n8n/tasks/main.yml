@@ -1,13 +1,13 @@
 ---
 - name: Create n8n Directory
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ n8n_data_directory }}"
 
 - name: Create n8n Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: n8n
     image: n8nio/n8n
     pull: true

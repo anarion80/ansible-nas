@@ -2,12 +2,12 @@
 - name: Start Rclone
   block:
     - name: Create ansible-nas group
-      group:
+      ansible.builtin.group:
         name: ansible-nas
         state: present
 
     - name: Create ansible-nas user
-      user:
+      ansible.builtin.user:
         name: ansible-nas
         state: present
         system: yes
@@ -18,7 +18,7 @@
       tags: molecule-idempotence-notest
 
     - name: Create rclone config directories
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: directory
         owner: "{{ rclone_service_user }}"
@@ -27,27 +27,27 @@
         - "{{ rclone_config_folder }}"
 
     - name: Create Service Account file
-      template:
+      ansible.builtin.template:
         src: gsuite.json
         dest: "/home/{{ rclone_service_user }}/.config/rclone/gsuite.json"
         owner: "{{ rclone_service_user }}"
         group: "{{ rclone_service_group }}"
 
     - name: Include Rclone role
-      include_role:
+      ansible_builtin.include_role:
         name: stefangweichinger.ansible_rclone
 
     - name: Install Rclone mount service
       block:
         - name: Make sure fuse is installed
-          apt:
+          ansible.builtin.apt:
             name: fuse
             state: present
           register: fuse
           until: fuse is succeeded
 
         - name: Create rclone mount directories
-          file:
+          ansible.builtin.file:
             path: "{{ item }}"
             state: directory
             owner: "{{ rclone_service_user }}"
@@ -56,18 +56,18 @@
             - "{{ rclone_mount }}"
 
         - name: Create Rclone service
-          template:
+          ansible.builtin.template:
             src: rclone.service
             dest: "/etc/systemd/system/rclone.service"
 
         - name: Enable allow_other option in fuse config
-          lineinfile:
+          ansible.builtin.lineinfile:
             path: "/etc/fuse.conf"
             line: 'user_allow_other'
             insertbefore: EOF
 
         - name: Create rclone.log file
-          file:
+          ansible.builtin.file:
             path: /var/log/rclone.log
             state: touch
             owner: "{{ rclone_service_user }}"
@@ -76,11 +76,11 @@
           tags: molecule-idempotence-notest
 
         - name: Force systemd to reload configs
-          systemd:
+          ansible.builtin:systemd:
             daemon_reload: true
 
         - name: Enable service rclone, ensure it is not masked and start it
-          systemd:
+          ansible.builtin:systemd:
             name: rclone
             enabled: true
             masked: no
@@ -96,7 +96,7 @@
 - name: Stop Rclone
   block:
     - name: Stop Rclone
-      systemd:
+      ansible.builtin:systemd:
         name: rclone
         enabled: false
         masked: true

@@ -1,13 +1,13 @@
 ---
 - name: Create Miniflux Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ miniflux_data_directory }}/postgres"
 
 - name: Create Postgres for Miniflux
-  docker_container:
+  community.docker.docker_container:
     name: miniflux-postgres
     image: postgres:11.1
     pull: true
@@ -20,7 +20,7 @@
     memory: "{{ miniflux_postgres_memory }}"
 
 - name: Create Miniflux Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: miniflux
     image: miniflux/miniflux:latest
     pull: true

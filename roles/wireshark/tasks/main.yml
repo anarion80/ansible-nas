@@ -1,6 +1,6 @@
 ---
 - name: Create Wireshark Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -8,7 +8,7 @@
     - "{{ wireshark_data_directory }}/config"
 
 - name: Create Wireshark Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: wireshark
     image: linuxserver/wireshark:latest
     pull: true

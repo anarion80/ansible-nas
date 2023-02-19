@@ -1,6 +1,6 @@
 ---
 - name: The Lounge Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -8,13 +8,13 @@
     - "{{ thelounge_data_directory }}/users"
 
 - name: Set up admin user
-  copy:
+  ansible.builtin.copy:
     src: admin.json
     dest: "{{ thelounge_data_directory }}/users/admin.json"
     mode: 0777
 
 - name: The Lounge Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: thelounge
     image: thelounge/thelounge:latest
     pull: true

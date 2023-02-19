@@ -1,6 +1,6 @@
 ---
 - name: Create ZNC Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     # mode: 0755
@@ -8,7 +8,7 @@
     - "{{ znc_data_directory }}"
 
 - name: Create ZNC Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: znc
     image: znc
     pull: true

@@ -1,6 +1,6 @@
 ---
 - name: Create pyLoad Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     # mode: 0755
@@ -9,7 +9,7 @@
     - "{{ pyload_download_directory }}"
 
 - name: Create pyLoad Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: pyload
     image: writl/pyload
     pull: true

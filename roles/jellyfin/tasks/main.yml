@@ -1,13 +1,13 @@
 ---
 - name: Create Jellyfin Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ jellyfin_config_directory }}"
 
 - name: Jellyfin Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: jellyfin
     image: linuxserver/jellyfin
     pull: true

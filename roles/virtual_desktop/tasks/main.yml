@@ -1,6 +1,6 @@
 ---
 - name: Create Virtual Desktop Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -8,12 +8,12 @@
     - "{{ virtual_desktop_data_directory }}/home"
 
 - name: Create users file
-  template:
+  ansible.builtin.template:
     src: "users.txt.j2"
     dest: "{{ virtual_desktop_data_directory }}/users.txt"
 
 - name: Virtual Desktop Container
-  docker_container:
+  community.docker.docker_container:
     name: virtual_desktop
     image: "{{ virtual_desktop_docker_image }}"
     pull: true

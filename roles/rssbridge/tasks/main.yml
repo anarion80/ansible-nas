@@ -1,6 +1,6 @@
 ---
 - name: Create RSSBridge Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     # mode: 0755
@@ -8,7 +8,7 @@
     - "{{ rssbridge_data_directory }}/data"
 
 - name: RSSBridge Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: rssbridge
     image: rssbridge/rss-bridge
     pull: true

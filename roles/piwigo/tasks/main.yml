@@ -1,6 +1,6 @@
 ---
 - name: Create Piwigo Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -9,7 +9,7 @@
     - "{{ piwigo_photos }}"
 
 - name: Create MySQL container for Piwigo
-  docker_container:
+  community.docker.docker_container:
     name: piwigo-mysql
     image: mysql:5.7
     pull: true
@@ -24,7 +24,7 @@
     memory: "{{ piwigo_mysql_memory }}"
 
 - name: Piwigo Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: piwigo
     image: linuxserver/piwigo
     pull: true

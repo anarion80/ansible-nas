@@ -1,13 +1,13 @@
 ---
 - name: Krusader Directory
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ krusader_config_directory }}/krusader"
 
 - name: Krusader Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: krusader
     image: djaydev/krusader:latest
     pull: true

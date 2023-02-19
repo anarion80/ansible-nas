@@ -1,6 +1,6 @@
 ---
 - name: MiniDLNA Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: minidlna
     image: vladgh/minidlna
     pull: true

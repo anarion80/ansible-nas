@@ -1,6 +1,6 @@
 ---
 - name: Create Wallabag Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -8,7 +8,7 @@
     - "{{ wallabag_data_directory }}/images"
 
 - name: Wallabag Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: wallabag
     image: wallabag/wallabag:latest
     pull: true

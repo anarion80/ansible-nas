@@ -1,6 +1,6 @@
 ---
 - name: Create Komga Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     # mode: 0755
@@ -9,7 +9,7 @@
     - "{{ komga_data_directory }}/config"
 
 - name: Komga Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: komga
     image: gotson/komga
     pull: true

@@ -1,13 +1,13 @@
 ---
 - name: Create Prowlarr Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ prowlarr_data_directory }}"
 
 - name: Create Prowlarr Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: prowlarr
     image: ghcr.io/linuxserver/prowlarr:develop
     pull: true

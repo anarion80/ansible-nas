@@ -1,13 +1,13 @@
 ---
 - name: Create NZBget Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ nzbget_data_directory }}"
 
 - name: NZBGet
-  docker_container:
+  community.docker.docker_container:
     name: nzbget
     image: linuxserver/nzbget
     pull: true

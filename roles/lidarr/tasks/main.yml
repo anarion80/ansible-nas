@@ -1,11 +1,11 @@
 ---
 - name: Create Lidarr Directory
-  file:
+  ansible.builtin.file:
     path: "{{ lidarr_data_directory }}"
     state: directory
 
 - name: Lidarr Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: lidarr
     image: linuxserver/lidarr
     pull: true

@@ -2,14 +2,14 @@
 - name: Start Authentik
   block:
     - name: Create Authentik Directory
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: directory
       with_items:
         - "{{ authentik_data_directory }}"
 
     - name: Create Authentik mount directories
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: directory
         owner: "1000"
@@ -164,7 +164,7 @@
         # Removing `user: root` also prevents the worker from fixing the permissions
         # on the mounted folders, so when removing this make sure the folders have the correct UID/GID
         # (1000:1000 by default)
-        user: root
+        ansible.builtin.user: root
         labels:
           traefik.enable: "false"
         restart_policy: unless-stopped

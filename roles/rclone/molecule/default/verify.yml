@@ -6,16 +6,16 @@
   gather_facts: false
   tasks:
     - name: Include vars
-      include_vars:
-        file: ../../defaults/main.yml
+      ansible.builtin.include_vars:
+        ansible.builtin.file: ../../defaults/main.yml
 
     - name: "Rclone - retrieve information"
-      stat:
+      ansible.builtin.stat:
         path: "/usr/local/bin/rclone"
       register: remote_file
 
     - name: "Rclone - assert that file is created correctly"
-      assert:
+      ansible.builtin.assert:
         that:
           - "remote_file.stat.exists"
           - "remote_file.stat.isreg"
@@ -37,7 +37,7 @@
       register: service_result
 
     - name: Check that Rclone service is running
-      assert:
+      ansible.builtin.assert:
         that:
           - service_result.status['ActiveState'] == "active"
           - service_result.status['Result'] == "success"

@@ -1,6 +1,6 @@
 ---
 - name: Create Mosquitto Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -9,13 +9,13 @@
     - "{{ mosquitto_data_directory }}/log"
 
 - name: Template mosquitto.conf
-  copy:
+  ansible.builtin.copy:
     src: mosquitto.conf
     dest: "{{ mosquitto_data_directory }}/config/mosquitto.conf"
   register: mosquitto_conf
 
 - name: Create Mosquitto container
-  docker_container:
+  community.docker.docker_container:
     name: mosquitto
     image: eclipse-mosquitto:latest
     pull: true

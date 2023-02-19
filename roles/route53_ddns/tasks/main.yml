@@ -1,18 +1,18 @@
 ---
 
 - name: Create AWS Route53 Dynamic DNS Directories
-  file:
+  ansible.builtin.file:
     path: "{{ route53_data_directory }}"
     state: directory
 
 - name: Generate AWS Route53 Dynamic DNS config file
-  template:
+  ansible.builtin.template:
     src: config.yml
     dest: "{{ route53_data_directory }}/ddns-route53.yml"
   register: template_config
 
 - name: AWS Route53 Dynamic DNS Container
-  docker_container:
+  community.docker.docker_container:
     name: route53-ddns
     image: crazymax/ddns-route53:latest
     pull: true

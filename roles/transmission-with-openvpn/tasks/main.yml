@@ -1,6 +1,6 @@
 ---
 - name: Create Transmission Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     # mode: 0755
@@ -10,7 +10,7 @@
     - "{{ transmission_watch_directory }}"
 
 - name: Transmission with VPN
-  docker_container:
+  community.docker.docker_container:
     name: transmission-openvpn
     image: haugene/transmission-openvpn
     pull: true

@@ -2,7 +2,7 @@
 - name: Start Gitea
   block:
     - name: Create Gitea Directories
-      file:
+      ansible.builtin.file:
         path: "{{ item }}"
         state: directory
         recurse: yes
@@ -11,7 +11,7 @@
         - "{{ gitea_data_directory }}/mysql"
 
     - name: Create MySQL container for Gitea
-      docker_container:
+      community.docker.docker_container:
         name: "{{ gitea_mysql_container_name }}"
         image: mysql:5.7
         pull: true
@@ -26,7 +26,7 @@
         memory: "{{ gitea_mysql_memory }}"
 
     - name: Create Gitea container
-      docker_container:
+      community.docker.docker_container:
         name: gitea
         image: gitea/gitea:latest
         pull: true
@@ -63,12 +63,12 @@
 - name: Stop Gitea
   block:
     - name: Stop Gitea
-      docker_container:
+      community.docker.docker_container:
         name: "{{ gitea_container_name }}"
         state: absent
 
     - name: Stop Gitea Mysql
-      docker_container:
+      community.docker.docker_container:
         name: "{{ gitea_mysql_container_name }}"
         state: absent
   when: gitea_enabled is false

@@ -1,13 +1,13 @@
 ---
 - name: Create Radarr Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ radarr_data_directory }}"
 
 - name: Radarr
-  docker_container:
+  community.docker.docker_container:
     name: radarr
     image: linuxserver/radarr
     pull: true

@@ -1,13 +1,13 @@
 ---
 - name: Create Ubooquity Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ ubooquity_data_directory }}"
 
 - name: Ubooquity Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: ubooquity
     image: linuxserver/ubooquity:latest
     pull: true

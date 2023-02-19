@@ -1,6 +1,6 @@
 ---
 - name: Create uTorrent Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -9,7 +9,7 @@
     - "{{ utorrent_download_directory_active }}"
 
 - name: Create uTorrent Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: utorrent
     image: ekho/utorrent:latest
     pull: true

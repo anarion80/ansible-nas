@@ -1,6 +1,6 @@
 ---
 - name: Create Traefik Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
@@ -8,13 +8,13 @@
     - "{{ traefik_data_directory }}/letsencrypt"
 
 - name: Template Traefik config.toml
-  template:
+  ansible.builtin.template:
     src: traefik.toml
     dest: "{{ traefik_data_directory }}/traefik.toml"
   register: template_config
 
 - name: Traefik Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: traefik
     image: "{{ traefik_docker_image }}"
     pull: true

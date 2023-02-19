@@ -1,23 +1,23 @@
 ---
 - name: Check for Gitea installation
-  fail:
+  ansible.builtin.fail:
     msg: "Woodpecker-CI requires Gitea enabled and running for authentication, please set that up first."
   when: gitea_enabled is false
 
 - name: Check for Gitea config
-  fail:
+  ansible.builtin.fail:
     msg: "Missing Gitea Oauth2 config! Read https://woodpecker-ci.org/docs/administration/forges/gitea and set woodpecker_ci_gitea_client and woodpecker_ci_gitea_secret."
   when: woodpecker_ci_gitea_client == "notset"
 
 - name: Create Woodpecker-CI Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ woodpecker_ci_data_directory }}"
 
 - name: Create Woodpecker-CI container
-  docker_container:
+  community.docker.docker_container:
     name: woodpecker-ci
     image: woodpeckerci/woodpecker-server:latest
     pull: true
@@ -47,7 +47,7 @@
       traefik.http.services.woodpecker_ci.loadbalancer.server.port: "8000"
 
 - name: Create Woodpecker-CI agent container
-  docker_container:
+  community.docker.docker_container:
     name: woodpecker-ci-agent
     image: woodpeckerci/woodpecker-agent:latest
     pull: true
@@ -61,7 +61,7 @@
     memory: "{{ woodpecker_ci_agent_memory }}"
 
 - name: Add webhook allowed hosts to Gitea
-  blockinfile:
+  ansible.builtin.blockinfile:
     path: "{{ gitea_data_directory }}/gitea/gitea/conf/app.ini"
     block: |
      [webhook]

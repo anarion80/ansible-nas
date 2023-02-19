@@ -1,13 +1,13 @@
 ---
 - name: Create Syncthing Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ syncthing_data_directory }}"
 
 - name: Syncthing Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: syncthing
     image: syncthing/syncthing:latest
     pull: true

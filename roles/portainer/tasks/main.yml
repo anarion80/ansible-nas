@@ -1,13 +1,13 @@
 ---
 - name: Create Portainer Directories
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ portainer_data_directory }}"
 
 - name: Portainer Docker Container
-  docker_container:
+  community.docker.docker_container:
     name: portainer
     image: portainer/portainer-ce
     pull: true

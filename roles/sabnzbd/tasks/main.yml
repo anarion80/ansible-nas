@@ -1,13 +1,13 @@
 ---
 - name: Create Sabnzbd Data Directory
-  file:
+  ansible.builtin.file:
     path: "{{ item }}"
     state: directory
   with_items:
     - "{{ sabnzbd_data_directory }}"
 
 - name: Sabnzbd
-  docker_container:
+  community.docker.docker_container:
     name: sabnzbd
     image: linuxserver/sabnzbd
     pull: true
