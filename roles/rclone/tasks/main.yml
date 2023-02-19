@@ -76,11 +76,11 @@
           tags: molecule-idempotence-notest
 
         - name: Force systemd to reload configs
-          ansible.builtin:systemd:
+          ansible.builtin.systemd:
             daemon_reload: true
 
         - name: Enable service rclone, ensure it is not masked and start it
-          ansible.builtin:systemd:
+          ansible.builtin.systemd:
             name: rclone
             enabled: true
             masked: no
@@ -96,7 +96,7 @@
 - name: Stop Rclone
   block:
     - name: Stop Rclone
-      ansible.builtin:systemd:
+      ansible.builtin.systemd:
         name: rclone
         enabled: false
         masked: true
