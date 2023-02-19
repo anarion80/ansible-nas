@@ -10,12 +10,12 @@
         file: ../../defaults/main.yml
 
     - name: Get claper db container state
-      docker_container_info:
+      community.docker.docker_container_info:
         name: "{{ claper_db_container_name }}"
       register: result_db
 
     - name: Get claper container state
-      docker_container_info:
+      community.docker.docker_container_info:
         name: "{{ claper_container_name }}"
       register: result
 

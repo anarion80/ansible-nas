@@ -8,22 +8,22 @@
         file: ../../defaults/main.yml
 
     - name: Get authentik database container state
-      docker_container_info:
+      community.docker.docker_container_info:
         name: "{{ authentik_database_container_name }}"
       register: result_database
 
     - name: Get authentik redis container state
-      docker_container_info:
+      community.docker.docker_container_info:
         name: "{{ authentik_redis_container_name }}"
       register: result_redis
 
     - name: Get authentik server container state
-      docker_container_info:
+      community.docker.docker_container_info:
         name: "{{ authentik_server_container_name }}"
       register: result_server
 
     - name: Get authentik worker container state
-      docker_container_info:
+      community.docker.docker_container_info:
         name: "{{ authentik_worker_container_name }}"
       register: result_worker
 
