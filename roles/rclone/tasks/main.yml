@@ -106,5 +106,5 @@
       retries: 5
       delay: 5
 
-    # TODO: Add proper service removal
+      # TODO: Add proper service removal
   when: rclone_enabled is false and rclone_mount_enabled is false
