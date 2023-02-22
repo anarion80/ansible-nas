@@ -50,4 +50,3 @@ keycloak_command:
   - --db-url="jdbc:{{ keycloak_db_vendor }}://{{ keycloak_db_addr }}:{{ keycloak_db_port }}/{{ keycloak_mysql_db_name }}"
   - --db-username={{ keycloak_mysql_db_user }}
   - --db-password={{ keycloak_mysql_db_password }}
-  
