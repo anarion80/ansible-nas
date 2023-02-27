@@ -1,4 +1,10 @@
 ---
+dependency:
+  name: galaxy
+  options:
+    ignore-certs: true
+    ignore-errors: true
+    role-file: main/requirements.yml
 platforms:
   - name: instance
     image: geerlingguy/docker-ubuntu2204-ansible:latest
