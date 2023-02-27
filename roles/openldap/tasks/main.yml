@@ -91,13 +91,13 @@
 
     - name: Copy PLA templates to container
       become: true
-      ansible.builtin.shell: docker cp {{ openldap_data_directory }}/config/templates/* {{ openldap_phpldapadmin_container_name }}:/var/www/phpldapadmin/templates/creation/
+      ansible.builtin.shell: /usr/bin/docker cp {{ openldap_data_directory }}/config/templates/* {{ openldap_phpldapadmin_container_name }}:/var/www/phpldapadmin/templates/creation/
       changed_when: false
       tags: molecule-idempotence-notest
 
     - name: Update template permissions
       become: true
-      ansible.builtin.shell: docker exec {{ openldap_phpldapadmin_container_name }} chown -R www-data:www-data /var/www/phpldapadmin/templates/creation/
+      ansible.builtin.command: /usr/bin/docker exec {{ openldap_phpldapadmin_container_name }} chown -R www-data:www-data /var/www/phpldapadmin/templates/creation/
       changed_when: false
       tags: molecule-idempotence-notest
   when: openldap_enabled is true
