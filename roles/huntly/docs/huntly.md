@@ -11,7 +11,6 @@ Huntly is a self-hosted information management tool, in simple terms, contains t
 - Connect to other services, currently GitHub is supported, so it's also a Github stars management tool.
 - In the future, it may support connections to services like Pocket, Hypothesis, etc.
 
-
 ## Usage
 
 Set `huntly_enabled: true` in your `inventories/<your_inventory>/nas.yml` file.
