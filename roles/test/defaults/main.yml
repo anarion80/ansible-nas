@@ -1,10 +1,10 @@
-test_traefik_labels_list_of_dicts:
+airsonic_traefik_labels_list_of_dicts:
   - key: "traefik.enable"
     value: "{{ airsonic_available_externally | string }}"
   - key: "{{ 'traefik.http.services.' + airsonic_container_name + '.loadbalancer.server.port' }}"
     value: "8337"
 
-test_traefik_labels_list: |
+airsonic_traefik_labels_list: |
   {{
     [("traefik.enable", airsonic_available_externally | string)]
     +
@@ -15,7 +15,7 @@ test_traefik_labels_list: |
     ([('traefik.http.routers.' + airsonic_container_name + '.middlewares', "airsonic-whitelist")] if ansible_nas_use_tls else [("traefik.enable", airsonic_available_externally | string)])
   }}
 
-test_traefik_labels_string: |-
+airsonic_traefik_labels_string: |-
   {{
     'http://matrix-nginx-proxy:12080' if ansible_nas_use_tls else {
       'synapse': ('http://matrix-synapse-reverse-proxy-companion:8008' if ansible_nas_use_tls else 'http://matrix-synapse:'+ 'matrix_synapse_container_client_api_port'),
@@ -24,7 +24,7 @@ test_traefik_labels_string: |-
     }['synapse']
   }}
 
-test_traefik_labels_dict: >
+airsonic_traefik_labels_dict: >
   {%- set labels = {
     "traefik.enable": airsonic_available_externally | string,
     'traefik.http.services.' + airsonic_container_name + '.loadbalancer.server.port': "8337",
@@ -40,7 +40,7 @@ test_traefik_labels_dict: >
   {%- endif -%}
   {{ labels }}
 
-test_traefik_labels_dict2: |-
+airsonic_traefik_labels_dict2: |-
   {%- set base = [
     ("traefik.enable", airsonic_available_externally | string),
     ('traefik.http.services.' + airsonic_container_name + '.loadbalancer.server.port', "8337"),
@@ -61,15 +61,15 @@ test_traefik_labels_dict2: |-
     '{{ key|e }}': '{{ value|e }}',
   {% endfor -%} }
 
-test_traefik_labels_dict3:
-  traefik.enable: "{{ tautulli_available_externally | string }}"
-  traefik.http.routers."{{ tautulli_hostname }}".rule: "Host(`{{ tautulli_hostname }}.{{ ansible_nas_domain }}`)"
-  traefik.http.routers.{{ tautulli_hostname }}.tls.certresolver: "letsencrypt"
-  traefik.http.routers.{{ tautulli_hostname }}.tls.domains[0].main: "{{ ansible_nas_domain }}"
-  traefik.http.routers.{{ tautulli_hostname }}.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
-  traefik.http.services.{{ tautulli_hostname }}.loadbalancer.server.port: "8181"
+airsonic_traefik_labels_dict3:
+  traefik.enable: "{{ airsonic_available_externally | string }}"
+  traefik.http.routers."{{ airsonic_hostname }}".rule: "Host(`{{ airsonic_hostname }}.{{ ansible_nas_domain }}`)"
+  traefik.http.routers.{{ airsonic_hostname }}.tls.certresolver: "letsencrypt"
+  traefik.http.routers.{{ airsonic_hostname }}.tls.domains[0].main: "{{ ansible_nas_domain }}"
+  traefik.http.routers.{{ airsonic_hostname }}.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+  traefik.http.services.{{ airsonic_hostname }}.loadbalancer.server.port: "8181"
 
-test_traefik: |
+airsonic_traefik: |
   {{
     {
       'traefik.enable': airsonic_available_externally | string,
@@ -92,6 +92,30 @@ test_traefik: |
   }}
 
 optional_labels:
-  traefik.optional: "{{ tautulli_available_externally | string }}"
-  traefik.optional.routers.tautulli.rule: "Host(`{{ tautulli_hostname }}.{{ ansible_nas_domain }}`)"
-  traefik.optional.routers.tautulli.tls.certresolver: "letsencrypt"
+  traefik.optional: "{{ airsonic_available_externally | string }}"
+  traefik.optional.routers.test.rule: "Host(`{{ airsonic_hostname }}.{{ ansible_nas_domain }}`)"
+  traefik.optional.routers.test.tls.certresolver: "letsencrypt"
+
+
+role_available_externally: "{{ airsonic_available_externally }}"
+role_hostname: "{{ airsonic_hostname }}"
+role_port: "{{ airsonic_port }}"
+
+
+
+airsonic_enabled: false
+airsonic_available_externally: false
+
+# directories
+airsonic_config_directory: "{{ docker_home }}/test/config"
+
+# uid / gid
+airsonic_user_id: "0"
+airsonic_group_id: "0"
+
+# network
+airsonic_hostname: "airsonic"
+airsonic_port: "4040"
+
+# specs
+airsonic_memory: "1g"

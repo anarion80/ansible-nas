@@ -215,4 +215,62 @@ samba_netbios_name: "{{ ansible_nas_hostname }}"
 ### Traefik
 ###
 
+# when enabled, traefik will terminate SSL connection and request TLS certificated
+# when disabled, ensuring secure connection is left to external proxy
 ansible_nas_use_tls: true
+
+# when enabled, IP whitelist middleware will be added to Traefik router via additional labels
+ansible_nas_use_ipwhitelist: false
+
+# global settings for IP whitelist, override per role under role_ipwhitelist_sourcerange/role_ipwhitelist_depth
+ansible_nas_ipwhitelist_sourcerange: "127.0.0.1/32, 192.168.0.0/16"
+ansible_nas_ipwhitelist_depth: "1"
+
+# when enabled, a traefik label to enable watchtower on particular container is added
+ansible_nas_use_watchtower: false
+
+default_traefik_labels: |
+  {{
+    {
+      'traefik.enable': role_available_externally | string | default("False"),
+      'traefik.http.services.' + role_hostname + '.loadbalancer.server.port': role_port,
+      'traefik.http.routers.' + role_hostname + '.rule': 'Host(`' + role_hostname + '.' + ansible_nas_domain + '`)',
+    }
+  }}
+
+default_tls_labels: |
+  {{
+    {
+      'traefik.http.routers.' + role_hostname + '.tls.certresolver': "letsencrypt",
+      'traefik.http.routers.' + role_hostname + '.tls.domains[0].main': ansible_nas_domain,
+      'traefik.http.routers.' + role_hostname + '.tls.domains[0].sans': '*.' + ansible_nas_domain
+    }
+  }}
+
+default_ipwhitelist_labels: |
+  {{
+    {
+      'traefik.http.middlewares.' + role_hostname + '-whitelist.ipwhitelist.ipstrategy.depth': role_ipwhitelist_depth | default(ansible_nas_ipwhitelist_depth),
+      'traefik.http.middlewares.' + role_hostname + '-whitelist.ipwhitelist.sourcerange': role_ipwhitelist_sourcerange | default(ansible_nas_ipwhitelist_sourcerange),
+      'traefik.http.routers.' + role_hostname + '.middlewares': role_hostname + '-whitelist'
+    }
+  }}
+
+default_watchtower_labels: |
+  {{
+    {
+      'com.centurylinklabs.watchtower.enable': role_watchtower_enable | string | default("False")
+    }
+  }}
+
+traefik_labels: |
+  {%- if ansible_nas_use_tls -%}
+      {% set default_traefik_labels = default_traefik_labels | combine( default_tls_labels ) %}
+  {%- endif -%}
+  {%- if ansible_nas_use_ipwhitelist -%}
+      {% set default_traefik_labels = default_traefik_labels | combine( default_ipwhitelist_labels ) %}
+  {%- endif -%}
+  {%- if ansible_nas_use_watchtower -%}
+      {% set default_traefik_labels = default_traefik_labels | combine( default_watchtower_labels ) %}
+  {%- endif -%}
+  {{ default_traefik_labels }}

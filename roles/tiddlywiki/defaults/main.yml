@@ -1,4 +1,9 @@
 ---
+role_available_externally: "{{ tiddlywiki_available_externally }}"
+role_hostname: "{{ tiddlywiki_hostname }}"
+role_port: "8080"
+role_watchtower_enable: true
+
 tiddlywiki_enabled: false
 tiddlywiki_available_externally: false
 
@@ -21,3 +26,6 @@ tiddlywiki_hostname: tiddlywiki
 
 # Container
 tiddlywiki_memory: 512MB
+tiddlywiki_optional_labels:
+  traefik.test: "True"
+role_ipwhitelist_sourcerange: "32.32.32.32/16"
