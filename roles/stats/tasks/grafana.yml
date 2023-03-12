@@ -17,11 +17,7 @@
 
     - name: Template Grafana data source
       ansible.builtin.template:
-<<<<<<< HEAD
-        src: datasources/ansible-nas.yml
-=======
         src: datasources/ansible-nas.yml.j2
->>>>>>> master
         dest: "{{ stats_grafana_config_directory }}/provisioning/datasources/ansible-nas.yml"
 
     - name: Copy Grafana dashboards configuration
