@@ -15,6 +15,7 @@
         mode: 0777
       with_items:
         - "{{ stats_prometheus_data_directory }}"
+        - "{{ stats_prometheus_config_directory }}"
 
     - name: Template Prometheus config
       ansible.builtin.template:
@@ -25,8 +26,12 @@
     - name: Prometheus Docker Container
       community.docker.docker_container:
         name: "{{ stats_prometheus_container_name }}"
-        image: prom/prometheus
+        image: "{{ stats_prometheus_docker_image_name }}:{{ stats_prometheus_docker_image_version }}"
         pull: true
+        networks:
+          - name: "{{ stats_network_name }}"
+        network_mode: "{{ stats_network_name }}"
+        container_default_behavior: no_defaults
         volumes:
           - "{{ stats_prometheus_config_directory }}/prometheus.yml:/etc/prometheus/prometheus.yml:ro"
           - "{{ stats_prometheus_data_directory }}:/prometheus:rw"

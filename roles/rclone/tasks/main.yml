@@ -89,6 +89,48 @@
           until: start_service.status.ActiveState == "active"
           retries: 5
           delay: 5
+
+        # When rclone service is enabled with rclone_mount, and mergerfs is enabled - install cloud upload script
+        - name: Install cloud synchronization script
+          block:
+            - name: Create cloud_upload script
+              ansible.builtin.template:
+                src: cloud_upload.sh
+                dest: "/home/{{ rclone_service_user }}/.config/rclone/cloud_upload.sh"
+                owner: "{{ rclone_service_user }}"
+                group: "{{ rclone_service_group }}"
+                mode: u=rwx,g=rx,o=rx
+
+            - name: Create excludes
+              ansible.builtin.template:
+                src: excludes
+                dest: "/home/{{ rclone_service_user }}/.config/rclone/excludes"
+                owner: "{{ rclone_service_user }}"
+                group: "{{ rclone_service_group }}"
+
+            - name: Create cloud_upload.log file
+              ansible.builtin.file:
+                path: /var/log/cloud_upload.log
+                state: touch
+                owner: "{{ rclone_service_user }}"
+                group: "{{ rclone_service_group }}"
+                mode: u=rw,g=r,o=r
+              tags: molecule-idempotence-notest
+
+            - name: Create cron job
+              ansible.builtin.cron:
+                name: "Run cloud_upload script"
+                user: "{{ rclone_service_user }}"
+                minute: "{{ rclone_cloud_upload_cron_minute | default(\"5\") }}"
+                hour: "{{ rclone_cloud_upload_cron_hour | default(\"1\") }}"
+                day: "{{ rclone_cloud_upload_cron_day | default(\"*\") }}"
+                month: "{{ rclone_cloud_upload_cron_month | default(\"*\") }}"
+                weekday: "{{ rclone_cloud_upload_cron_weekday | default(\"*\") }}"
+                job: "/home/{{ rclone_service_user }}/.config/rclone/cloud_upload.sh"
+          when:
+            - rclone_cloud_upload_enabled is true
+            - mergerfs_enabled is true
+            - rclone_mount_enabled is true
       when: rclone_mount_enabled is true
 
   when: rclone_enabled is true
@@ -108,3 +150,22 @@
 
       # TODO: Add proper service removal
   when: rclone_enabled is false and rclone_mount_enabled is false
+
+- name: Remove cloud upload cron job
+  block:
+    - name: Remove cloud upload cron job
+      ansible.builtin.cron:
+        name: "Run cloud_upload script"
+        user: "{{ rclone_service_user }}"
+        state: absent
+
+    - name: Remove script
+      ansible.builtin.file:
+        path: "/home/{{ rclone_service_user }}/.config/rclone/cloud_upload.sh"
+        state: absent
+
+    - name: Remove excludes file
+      ansible.builtin.file:
+        path: "/home/{{ rclone_service_user }}/.config/rclone/excludes"
+        state: absent
+  when: rclone_cloud_upload_enabled is false

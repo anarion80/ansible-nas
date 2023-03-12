@@ -15,15 +15,19 @@
       register: telegraf_config
 
     - name: Get Docker daemon uid
-      command: stat -c '%g' /var/run/docker.sock
+      ansible.builtin.command: stat -c '%g' /var/run/docker.sock
       register: docker_uid
       changed_when: false
 
     - name: Telegraf Docker Container
       community.docker.docker_container:
         name: "{{ stats_telegraf_container_name }}"
-        image: telegraf
+        image: "{{ stats_telegraf_docker_image_name }}:{{ stats_telegraf_docker_image_version }}"
         pull: true
+        networks:
+          - name: "{{ stats_network_name }}"
+        network_mode: "{{ stats_network_name }}"
+        container_default_behavior: no_defaults
         privileged: true
         ipc_mode: host
         ports: |

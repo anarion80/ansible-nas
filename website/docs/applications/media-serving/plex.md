@@ -16,3 +16,12 @@ The Plex web interface can be found at <http://ansible_nas_host_or_ip:32400/web/
 
 You'll need to log in with a plex account, (or possibly claim your server).
 You'll need to set up your local file store - go to settings > Manage > Libraries, and add your libraries. These are mounted in the root directory by default.
+
+Optionally, after setting up Plex, you can install [Plex Autoscan](https://github.com/Cloudbox/autoscan). To do that:
+
+- enable `plex_autoscan_enabled`
+- set `plex_api_token`
+- edit `templates\autoscan_config.j2` to suit your needs
+- and run the playbook again.
+
+Also, you can install [Plex Meta Manager](https://metamanager.wiki/) by enabling `plex_metamanager_enabled` and setting the relevant ENV variables. Please also update the `templates/pmm_config.yml.j2` template according to your needs. Please check out [Plex Meta Manager documentation](https://metamanager.wiki/en/latest/config/configuration.html) for details.

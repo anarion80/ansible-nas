@@ -73,6 +73,10 @@
       tags:
         - calibre
 
+    - role: changedetection
+      tags:
+        - changedetection
+
     - role: claper
       tags:
         - claper
@@ -133,15 +137,29 @@
       tags:
         - flame
 
+    - role: flarum
+      tags:
+        - flarum
+
     - role: freshrss
       tags:
         - freshrss
-      when: (freshrss_enabled | default(False))
+
+    - role: frigate
+      tags:
+        - frigate
+
+    - role: gaps
+      tags:
+        - gaps
 
     - role: get_iplayer
       tags:
         - get_iplayer
-      when: (get_iplayer_enabled | default(False))
+
+    - role: ghost
+      tags:
+        - ghost
 
     - role: gitea
       tags:
@@ -150,17 +168,18 @@
     - role: gitlab
       tags:
         - gitlab
-      when: (gitlab_enabled | default(False))
 
     - role: glances
       tags:
         - glances
-      when: (glances_enabled | default(False))
 
     - role: gotify
       tags:
         - gotify
-      when: (gotify_enabled | default(False))
+
+    - role: graylog
+      tags:
+        - graylog
 
     - role: grocy
       tags:
@@ -169,17 +188,14 @@
     - role: guacamole
       tags:
         - guacamole
-      when: (guacamole_enabled | default(False))
 
     - role: healthchecks.io
       tags:
         - healthchecks.io
-      when: (healthchecks_enabled | default(False))
 
     - role: heimdall
       tags:
         - heimdall
-      when: (heimdall_enabled | default(False))
 
     - role: hello_world
       tags:
@@ -188,12 +204,18 @@
     - role: homeassistant
       tags:
         - homeassistant
-      when: (homeassistant_enabled | default(False))
 
     - role: homebridge
       tags:
         - homebridge
-      when: (homebridge_enabled | default(False))
+
+    - role: huginn
+      tags:
+        - huginn
+
+    - role: huntly
+      tags:
+        - huntly
 
     - role: immich
       tags:
@@ -202,92 +224,130 @@
     - role: jackett
       tags:
         - jackett
-      when: (jackett_enabled | default(False))
 
     - role: jellyfin
       tags:
         - jellyfin
-      when: (jellyfin_enabled | default(False))
 
     - role: joomla
       tags:
         - joomla
-      when: (joomla_enabled | default(False))
+
+    - role: kavita
+      tags:
+        - kavita
+
+    - role: keycloak
+      tags:
+        - keycloak
 
     - role: komga
       tags:
         - komga
-      when: (komga_enabled | default(False))
 
     - role: krusader
       tags:
         - krusader
-      when: (krusader_enabled | default(False))
+
+    - role: lazylibrarian
+      tags:
+        - lazylibrarian
+
+    - role: libreddit
+      tags:
+        - libreddit
+
+    - role: librephotos
+      tags:
+        - librephotos
+
+    - role: librespeed
+      tags:
+        - librespeed
 
     - role: lidarr
       tags:
         - lidarr
-      when: (lidarr_enabled | default(False))
+
+    - role: mattermost
+      tags:
+        - mattermost
 
     - role: mealie
       tags:
         - mealie
-      when: (mealie_enabled | default(False))
+
+    - role: memos
+      tags:
+        - memos
+
+    - role: mergerfs
+      tags:
+        - mergerfs
 
     - role: minecraft-server
       tags:
         - minecraft-server
-      when: (minecraft_server_enabled | default(False))
+
+    - role: minetest-server
+      tags:
+        - minetest-server
 
     - role: minidlna
       tags:
         - minidlna
-      when: (minidlna_enabled | default(False))
 
     - role: miniflux
       tags:
         - miniflux
-      when: (miniflux_enabled | default(False))
 
     - role: mosquitto
       tags:
         - mosquitto
-      when: (mosquitto_enabled | default(False))
+
+    - role: moviematch
+      tags:
+        - moviematch
 
     - role: mylar
       tags:
         - mylar
-      when: (mylar_enabled | default(False))
 
     - role: mymediaforalexa
       tags:
         - mymediaforalexa
-      when: (mymediaforalexa_enabled | default(False))
+
+    - role: mysql
+      tags:
+        - mysql
 
     - role: n8n
       tags:
         - n8n
-      when: (n8n_enabled | default(False))
 
     - role: navidrome
       tags:
         - navidrome
-      when: (navidrome_enabled | default(False))
 
     - role: netbootxyz
       tags:
         - netbootxyz
-      when: (netbootxyz_enabled | default(False))
+
+    - role: netbox
+      tags:
+        - netbox
 
     - role: netdata
       tags:
         - netdata
-      when: (netdata_enabled | default(False))
 
     - role: nextcloud
       tags:
         - nextcloud
-      when: (nextcloud_enabled | default(False))
+
+    - role: nodered
+      tags:
+        - nodered
 
     - role: nomad
       tags:
@@ -296,106 +356,134 @@
     - role: nzbget
       tags:
         - nzbget
-      when: (nzbget_enabled | default(False))
+
+    - role: nzbhydra2
+      tags:
+        - nzbhydra2
 
     - role: octoprint
       tags:
         - octoprint
-      when: (octoprint_enabled | default(False))
 
     - role: ombi
       tags:
         - ombi
-      when: (ombi_enabled | default(False))
 
     - role: openhab
       tags:
         - openhab
-      when: (openhab_enabled | default(False))
+
+    - role: openldap
+      tags:
+        - openldap
 
     - role: organizr
       tags:
         - organizr
-      when: (organizr_enabled | default(False))
 
     - role: overseerr
       tags:
         - overseerr
-      when: (overseerr_enabled | default(False))
 
     - role: paperless_ng
       tags:
         - paperless_ng
-      when: (paperless_ng_enabled | default(False))
+
+    - role: photofield
+      tags:
+        - photofield
+
+    - role: photoprism
+      tags:
+        - photoprism
+
+    - role: photostructure
+      tags:
+        - photostructure
+
+    - role: phpmyadmin
+      tags:
+        - phpmyadmin
 
     - role: piwigo
       tags:
         - piwigo
-      when: (piwigo_enabled | default(False))
 
     - role: plex
       tags:
         - plex
-      when: (plex_enabled | default(False))
 
     - role: portainer
       tags:
         - portainer
-      when: (portainer_enabled | default(False))
 
     - role: prowlarr
       tags:
         - prowlarr
-      when: (prowlarr_enabled | default(False))
 
     - role: pyload
       tags:
         - pyload
-      when: (pyload_enabled | default(False))
 
     - role: pytivo
       tags:
         - pytivo
-      when: (pytivo_enabled | default(False))
 
     - role: radarr
       tags:
         - radarr
-      when: (radarr_enabled | default(False))
 
     - role: rclone
       tags:
         - rclone
 
+    - role: releasebell
+      tags:
+        - releasebell
+
+    - role: restic
+      tags:
+        - restic
+
     - role: route53_ddns
       tags:
         - route53_ddns
-      when: (route53_ddns_enabled | default(False))
 
     - role: rssbridge
       tags:
         - rssbridge
-      when: (rssbridge_enabled | default(False))
 
     - role: sabnzbd
       tags:
         - sabnzbd
-      when: (sabnzbd_enabled | default(False))
+
+    - role: seafile
+      tags:
+        - seafile
+
+    - role: searxng
+      tags:
+        - searxng
+
+    - role: shaarli
+      tags:
+        - shaarli
 
     - role: sickchill
       tags:
         - sickchill
-      when: (sickchill_enabled | default(False))
+
+    - role: snipeit
+      tags:
+        - snipeit
 
     - role: sonarr
       tags:
         - sonarr
-      when: (sonarr_enabled | default(False))
 
     - role: speedtest-tracker
       tags:
         - speedtest-tracker
-      when: (speedtest_tracker_enabled | default(False))
 
     - role: stats
       tags:
@@ -404,52 +492,50 @@
     - role: syncthing
       tags:
         - syncthing
-      when: (syncthing_enabled | default(False))
 
     - role: tautulli
       tags:
         - tautulli
-      when: (tautulli_enabled | default(False))
 
     - role: thelounge
       tags:
         - thelounge
-      when: (thelounge_enabled | default(False))
 
     - role: tiddlywiki
       tags:
         - tiddlywiki
-      when: (tiddlywiki_enabled | default(False))
 
     - role: timemachine
       tags:
         - timemachine
-      when: (timemachine_enabled | default(False))
 
     - role: traefik
       tags:
         - traefik
-      when: (traefik_enabled | default(False))
 
     - role: transmission
       tags:
         - transmission
-      when: (transmission_enabled | default(False))
 
     - role: transmission-with-openvpn
       tags:
         - transmission_with_openvpn
-      when: (transmission_with_openvpn_enabled | default(False))
+
+    - role: trilium
+      tags:
+        - trilium
+
+    - role: ttrss
+      tags:
+        - ttrss
 
     - role: ubooquity
       tags:
         - ubooquity
-      when: (ubooquity_enabled | default(False))
 
     - role: utorrent
       tags:
         - utorrent
-      when: (utorrent_enabled | default(False))
 
     - role: vaultwarden
       tags:
@@ -458,34 +544,39 @@
     - role: virtual_desktop
       tags:
         - virtual_desktop
-      when: (virtual_desktop_enabled | default(False))
 
     - role: wallabag
       tags:
         - wallabag
-      when: (wallabag_enabled | default(False))
 
     - role: watchtower
       tags:
         - watchtower
-      when: (watchtower_enabled | default(False))
+
+    - role: webtrees
+      tags:
+        - webtrees
+
+    - role: wger
+      tags:
+        - wger
+
+    - role: whoogle
+      tags:
+        - whoogle
 
     - role: wireshark
       tags:
         - wireshark
-      when: (wireshark_enabled | default(False))
 
     - role: woodpecker-ci
       tags:
         - woodpecker_ci
-      when: (woodpecker_ci_enabled | default(False))
 
     - role: youtubedlmaterial
       tags:
         - youtubedlmaterial
-      when: (youtubedlmaterial_enabled | default(False))
 
     - role: znc
       tags:
         - znc
-      when: (znc_enabled | default(False))

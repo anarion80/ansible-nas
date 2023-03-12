@@ -8,3 +8,4 @@
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
       vars:
         rclone_enabled: false
+        rclone_cloud_upload_enabled: false

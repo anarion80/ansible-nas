@@ -11,5 +11,6 @@ roles:
 
   - name: stefangweichinger.ansible_rclone
 
-collections:
-  - name: community.docker
+  - name: tigattack.mergerfs
+
+  - name: arillso.restic

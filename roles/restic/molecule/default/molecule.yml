@@ -1,0 +1,34 @@
+---
+dependency:
+  name: galaxy
+  options:
+    ignore-certs: true
+    ignore-errors: true
+    role-file: main/requirements.yml
+provisioner:
+  inventory:
+    group_vars:
+      all:
+        restic_enabled: true
+        restic_create_cron_jobs: true
+        docker_image_directory: "/tmp"
+        restic_service_user: root
+        restic_service_group: root
+        restic_script_dir: /root/restic
+  playbooks:
+    prepare: prepare.yml
+scenario:
+  test_sequence:
+    - cleanup
+    - destroy
+    - dependency
+    - syntax
+    - create
+    - prepare
+    - converge
+    - idempotence
+    - verify
+    - side_effect
+    - verify verify_stopped.yml
+    - cleanup
+    - destroy

@@ -1,0 +1,27 @@
+---
+apiVersion: 1
+
+datasources:
+  - name: Prometheus
+    type: prometheus
+    access: proxy
+    orgId: 1
+    url: http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ stats_prometheus_port }}
+    uid: ansible_nas
+    isDefault: true
+    version: 4
+{{ '  - name: Loki
+    type: loki
+    access: proxy
+    orgId: 1
+    url: http://' + stats_loki_container_name  + ':3100
+    basicAuth: false
+    isDefault: false
+    version: 1
+    editable: true' if stats_loki_enabled | bool }}
+
+deleteDatasources:
+  - name: "InfluxDB"
+    orgId: 1
+  - name: "Alertmanager"
+    orgId: 1
