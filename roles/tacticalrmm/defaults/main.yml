@@ -1,0 +1,98 @@
+---
+tacticalrmm_enabled: false
+tacticalrmm_available_externally: false
+
+# directories
+tacticalrmm_data_directory: "{{ docker_home }}/tacticalrmm"
+tacticalrmm_upload_directory: "{{ docker_home }}/tacticalrmm/upload"
+
+# network
+tacticalrmm_http_port: "8117"
+tacticalrmm_https_port: "8118"
+tacticalrmm_frontend_port: "8119"
+tacticalrmm_mesh_port: "8120"
+tacticalrmm_api_port: "8121"
+tacticalrmm_hostname: "tacticalrmm"
+tacticalrmm_network_name: "tacticalrmm"
+
+# specs
+tacticalrmm_postgres_memory: 1g
+tacticalrmm_redis_memory: 1g
+tacticalrmm_init_memory: 1g
+tacticalrmm_nats_memory: 1g
+tacticalrmm_meshcentral_memory: 1g
+tacticalrmm_mongodb_memory: 1g
+tacticalrmm_frontend_memory: 1g
+tacticalrmm_backend_memory: 1g
+tacticalrmm_websockets_memory: 1g
+tacticalrmm_nginx_memory: 1g
+tacticalrmm_celery_memory: 1g
+tacticalrmm_celerybeat_memory: 1g
+
+# docker
+tacticalrmm_postgres_container_name: "tacticalrmm_postgres"
+tacticalrmm_redis_container_name: "tacticalrmm_redis"
+tacticalrmm_init_container_name: "tacticalrrm_init"
+tacticalrmm_nats_container_name: "tacticalrrm_nats"
+tacticalrmm_meshcentral_container_name: "tacticalrrm_meshcentral"
+tacticalrmm_mongodb_container_name: "tacticalrrm_mongodb"
+tacticalrmm_frontend_container_name: "tacticalrrm_frontend"
+tacticalrmm_backend_container_name: "tacticalrrm_backend"
+tacticalrmm_websockets_container_name: "tacticalrrm_websockets"
+tacticalrmm_nginx_container_name: "tacticalrrm_nginx"
+tacticalrmm_celery_container_name: "tacticalrrm_celery"
+tacticalrmm_celerybeat_container_name: "tacticalrrm_celerybeat"
+
+tacticalrmm_postgres_image: "postgres"
+tacticalrmm_postgres_tag: "13-alpine"
+tacticalrmm_redis_image: "redis"
+tacticalrmm_redis_tag: "6.0-alpine"
+tacticalrmm_init_image: "tacticalrmm/tactical"
+tacticalrmm_init_tag: "latest"
+tacticalrmm_nats_image: "tacticalrmm/tactical-nats"
+tacticalrmm_nats_tag: "latest"
+tacticalrmm_meshcentral_image: "tacticalrmm/tactical-meshcentral"
+tacticalrmm_meshcentral_tag: "latest"
+tacticalrmm_mongodb_image: "mongo"
+tacticalrmm_mongodb_tag: "4.4"
+tacticalrmm_frontend_image: "tacticalrmm/tactical-frontend"
+tacticalrmm_frontend_tag: "latest"
+tacticalrmm_backend_image: "tacticalrmm/tactical"
+tacticalrmm_backend_tag: "latest"
+tacticalrmm_websockets_image: "tacticalrmm/tactical"
+tacticalrmm_websockets_tag: "latest"
+tacticalrmm_nginx_image: "tacticalrmm/tactical-nginx"
+tacticalrmm_nginx_tag: "latest"
+tacticalrmm_celery_image: "tacticalrmm/tactical"
+tacticalrmm_celery_tag: "latest"
+tacticalrmm_celerybeat_image: "tacticalrmm/tactical"
+tacticalrmm_celerybeat_tag: "latest"
+tacticalrmm_user_id: "1000"
+tacticalrmm_group_id: "1000"
+
+# database
+tacticalrmm_db_password: "postgres" # $(pwgen -s 40 1)
+tacticalrmm_db_username: "postgres"
+tacticalrmm_db_name: "tacticalrmm"
+tacticalrmm_db_port: "5432"
+
+# tacticalrmm
+tacticalrmm_app_host: "{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}"
+tacticalrmm_api_host: "api.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}"
+tacticalrmm_mesh_user: "tactical" #"meshcentral"
+tacticalrmm_mesh_pass: "tactical" #"meshcentralpass"
+tacticalrmm_mesh_host: "mesh.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}"
+tacticalrmm_trmm_user: "tactical"
+tacticalrmm_trmm_pass: "tactical"
+tacticalrmm_mongodb_user: "mongouser"
+tacticalrmm_mongodb_password: "mongopass"
+tacticalrmm_mesh_persistant_config: "0"
+tacticalrmm_mongo_initdb_database: "meshcentral"
+tacticalrmm_cert_pub_key: ""
+tacticalrmm_cert_priv_key: ""
+tacticalrmm_smtp_host: "smtp.example.com"
+tacticalrmm_smtp_port: "587"
+tacticalrmm_smtp_from: "tacticalrmm@example.com"
+tacticalrmm_smtp_user: "user"
+tacticalrmm_smtp_pass: "pass"
+tacticalrmm_smtp_tls: "false"

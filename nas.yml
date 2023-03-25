@@ -513,6 +513,10 @@
       tags:
         - syncthing
 
+    - role: tacticalrmm
+      tags:
+        - tacticalrmm
+
     - role: tautulli
       tags:
         - tautulli

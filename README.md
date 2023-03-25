@@ -138,6 +138,7 @@ If you have a spare domain name you can configure applications to be accessible 
 * [Speedtest-Tracker](https://github.com/henrywhitaker3/Speedtest-Tracker) - Continuously track your internet speed
 * Stats - Monitor and visualise metrics about your NAS and internet connection using Grafana, Prometheus, Telegraf and more.
 * [Syncthing](https://syncthing.net/) - sync directories with another device
+* [Tactical RMM](https://github.com/amidaware/tacticalrmm) - A remote monitoring & management tool.
 * [Tautulli](http://tautulli.com/) - Monitor Your Plex Media Server
 * [The Lounge](https://thelounge.chat) - Web based always-on IRC client
 * [TiddlyWiki](https://tiddlywiki.com) - A unique non-linear notebook/wiki for capturing, organizing, and sharing complex information

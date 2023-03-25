@@ -1,0 +1,391 @@
+---
+- name: Start Tactical RMM
+  block:
+    - name: Create Tactical RMM Directory
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        # owner: 1000
+        # group: 1000
+        # mode: 0777
+      with_items:
+        - "{{ tacticalrmm_data_directory }}"
+        - "{{ tacticalrmm_data_directory }}/tactical_data"
+        - "{{ tacticalrmm_data_directory }}/database"
+        - "{{ tacticalrmm_data_directory }}/mongo_data"
+        - "{{ tacticalrmm_data_directory }}/mesh_data"
+
+    - name: Create Tactical RMM Directory
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        # owner: 1000
+        # group: 1000
+        mode: 0777
+      with_items:
+        - "{{ tacticalrmm_data_directory }}/redis_data"
+
+    - name: Create Tactical RMM network
+      community.docker.docker_network:
+        name: "{{ tacticalrmm_network_name }}"
+        ipam_config:
+          - subnet: 172.20.0.0/24
+
+    - name: Tactical RMM Postgress Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_postgres_container_name }}"
+        image: "{{ tacticalrmm_postgres_image }}:{{ tacticalrmm_postgres_tag }}"
+        pull: true
+        volumes:
+          # - "postgres_data:/var/lib/postgresql/data:rw"
+          - "{{ tacticalrmm_data_directory }}/database:/var/lib/postgresql/data:rw"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+        network_mode: "{{ tacticalrmm_network_name }}"
+        container_default_behavior: no_defaults
+        env:
+          POSTGRES_PASSWORD: "{{ tacticalrmm_db_password }}"
+          POSTGRES_USER: "{{ tacticalrmm_db_username }}"
+          POSTGRES_DB: "{{ tacticalrmm_db_name }}"
+          PG_DATA: /var/lib/postgresql/data
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ tacticalrmm_postgres_memory }}"
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -d {{ tacticalrmm_db_name }} -U {{ tacticalrmm_db_username }}"]
+          start_period: 20s
+          interval: 30s
+          retries: 5
+          timeout: 5s
+
+    - name: Tactical RMM Redis Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_redis_container_name }}"
+        image: "{{ tacticalrmm_redis_image }}:{{ tacticalrmm_redis_tag }}"
+        pull: true
+        user: 1000:1000
+        volumes:
+          # - "redis_data:/data:rw"
+          - "{{ tacticalrmm_data_directory }}/redis_data:/data:rw"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ tacticalrmm_redis_memory }}"
+        healthcheck:
+          test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+          start_period: 20s
+          interval: 30s
+          retries: 5
+          timeout: 3s
+
+    - name: Tactical RMM Init Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_init_container_name }}"
+        image: "{{ tacticalrmm_init_image }}:{{ tacticalrmm_init_tag }}"
+        pull: true
+        command: [ "tactical-init" ]
+        volumes:
+          # - "mongo_data:/mongo/data/db:rw"
+          # - "tactical_data:/opt/tactical:rw"
+          # - "redis_data:/data:rw"
+          # - "mesh_data:/meshcentral-data:rw"
+          - "{{ tacticalrmm_data_directory }}/mongo_data:/mongo/data/db:rw"
+          - "{{ tacticalrmm_data_directory }}/tactical_data:/opt/tactical:rw"
+          - "{{ tacticalrmm_data_directory }}/redis_data:/data:rw"
+          - "{{ tacticalrmm_data_directory }}/mesh_data:/meshcentral-data:rw"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+        env:
+          POSTGRES_USER: "{{ tacticalrmm_db_username }}"
+          POSTGRES_PASS: "{{ tacticalrmm_db_password }}"
+          POSTGRES_HOST: "{{ tacticalrmm_postgres_container_name }}"
+          MESH_SERVICE: "{{ tacticalrmm_meshcentral_container_name }}"
+          POSTGRES_PORT: "5432"
+          APP_HOST: "{{ tacticalrmm_app_host }}"
+          API_HOST: "{{ tacticalrmm_api_host }}"
+          MESH_USER: "{{ tacticalrmm_mesh_user }}"
+          MESH_HOST: "{{ tacticalrmm_mesh_host }}"
+          TRMM_USER: "{{ tacticalrmm_trmm_user }}"
+          TRMM_PASS: "{{ tacticalrmm_trmm_pass }}"
+          REDIS_HOST: "{{ tacticalrmm_redis_container_name }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: on-failure
+        memory: "{{ tacticalrmm_init_memory }}"
+
+    - name: Tactical RMM Nats Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_nats_container_name }}"
+        image: "{{ tacticalrmm_nats_image }}:{{ tacticalrmm_nats_tag }}"
+        pull: true
+        user: 1000:1000
+        volumes:
+          # - "tactical_data:/opt/tactical"
+          - "{{ tacticalrmm_data_directory }}/tactical_data:/opt/tactical"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+            aliases:
+              - "(( tacticalrmm_api_host ))"
+        env:
+          API_HOST: "{{ tacticalrmm_api_host }}"
+        restart_policy: unless-stopped
+        memory: "{{ tacticalrmm_nats_memory }}"
+        ports:
+          - "{{ tacticalrmm_api_port }}:4222"
+        labels:
+          traefik.enable: "{{ tacticalrmm_available_externally | string }}"
+          traefik.http.routers.tacticalrmm-api.rule: "Host(`api.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
+          # traefik.http.routers.tacticalrmm-api.tls.certresolver: "letsencrypt"
+          # traefik.http.routers.tacticalrmm-api.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          # traefik.http.routers.tacticalrmm-api.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.tacticalrmm-api.loadbalancer.server.port: "4222"
+
+    - name: Tactical RMM Meshcentral Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_meshcentral_container_name }}"
+        image: "{{ tacticalrmm_meshcentral_image }}:{{ tacticalrmm_meshcentral_tag }}"
+        pull: true
+        user: 1000:1000
+        volumes:
+          # - "mesh_data:/home/node/app/meshcentral-data"
+          # - "tactical_data:/opt/tactical"
+          - "{{ tacticalrmm_data_directory }}/mesh_data:/home/node/app/meshcentral-data"
+          - "{{ tacticalrmm_data_directory }}/tactical_data:/opt/tactical"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+            aliases:
+              - "(( tacticalrmm_mesh_host ))"
+        env:
+          MESH_HOST: "{{ tacticalrmm_mesh_host }}"
+          MESH_USER: "{{ tacticalrmm_mesh_user }}"
+          MESH_PASS: "{{ tacticalrmm_mesh_pass }}"
+          NGINX_HOST_IP: "{{ tacticalrmm_nginx_container_name }}"
+          MONGODB_HOST: "{{ tacticalrmm_mongodb_container_name }}"
+          MONGODB_PORT: "27017"
+          MONGODB_USER: "{{ tacticalrmm_mongodb_user }}"
+          MONGODB_PASSWORD: "{{ tacticalrmm_mongodb_password }}"
+          MESH_PERSISTENT_CONFIG: "{{ tacticalrmm_mesh_persistant_config }}"
+          SMTP_HOST: "{{ tacticalrmm_smtp_host }}"
+          SMTP_PORT: "{{ tacticalrmm_smtp_port }}"
+          SMTP_FROM: "{{ tacticalrmm_smtp_from }}"
+          SMTP_USER: "{{ tacticalrmm_smtp_user }}"
+          SMTP_PASS: "{{ tacticalrmm_smtp_pass }}"
+          SMTP_TLS: "{{ tacticalrmm_smtp_tls }}"
+        restart_policy: unless-stopped
+        memory: "{{ tacticalrmm_meshcentral_memory }}"
+        ports:
+          - "{{ tacticalrmm_mesh_port }}:4443"
+        labels:
+          traefik.enable: "{{ tacticalrmm_available_externally | string }}"
+          traefik.http.routers.tacticalrmm-mesh.rule: "Host(`mesh.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.tacticalrmm-mesh.service: "tacticalrmm-mesh"
+          traefik.http.routers.tacticalrmm-mesh1.service: "tacticalrmm-mesh1"
+          traefik.http.routers.tacticalrmm-mesh1.rule: "Host(`mesh.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`) && PathPrefix( `/agent.ashx`, `/meshrelay.ashx`, ) && Headers(`X-Forwarded-Proto`, `wss`)" # "Host(`mesh.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
+          # traefik.http.routers.tacticalrmm-mesh.tls.certresolver: "letsencrypt"
+          # traefik.http.routers.tacticalrmm-mesh.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          # traefik.http.routers.tacticalrmm-mesh.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.tacticalrmm-mesh.loadbalancer.server.port: "4443"
+          traefik.http.services.tacticalrmm-mesh1.loadbalancer.server.port: "4443"
+
+    - name: Tactical RMM Mongodb Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_mongodb_container_name }}"
+        image: "{{ tacticalrmm_mongodb_image }}:{{ tacticalrmm_mongodb_tag }}"
+        pull: true
+        user: 1000:1000
+        volumes:
+          # - "mongo_data:/data/db"
+          - "{{ tacticalrmm_data_directory }}/mongo_data:/data/db"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+        env:
+          MONGO_INITDB_ROOT_USERNAME: "{{ tacticalrmm_mongodb_user }}"
+          MONGO_INITDB_ROOT_PASSWORD: "{{ tacticalrmm_mongodb_password }}"
+          MONGO_INITDB_DATABASE: "{{ tacticalrmm_mongo_initdb_database }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ tacticalrmm_mongodb_memory }}"
+
+    - name: Tactical RMM Frontend Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_frontend_container_name }}"
+        image: "{{ tacticalrmm_frontend_image }}:{{ tacticalrmm_frontend_tag }}"
+        pull: true
+        user: 1000:1000
+        volumes:
+          # - "tactical_data:/opt/tactical"
+          - "{{ tacticalrmm_data_directory }}/tactical_data:/opt/tactical"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+        env:
+          API_HOST: "{{ tacticalrmm_api_host }}"
+        restart_policy: unless-stopped
+        memory: "{{ tacticalrmm_frontend_memory }}"
+        ports:
+          - "{{ tacticalrmm_frontend_port }}:8080"
+        labels:
+          traefik.enable: "{{ tacticalrmm_available_externally | string }}"
+          traefik.http.routers.tacticalrmm-frontend.rule: "Host(`frontend.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
+          # traefik.http.routers.tacticalrmm-frontend.tls.certresolver: "letsencrypt"
+          # traefik.http.routers.tacticalrmm-frontend.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          # traefik.http.routers.tacticalrmm-frontend.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.tacticalrmm-frontend.loadbalancer.server.port: "8080"
+
+    - name: Tactical RMM Backend Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_backend_container_name }}"
+        image: "{{ tacticalrmm_backend_image }}:{{ tacticalrmm_backend_tag }}"
+        pull: true
+        user: 1000:1000
+        command: [ "tactical-backend" ]
+        volumes:
+          # - "tactical_data:/opt/tactical"
+          - "{{ tacticalrmm_data_directory }}/tactical_data:/opt/tactical"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ tacticalrmm_backend_memory }}"
+
+    - name: Tactical RMM Websockets Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_websockets_container_name }}"
+        image: "{{ tacticalrmm_websockets_image }}:{{ tacticalrmm_websockets_tag }}"
+        pull: true
+        user: 1000:1000
+        command: [ "tactical-websockets" ]
+        volumes:
+          # - "tactical_data:/opt/tactical"
+          - "{{ tacticalrmm_data_directory }}/tactical_data:/opt/tactical"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ tacticalrmm_websockets_memory }}"
+
+    - name: Tactical RMM Nginx Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_nginx_container_name }}"
+        image: "{{ tacticalrmm_nginx_image }}:{{ tacticalrmm_nginx_tag }}"
+        pull: true
+        user: 1000:1000
+        volumes:
+          # - "tactical_data:/opt/tactical"
+          - "{{ tacticalrmm_data_directory }}/tactical_data:/opt/tactical"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+            ipv4_address: 172.20.0.20
+        ports:
+          - "{{ tacticalrmm_http_port }}:8080"
+          - "{{ tacticalrmm_https_port }}:4443"
+        env:
+          APP_HOST: "{{ tacticalrmm_app_host }}"
+          API_HOST: "{{ tacticalrmm_api_host }}"
+          MESH_HOST: "{{ tacticalrmm_mesh_host }}"
+          CERT_PUB_KEY: "{{ tacticalrmm_cert_pub_key }}"
+          CERT_PRIV_KEY: "{{ tacticalrmm_cert_priv_key }}"
+          BACKEND_SERVICE: "{{ tacticalrmm_backend_container_name }}"
+          FRONTEND_SERVICE: "{{ tacticalrmm_frontend_container_name }}"
+          MESH_SERVICE: "{{ tacticalrmm_meshcentral_container_name }}"
+          WEBSOCKETS_SERVICE: "{{ tacticalrmm_websockets_container_name }}"
+          NATS_SERVICE: "{{ tacticalrmm_nats_container_name }}"
+          DEV: "0"
+        labels:
+          traefik.enable: "{{ tacticalrmm_available_externally | string }}"
+          traefik.http.routers.tacticalrmm.rule: "Host(`{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
+          # traefik.http.routers.tacticalrmm.tls.certresolver: "letsencrypt"
+          # traefik.http.routers.tacticalrmm.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          # traefik.http.routers.tacticalrmm.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.tacticalrmm.loadbalancer.server.port: "4443"
+        restart_policy: unless-stopped
+        memory: "{{ tacticalrmm_nginx_memory }}"
+
+    - name: Tactical RMM Celery Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_celery_container_name }}"
+        image: "{{ tacticalrmm_celery_image }}:{{ tacticalrmm_celery_tag }}"
+        pull: true
+        user: 1000:1000
+        command: [ "tactical-celery" ]
+        volumes:
+          # - "tactical_data:/opt/tactical"
+          - "{{ tacticalrmm_data_directory }}/tactical_data:/opt/tactical"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ tacticalrmm_celery_memory }}"
+
+    - name: Tactical RMM Celery Beat Docker Container
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_celerybeat_container_name }}"
+        image: "{{ tacticalrmm_celerybeat_image }}:{{ tacticalrmm_celerybeat_tag }}"
+        pull: true
+        user: 1000:1000
+        command: [ "tactical-celerybeat" ]
+        volumes:
+          # - "tactical_data:/opt/tactical"
+          - "{{ tacticalrmm_data_directory }}/tactical_data:/opt/tactical"
+        networks:
+          - name: "{{ tacticalrmm_network_name }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ tacticalrmm_celerybeat_memory }}"
+
+  when: tacticalrmm_enabled is true
+
+- name: Stop Tactical RMM
+  block:
+    - name: Stop Tactical RMM Postgres
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_postgres_container_name }}"
+        state: absent
+
+    - name: Stop Tactical RMM Redis
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_redis_container_name }}"
+        state: absent
+
+    - name: Stop Tactical RMM Typesense
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_typesense_container_name }}"
+        state: absent
+
+    - name: Stop Tactical RMM Server
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_server_container_name }}"
+        state: absent
+
+    - name: Stop Tactical RMM Microservices
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_microservices_container_name }}"
+        state: absent
+
+    - name: Stop Tactical RMM Machine Learning
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_machinelearning_container_name }}"
+        state: absent
+
+    - name: Stop Tactical RMM Web
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_web_container_name }}"
+        state: absent
+
+    - name: Stop Tactical RMM Proxy
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_proxy_container_name }}"
+        state: absent
+
+    - name: Delete Tactical RMM Network
+      community.docker.docker_network:
+        name: "{{ tacticalrmm_network_name }}"
+        state: absent
+  when: tacticalrmm_enabled is false
