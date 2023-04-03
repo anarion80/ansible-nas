@@ -137,7 +137,7 @@
           - "{{ tacticalrmm_api_port }}:4222"
         labels:
           traefik.enable: "{{ tacticalrmm_available_externally | string }}"
-          traefik.http.routers.tacticalrmm-api.rule: "Host(`api.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.tacticalrmm-api.rule: "Host(`{{ tacticalrmm_api_hostname }}.{{ ansible_nas_domain }}`)"
           # traefik.http.routers.tacticalrmm-api.tls.certresolver: "letsencrypt"
           # traefik.http.routers.tacticalrmm-api.tls.domains[0].main: "{{ ansible_nas_domain }}"
           # traefik.http.routers.tacticalrmm-api.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
@@ -180,10 +180,10 @@
           - "{{ tacticalrmm_mesh_port }}:4443"
         labels:
           traefik.enable: "{{ tacticalrmm_available_externally | string }}"
-          traefik.http.routers.tacticalrmm-mesh.rule: "Host(`mesh.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.tacticalrmm-mesh.rule: "Host(`{{ tacticalrmm_mesh_hostname }}.{{ ansible_nas_domain }}`)"
           traefik.http.routers.tacticalrmm-mesh.service: "tacticalrmm-mesh"
           traefik.http.routers.tacticalrmm-mesh1.service: "tacticalrmm-mesh1"
-          traefik.http.routers.tacticalrmm-mesh1.rule: "Host(`mesh.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`) && PathPrefix( `/agent.ashx`, `/meshrelay.ashx`, ) && Headers(`X-Forwarded-Proto`, `wss`)" # "Host(`mesh.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.tacticalrmm-mesh1.rule: "Host(`{{ tacticalrmm_mesh_hostname }}.{{ ansible_nas_domain }}`) && PathPrefix( `/agent.ashx`, `/meshrelay.ashx`, ) && Headers(`X-Forwarded-Proto`, `wss`)" # "Host(`mesh.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
           # traefik.http.routers.tacticalrmm-mesh.tls.certresolver: "letsencrypt"
           # traefik.http.routers.tacticalrmm-mesh.tls.domains[0].main: "{{ ansible_nas_domain }}"
           # traefik.http.routers.tacticalrmm-mesh.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
@@ -299,10 +299,15 @@
         labels:
           traefik.enable: "{{ tacticalrmm_available_externally | string }}"
           traefik.http.routers.tacticalrmm.rule: "Host(`{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.tacticalrmm.middlewares: "tacticalrmm-redirectscheme"
+          # traefik.http.routers.tacticalrmm.tls: "true"
+          # traefik.http.routers.tacticalrmm.tls.passthrough: "true"
           # traefik.http.routers.tacticalrmm.tls.certresolver: "letsencrypt"
           # traefik.http.routers.tacticalrmm.tls.domains[0].main: "{{ ansible_nas_domain }}"
           # traefik.http.routers.tacticalrmm.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
           traefik.http.services.tacticalrmm.loadbalancer.server.port: "4443"
+          traefik.http.middlewares.tacticalrmm-redirectscheme.redirectscheme.scheme: "https"
+          traefik.http.middlewares.tacticalrmm-redirectscheme.redirectscheme.permanent: "true"
         restart_policy: unless-stopped
         memory: "{{ tacticalrmm_nginx_memory }}"
 
@@ -354,38 +359,59 @@
         name: "{{ tacticalrmm_redis_container_name }}"
         state: absent
 
-    - name: Stop Tactical RMM Typesense
+    - name: Stop Tactical RMM Init
       community.docker.docker_container:
-        name: "{{ tacticalrmm_typesense_container_name }}"
+        name: "{{ tacticalrmm_init_container_name }}"
         state: absent
 
-    - name: Stop Tactical RMM Server
+    - name: Stop Tactical RMM Nats
       community.docker.docker_container:
-        name: "{{ tacticalrmm_server_container_name }}"
+        name: "{{ tacticalrmm_nats_container_name }}"
         state: absent
 
-    - name: Stop Tactical RMM Microservices
+    - name: Stop Tactical RMM Meshcentral
       community.docker.docker_container:
-        name: "{{ tacticalrmm_microservices_container_name }}"
+        name: "{{ tacticalrmm_meshcentral_container_name }}"
         state: absent
 
-    - name: Stop Tactical RMM Machine Learning
+    - name: Stop Tactical RMM Mongodb
       community.docker.docker_container:
-        name: "{{ tacticalrmm_machinelearning_container_name }}"
+        name: "{{ tacticalrmm_mongodb_container_name }}"
         state: absent
 
-    - name: Stop Tactical RMM Web
+    - name: Stop Tactical RMM Frontend
       community.docker.docker_container:
-        name: "{{ tacticalrmm_web_container_name }}"
+        name: "{{ tacticalrmm_frontend_container_name }}"
         state: absent
 
-    - name: Stop Tactical RMM Proxy
+    - name: Stop Tactical RMM Backend
       community.docker.docker_container:
-        name: "{{ tacticalrmm_proxy_container_name }}"
+        name: "{{ tacticalrmm_backend_container_name }}"
+        state: absent
+
+    - name: Delete Tactical RMM Websockets
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_websockets_container_name }}"
+        state: absent
+
+    - name: Delete Tactical RMM Nginx
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_nginx_container_name }}"
+        state: absent
+
+    - name: Delete Tactical RMM Celery
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_celery_container_name }}"
+        state: absent
+
+    - name: Delete Tactical RMM Celerybeat
+      community.docker.docker_container:
+        name: "{{ tacticalrmm_celerybeat_container_name }}"
         state: absent
 
     - name: Delete Tactical RMM Network
       community.docker.docker_network:
         name: "{{ tacticalrmm_network_name }}"
         state: absent
+
   when: tacticalrmm_enabled is false

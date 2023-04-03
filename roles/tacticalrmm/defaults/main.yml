@@ -13,7 +13,9 @@ tacticalrmm_frontend_port: "8119"
 tacticalrmm_mesh_port: "8120"
 tacticalrmm_api_port: "8121"
 tacticalrmm_hostname: "tacticalrmm"
-tacticalrmm_network_name: "tacticalrmm"
+tacticalrmm_mesh_hostname: "tacticalrmm-mesh"
+tacticalrmm_api_hostname: "tacticalrmm-api"
+tacticalrmm_network_name: "tacticalrmm-mesh"
 
 # specs
 tacticalrmm_postgres_memory: 1g
@@ -78,10 +80,10 @@ tacticalrmm_db_port: "5432"
 
 # tacticalrmm
 tacticalrmm_app_host: "{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}"
-tacticalrmm_api_host: "api.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}"
+tacticalrmm_api_host: "{{ tacticalrmm_api_hostname }}.{{ ansible_nas_domain }}"
 tacticalrmm_mesh_user: "tactical" #"meshcentral"
 tacticalrmm_mesh_pass: "tactical" #"meshcentralpass"
-tacticalrmm_mesh_host: "mesh.{{ tacticalrmm_hostname }}.{{ ansible_nas_domain }}"
+tacticalrmm_mesh_host: "{{ tacticalrmm_mesh_hostname }}.{{ ansible_nas_domain }}"
 tacticalrmm_trmm_user: "tactical"
 tacticalrmm_trmm_pass: "tactical"
 tacticalrmm_mongodb_user: "mongouser"
