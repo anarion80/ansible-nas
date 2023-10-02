@@ -74,23 +74,6 @@
           traefik.http.routers.servas.tls.domains[0].main: "{{ ansible_nas_domain }}"
           traefik.http.routers.servas.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
           traefik.http.services.servas.loadbalancer.server.port: "80"
-
-    # - name: Create app key
-    #   community.docker.docker_container_exec:
-    #     container: "{{ servas_container_name }}"
-    #     command: php artisan key:generate --force
-    #   register: servas_key
-    #   changed_when: false
-    #   tags: molecule-idempotence-notest
-
-    # - name: Restart Servas Docker Container
-    #   community.docker.docker_container:
-    #     name: "{{ servas_container_name }}"
-    #     image: "{{ servas_image_name }}:{{ servas_image_version }}"
-    #     restart: true
-    #     state: started
-    #     env:
-    #       APP_KEY: "{{ servas_key }}"
   when: servas_enabled is true
 
 - name: Stop Servas
