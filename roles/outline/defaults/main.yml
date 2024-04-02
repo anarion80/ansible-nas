@@ -43,7 +43,7 @@ outline_database_connection_pool_min: ""
 outline_database_connection_pool_max: ""
 outline_pgsslmode: disable
 outline_redis_url: redis://{{ outline_redis_container_name }}:6379
-outline_url: redis://{{ outline_redis_container_name }}:6379
+outline_url: https://{{ outline_hostname }}.{{ ansible_nas_domain }}
 outline_env_port: "3000"
 outline_collaboration_url: ""
 outline_file_storage: local
