@@ -1,0 +1,7 @@
+---
+provisioner:
+  inventory:
+    group_vars:
+      all:
+        twenty_enabled: true
+        twenty_data_directory: /tmp/twenty
