@@ -2,7 +2,7 @@
 <rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:content="http://purl.org/rss/1.0/modules/content/">
     <channel>
         <title>Ansible-NAS Blog</title>
-        <link>https://ansible-nas.io/blog</link>
+        <link>https://anarion80.github.io/ansible-nas/blog</link>
         <description>Ansible-NAS Blog</description>
         <lastBuildDate>Mon, 19 Sep 2022 00:00:00 GMT</lastBuildDate>
         <docs>https://validator.w3.org/feed/docs/rss2.html</docs>
@@ -10,8 +10,8 @@
         <language>en</language>
         <item>
             <title><![CDATA[Welcome]]></title>
-            <link>https://ansible-nas.io/blog/welcome</link>
-            <guid>https://ansible-nas.io/blog/welcome</guid>
+            <link>https://anarion80.github.io/ansible-nas/blog/welcome</link>
+            <guid>https://anarion80.github.io/ansible-nas/blog/welcome</guid>
             <pubDate>Mon, 19 Sep 2022 00:00:00 GMT</pubDate>
             <description><![CDATA[It's about time Ansible-NAS had a proper website and domain name. This new Docusaurus based site is moving closer to that goal, served from https://ansible-nas.io via Github Pages.]]></description>
             <content:encoded><![CDATA[<p>It's about time Ansible-NAS had a proper website and domain name. This new <a href="https://docusaurus.io/" target="_blank" rel="noopener noreferrer">Docusaurus</a> based site is moving closer to that goal, served from <a href="https://ansible-nas.io/" target="_blank" rel="noopener noreferrer">https://ansible-nas.io</a> via Github Pages.</p>]]></content:encoded>
