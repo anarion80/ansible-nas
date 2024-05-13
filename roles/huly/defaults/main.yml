@@ -75,7 +75,7 @@ huly_elastic_bitnami_debug: "true"
 huly_elastic_discovery_type: single-node
 huly_elastic_es_java_opts: "-Xms1024m -Xmx1024m"
 huly_elastic_http_cors_enabled: "true"
-huly_elastic_http_cors_allow_origin : "http://localhost:8082"
+huly_elastic_http_cors_allow_origin: "http://localhost:8082" # not sure what this points to, might need to be fixed later
 
 huly_account_server_port: "3000"
 huly_account_server_secret: secret
