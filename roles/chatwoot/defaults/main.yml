@@ -160,9 +160,9 @@ chatwoot_aws_region: ""
 # Disable if you want to write logs to a file
 chatwoot_rails_log_to_stdout: "true"
 chatwoot_log_level: "info"
-chatwoot_log_size : "500"
+chatwoot_log_size: "500"
 # Configure this environment variable if you want to use lograge instead of rails logger
-#chatwoot_lograge_enabled: "true"
+# chatwoot_lograge_enabled: "true"
 
 ### This environment variables are only required if you are setting up social media channels
 
