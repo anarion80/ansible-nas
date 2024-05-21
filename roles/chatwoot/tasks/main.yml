@@ -94,7 +94,7 @@
           traefik.enable: "false"
 
     - name: Prepare the database
-      ansible.builtin.command: /usr/bin/docker exec {{ chatwoot_rails_container_name }} bundle exec rails db:chatwoot_prepare
+      ansible.builtin.command: docker exec {{ chatwoot_rails_container_name }} bundle exec rails db:chatwoot_prepare
       changed_when: false
       tags: molecule-idempotence-notest
   when: chatwoot_enabled is true
