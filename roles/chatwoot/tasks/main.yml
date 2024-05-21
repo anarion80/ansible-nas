@@ -97,6 +97,7 @@
       community.docker.docker_container_exec:
         container: "{{ chatwoot_rails_container_name }}"
         command: bundle exec rails db:chatwoot_prepare
+      tags: molecule-idempotence-notest
 
   when: chatwoot_enabled is true
 
