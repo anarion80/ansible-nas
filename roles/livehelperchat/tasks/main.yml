@@ -55,6 +55,7 @@
         owner: www-data
         group: www-data
         remote_src: yes
+      tags: molecule-idempotence-notest
 
     - name: Clean up downloaded ZIP file
       ansible.builtin.file:
