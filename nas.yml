@@ -798,6 +798,10 @@
       tags:
         - vaultwarden
 
+    - role: vendure
+      tags:
+        - vendure
+
     - role: virtual_desktop
       tags:
         - virtual_desktop

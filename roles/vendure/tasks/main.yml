@@ -1,0 +1,124 @@
+---
+- name: Start Vendure
+  block:
+    - name: Create vendure Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ vendure_data_directory }}"
+
+    - name: Create Vendure network
+      community.docker.docker_network:
+        name: "{{ vendure_network_name }}"
+
+    - name: Create Vendure Postgress Docker Container
+      community.docker.docker_container:
+        name: "{{ vendure_postgres_container_name }}"
+        image: "{{ vendure_postgres_image_name }}:{{ vendure_postgres_image_version }}"
+        pull: true
+        volumes:
+          - "{{ vendure_data_directory }}/database:/var/lib/postgresql/data:rw"
+        networks:
+          - name: "{{ vendure_network_name }}"
+        network_mode: "{{ vendure_network_name }}"
+        container_default_behavior: no_defaults
+        env:
+          POSTGRES_PASSWORD: "{{ vendure_db_password }}"
+          POSTGRES_USER: "{{ vendure_db_user }}"
+          POSTGRES_DB: "{{ vendure_db_name }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ vendure_postgres_memory }}"
+
+    - name: Create Vendure Server Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ vendure_server_container_name }}"
+        image: "{{ vendure_server_image_name }}:{{ vendure_server_image_version }}"
+        pull: true
+        ports:
+          - "{{ vendure_server_port }}:3000"
+        networks:
+          - name: "{{ vendure_network_name }}"
+        network_mode: "{{ vendure_network_name }}"
+        env:
+          DATABASE_HOST: "{{ vendure_database_host }}"
+          DATABASE_PORT: "{{ vendure_database_port }}"
+          POSTGRES_PASSWORD: "{{ vendure_db_password }}"
+          POSTGRES_USER: "{{ vendure_db_user }}"
+        restart_policy: unless-stopped
+        memory: "{{ vendure_server_memory }}"
+        command: ["./wait-for-it.sh", "{{ vendure_postgres_container_name }}:5432", "--", "yarn", "start:server"]
+        labels:
+          traefik.enable: "false"
+
+    - name: Create Vendure Worker Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ vendure_worker_container_name }}"
+        image: "{{ vendure_worker_image_name }}:{{ vendure_worker_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ vendure_network_name }}"
+        network_mode: "{{ vendure_network_name }}"
+        env:
+          DATABASE_HOST: "{{ vendure_database_host }}"
+          DATABASE_PORT: "{{ vendure_database_port }}"
+          POSTGRES_PASSWORD: "{{ vendure_db_password }}"
+          POSTGRES_USER: "{{ vendure_db_user }}"
+        restart_policy: unless-stopped
+        memory: "{{ vendure_worker_memory }}"
+        command: ["./wait-for-it.sh", "{{ vendure_postgres_container_name }}:5432", "--", "yarn", "start:worker"]
+        labels:
+          traefik.enable: "false"
+
+    - name: Create Vendure Storefront Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ vendure_storefront_container_name }}"
+        image: "{{ vendure_storefront_image_name }}:{{ vendure_storefront_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ vendure_network_name }}"
+        network_mode: "{{ vendure_network_name }}"
+        ports:
+          - "{{ vendure_port }}:4000"
+        env:
+          SERVER_API_HOST: "{{ vendure_server_api_host }}"
+          SERVER_API_PORT: "{{ vendure_server_api_port }}"
+          SERVER_API_PATH: "{{ vendure_server_api_path }}"
+        restart_policy: unless-stopped
+        memory: "{{ vendure_storefront_memory }}"
+        labels:
+          traefik.enable: "{{ vendure_available_externally | string }}"
+          traefik.http.routers.vendure.rule: "Host(`{{ vendure_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.vendure.tls.certresolver: "letsencrypt"
+          traefik.http.routers.vendure.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.vendure.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.vendure.loadbalancer.server.port: "4000"
+  when: vendure_enabled is true
+
+- name: Stop Vendure
+  block:
+    - name: Stop Vendure postgres
+      community.docker.docker_container:
+        name: "{{ vendure_postgres_container_name }}"
+        state: absent
+
+    - name: Stop Vendure server
+      community.docker.docker_container:
+        name: "{{ vendure_server_container_name }}"
+        state: absent
+
+    - name: Stop Vendure worker
+      community.docker.docker_container:
+        name: "{{ vendure_worker_container_name }}"
+        state: absent
+
+    - name: Stop Vendure storefront
+      community.docker.docker_container:
+        name: "{{ vendure_storefront_container_name }}"
+        state: absent
+  when: vendure_enabled is false

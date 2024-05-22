@@ -1,0 +1,44 @@
+---
+vendure_enabled: false
+vendure_available_externally: false
+
+# directories
+vendure_data_directory: "{{ docker_home }}/vendure"
+
+# network
+vendure_port: "4003"
+vendure_server_port: "3000"
+vendure_hostname: "vendure"
+vendure_network_name: "vendure"
+
+# specs
+vendure_server_memory: 1g
+vendure_worker_memory: 1g
+vendure_storefront_memory: 1g
+vendure_postgres_memory: 1g
+
+# docker
+vendure_server_container_name: vendure-server
+vendure_server_image_name: "salahdev101/vendure-docker-compose-server"
+vendure_server_image_version: latest
+vendure_worker_container_name: vendure-worker
+vendure_worker_image_name: "salahdev101/vendure-docker-compose-worker"
+vendure_worker_image_version: "latest"
+vendure_storefront_container_name: vendure-storefront
+vendure_storefront_image_name: "salahdev101/vendure-docker-compose-storefront"
+vendure_storefront_image_version: "latest"
+vendure_postgres_container_name: vendure-postgres
+vendure_postgres_image_name: "postgres"
+vendure_postgres_image_version: "16"
+vendure_user_id: "1000"
+vendure_group_id: "1000"
+
+# vendure
+vendure_db_name: "vendure"
+vendure_db_password: "password"
+vendure_db_user: "postgres"
+vendure_database_host: "{{ vendure_postgres_container_name }}"
+vendure_database_port: "5432"
+vendure_server_api_host: http://{{ vendure_server_container_name }}
+vendure_server_api_port: "3000"
+vendure_server_api_path: "/shop-api"

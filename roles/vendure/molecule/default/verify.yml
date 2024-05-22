@@ -1,0 +1,41 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get vendure postgres container state
+      community.docker.docker_container:
+        name: "{{ vendure_postgres_container_name }}"
+      register: result_db
+
+    - name: Get vendure server container state
+      community.docker.docker_container:
+        name: "{{ vendure_server_container_name }}"
+      register: result_server
+
+    - name: Get vendure worker container state
+      community.docker.docker_container:
+        name: "{{ vendure_worker_container_name }}"
+      register: result_worker
+
+    - name: Get vendure storefront container state
+      community.docker.docker_container:
+        name: "{{ vendure_storefront_container_name }}"
+      register: result_storefront
+
+
+    - name: Check if vendure containers are running
+      ansible.builtin.assert:
+        that:
+          - result_db.container['State']['Status'] == "running"
+          - result_db.container['State']['Restarting'] == false
+          - result_server.container['State']['Status'] == "running"
+          - result_server.container['State']['Restarting'] == false
+          - result_worker.container['State']['Status'] == "running"
+          - result_worker.container['State']['Restarting'] == false
+          - result_storefront.container['State']['Status'] == "running"
+          - result_storefront.container['State']['Restarting'] == false
