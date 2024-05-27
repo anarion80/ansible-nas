@@ -1,0 +1,110 @@
+---
+forem_enabled: false
+forem_available_externally: false
+
+# directories
+forem_data_directory: "{{ docker_home }}/forem"
+
+# network
+forem_port: "3026"
+forem_hostname: "forem"
+forem_network_name: "forem"
+
+# specs
+forem_backend_memory: 1g
+forem_rails_memory: 1g
+forem_web_memory: 1g
+forem_esbuild_memory: 1g
+forem_chrome_memory: 1g
+forem_sidekiq_memory: 1g
+forem_db_memory: 1g
+forem_redis_memory: 1g
+forem_rspec_system_memory: 1g
+
+# docker
+forem_backend_container_name: forem-backend
+forem_backend_image_name: quay.io/forem/forem
+forem_backend_image_version: development
+forem_rails_container_name: forem-rails
+forem_rails_image_name: quay.io/forem/forem
+forem_rails_image_version: development
+forem_web_container_name: forem-web
+forem_web_image_name: quay.io/forem/forem
+forem_web_image_version: development
+forem_esbuild_container_name: forem-esbuild
+forem_esbuild_image_name: quay.io/forem/forem
+forem_esbuild_image_version: development
+forem_chrome_container_name: forem-chrome
+forem_chrome_image_name: browserless/chrome
+forem_chrome_image_version: latest
+forem_sidekiq_container_name: forem-sidekiq
+forem_sidekiq_image_name: quay.io/forem/forem
+forem_sidekiq_image_version: development
+forem_rspec_system_container_name: forem-rspec_system
+forem_rspec_system_image_name: quay.io/forem/forem
+forem_rspec_system_image_version: development
+forem_db_container_name: forem-db
+forem_db_image_name: postgres
+forem_db_image_version: 13
+forem_redis_container_name: forem-redis
+forem_redis_image_name: redis
+forem_redis_image_version: 7.0-alpine
+
+forem_user_id: "1000"
+forem_group_id: "1000"
+
+
+# forem
+forem_postgres_host: "{{ forem_db_container_name }}"
+forem_postgres_port: "5432"
+forem_postgres_db: "PracticalDeveloper_development"
+forem_postgres_user: "forem"
+forem_postgres_password: "forem"
+forem_database_url: "postgresql://{{ forem_postgres_user }}:{{ forem_postgres_password }}@{{ forem_postgres_host }}:{{ forem_postgres_port }}/{{ forem_postgres_db }}"
+forem_malloc_arena_max: "2"
+forem_web_concurrency: "-1"
+forem_bootsnap_cache_dir: "/usr/local/bundle/_bootsnap"
+forem_xdg_data_home: "/app/tmp/cache"
+forem_yarn_cache_folder: "/app/node_modules/.yarn-cache"
+forem_histfile: "/usr/local/hist/.bash_history"
+forem_psql_histfile: "/usr/local/hist/.psql_history"
+forem_irb_histfile: "/usr/local/hist/.irb_history"
+forem_chrome_url: "http://{{ forem_chrome_container_name }}:3333"
+forem_redis_url: "redis://{{ forem_redis_container_name }}:6379"
+
+forem_backend_env:
+  RAILS_ENV: production
+  NODE_ENV: production
+  CHROME_URL: "{{ forem_chrome_url }}"
+  REDIS_URL: "{{ forem_redis_url }}"
+  DATABASE_URL: "{{ forem_database_url }}"
+  MALLOC_ARENA_MAX: "{{ forem_malloc_arena_max }}"
+  WEB_CONCURRENCY: "{{ forem_web_concurrency }}"
+  BOOTSNAP_CACHE_DIR: "{{ forem_bootsnap_cache_dir }}"
+  XDG_DATA_HOME: "{{ forem_xdg_data_home }}"
+  YARN_CACHE_FOLDER: "{{ forem_yarn_cache_folder }}"
+  HISTFILE: "{{ forem_histfile }}"
+  PSQL_HISTFILE: "{{ forem_psql_histfile }}"
+  IRB_HISTFILE: "{{ forem_irb_histfile }}"
+
+forem_rails_env: "{{ forem_backend_env }}"
+forem_web_env: "{{ forem_backend_env }}"
+forem_sidekiq_env: "{{ forem_backend_env }}"
+
+forem_chrome_env:
+  PORT: "3333"
+  CONNECTION_TIMEOUT: "600000"
+
+forem_esbuild_env:
+  RAILS_ENV: production
+  NODE_ENV: production
+  WEBPACKER_DEV_SERVER_HOST: "0.0.0.0"
+  YARN_CACHE_FOLDER: "/app/node_modules/.yarn-cache"
+
+
+forem_db_env:
+  POSTGRES_PORT: "{{ forem_postgres_port }}"
+  POSTGRES_DB: "{{ forem_postgres_db }}"
+  POSTGRES_USER: "{{ forem_postgres_user }}"
+  POSTGRES_PASSWORD: "{{ forem_postgres_password }}"
+  PSQL_HISTFILE: /usr/local/hist/.psql_history

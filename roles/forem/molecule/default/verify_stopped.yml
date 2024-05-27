@@ -1,0 +1,68 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Try and stop and remove forem redis
+      community.docker.docker_container:
+        name: "{{ forem_redis_container_name }}"
+        state: absent
+      register: result_redis
+
+    - name: Try and stop and remove forem db
+      community.docker.docker_container:
+        name: "{{ forem_db_container_name }}"
+        state: absent
+      register: result_db
+
+    - name: Try and stop and remove forem sidekiq
+      community.docker.docker_container:
+        name: "{{ forem_sidekiq_container_name }}"
+        state: absent
+      register: result_sidekiq
+
+    - name: Try and stop and remove forem seed
+      community.docker.docker_container:
+        name: "{{ forem_seed_container_name }}"
+        state: absent
+      register: result_seed
+
+    - name: Try and stop and remove forem webpacker
+      community.docker.docker_container:
+        name: "{{ forem_webpacker_container_name }}"
+        state: absent
+      register: result_webpacker
+
+    - name: Try and stop and remove forem yarn
+      community.docker.docker_container:
+        name: "{{ forem_yarn_container_name }}"
+        state: absent
+      register: result_yarn
+
+    - name: Try and stop and remove forem bundle
+      community.docker.docker_container:
+        name: "{{ forem_bundle_container_name }}"
+        state: absent
+      register: result_bundle
+
+    - name: Try and stop and remove forem rails
+      community.docker.docker_container:
+        name: "{{ forem_rails_container_name }}"
+        state: absent
+      register: result_rails
+
+    - name: Check if forem is stopped
+      ansible.builtin.assert:
+        that:
+          - not result_redis.changed
+          - not result_db.changed
+          - not result_sidekiq.changed
+          - not result_seed.changed
+          - not result_webpacker.changed
+          - not result_yarn.changed
+          - not result_bundle.changed
+          - not result_rails.changed

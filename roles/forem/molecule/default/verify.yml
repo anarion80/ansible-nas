@@ -1,0 +1,68 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get forem db container state
+      community.docker.docker_container:
+        name: "{{ forem_db_container_name }}"
+      register: result_db
+
+    - name: Get forem rails container state
+      community.docker.docker_container:
+        name: "{{ forem_rails_container_name }}"
+      register: result_rails
+
+    - name: Get forem bundle container state
+      community.docker.docker_container:
+        name: "{{ forem_bundle_container_name }}"
+      register: result_bundle
+
+    - name: Get forem yarn container state
+      community.docker.docker_container:
+        name: "{{ forem_yarn_container_name }}"
+      register: result_yarn
+
+    - name: Get forem webpacker container state
+      community.docker.docker_container:
+        name: "{{ forem_webpacker_container_name }}"
+      register: result_webpacker
+
+    - name: Get forem seed container state
+      community.docker.docker_container:
+        name: "{{ forem_seed_container_name }}"
+      register: result_seed
+
+    - name: Get forem sidekiq container state
+      community.docker.docker_container:
+        name: "{{ forem_sidekiq_container_name }}"
+      register: result_sidekiq
+
+    - name: Get forem redis container state
+      community.docker.docker_container:
+        name: "{{ forem_redis_container_name }}"
+      register: result_redis
+
+    - name: Check if forem containers are running
+      ansible.builtin.assert:
+        that:
+          - result_db.container['State']['Status'] == "running"
+          - result_db.container['State']['Restarting'] == false
+          - result_rails.container['State']['Status'] == "running"
+          - result_rails.container['State']['Restarting'] == false
+          - result_bundle.container['State']['Status'] == "running"
+          - result_bundle.container['State']['Restarting'] == false
+          - result_yarn.container['State']['Status'] == "running"
+          - result_yarn.container['State']['Restarting'] == false
+          - result_webpacker.container['State']['Status'] == "running"
+          - result_webpacker.container['State']['Restarting'] == false
+          - result_seed.container['State']['Status'] == "running"
+          - result_seed.container['State']['Restarting'] == false
+          - result_sidekiq.container['State']['Status'] == "running"
+          - result_sidekiq.container['State']['Restarting'] == false
+          - result_redis.container['State']['Status'] == "running"
+          - result_redis.container['State']['Restarting'] == false

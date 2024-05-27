@@ -1,0 +1,265 @@
+---
+- name: Start Forem
+  block:
+    - name: Create Forem Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: 1000
+        group: 1000
+      with_items:
+        - "{{ forem_data_directory }}"
+        - "{{ forem_data_directory }}/data"
+
+    - name: Create Forem network
+      community.docker.docker_network:
+        name: "{{ forem_network_name }}"
+
+    - name: Create Forem Db Docker Container
+      community.docker.docker_container:
+        name: "{{ forem_db_container_name }}"
+        image: "{{ forem_db_image_name }}:{{ forem_db_image_version }}"
+        pull: true
+        volumes:
+          - "{{ forem_data_directory }}/postgres:/var/lib/postgresql/data:rw"
+          - "{{ forem_data_directory }}/history:/usr/local/hist"
+        networks:
+          - name: "{{ forem_network_name }}"
+        network_mode: "{{ forem_network_name }}"
+        container_default_behavior: no_defaults
+        env: "{{ forem_db_env }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ forem_db_memory }}"
+        healthcheck:
+          test: [ "CMD", "pg_isready", "-d" ,"{{ forem_postgres_db }}", "-U", "{{ forem_postgres_user }}" ]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+
+    - name: Create Forem Backend Docker Container
+      community.docker.docker_container:
+        name: "{{ forem_backend_container_name }}"
+        image: "{{ forem_backend_image_name }}:{{ forem_backend_image_version }}"
+        pull: true
+        env: "{{ forem_backend_env }}"
+        # volumes:
+        #   - "{{ forem_data_directory }}/data:/app:cached"
+        #   - "{{ forem_data_directory }}/bundle:/usr/local/bundle"
+        #   - "{{ forem_data_directory }}/cypress:/root/.cache/Cypress"
+        #   - "{{ forem_data_directory }}/rails_cache:/app/tmp/cache"
+        #   - "{{ forem_data_directory }}/assets:/app/public/assets"
+        #   - "{{ forem_data_directory }}/node_modules:/app/node_modules"
+        #   - "{{ forem_data_directory }}/builds:/app/public/builds"
+        #   - "{{ forem_data_directory }}/history:/usr/local/hist"
+        networks:
+          - name: "{{ forem_network_name }}"
+        network_mode: "{{ forem_network_name }}"
+        container_default_behavior: no_defaults
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ forem_backend_memory }}"
+        mounts:
+          - type: tmpfs
+            target: /tmp
+          - type: tmpfs
+            target: /app/tmp/pids
+          - type: tmpfs
+            target: /workspaces/forem/tmp/pids
+
+    - name: Create Forem Rails Docker Container
+      community.docker.docker_container:
+        name: "{{ forem_rails_container_name }}"
+        image: "{{ forem_rails_image_name }}:{{ forem_rails_image_version }}"
+        pull: true
+        env: "{{ forem_rails_env }}"
+        volumes:
+          - "{{ forem_data_directory }}/data:/app:cached"
+          - "{{ forem_data_directory }}/bundle:/usr/local/bundle"
+          - "{{ forem_data_directory }}/cypress:/root/.cache/Cypress"
+          - "{{ forem_data_directory }}/rails_cache:/app/tmp/cache"
+          - "{{ forem_data_directory }}/assets:/app/public/assets"
+          - "{{ forem_data_directory }}/node_modules:/app/node_modules"
+          - "{{ forem_data_directory }}/builds:/app/public/builds"
+          - "{{ forem_data_directory }}/history:/usr/local/hist"
+        networks:
+          - name: "{{ forem_network_name }}"
+        network_mode: "{{ forem_network_name }}"
+        container_default_behavior: no_defaults
+        labels:
+          traefik.enable: "false"
+        command: bundle exec rails
+        restart_policy: always
+        memory: "{{ forem_rails_memory }}"
+
+    - name: Create Forem Redis Docker Container
+      community.docker.docker_container:
+        name: "{{ forem_redis_container_name }}"
+        image: "{{ forem_redis_image_name }}:{{ forem_redis_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ forem_network_name }}"
+        network_mode: "{{ forem_network_name }}"
+        container_default_behavior: no_defaults
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ forem_redis_memory }}"
+        healthcheck:
+          test: [ "CMD", "redis-cli", "--raw", "incr", "ping" ]
+          interval: 20s
+          timeout: 5s
+          retries: 3
+          start_period: 10s
+
+    - name: Create Forem Web Docker Container
+      community.docker.docker_container:
+        name: "{{ forem_web_container_name }}"
+        image: "{{ forem_web_image_name }}:{{ forem_web_image_version }}"
+        pull: true
+        volumes:
+          - "{{ forem_data_directory }}/data:/app:cached"
+          - "{{ forem_data_directory }}/bundle:/usr/local/bundle"
+          - "{{ forem_data_directory }}/cypress:/root/.cache/Cypress"
+          - "{{ forem_data_directory }}/rails_cache:/app/tmp/cache"
+          - "{{ forem_data_directory }}/assets:/app/public/assets"
+          - "{{ forem_data_directory }}/node_modules:/app/node_modules"
+          - "{{ forem_data_directory }}/builds:/app/public/builds"
+          - "{{ forem_data_directory }}/history:/usr/local/hist"
+        networks:
+          - name: "{{ forem_network_name }}"
+        network_mode: "{{ forem_network_name }}"
+        container_default_behavior: no_defaults
+        env: "{{ forem_web_env }}"
+        ports:
+          - "{{ forem_port }}:3000"
+        labels:
+          traefik.enable: "{{ forem_available_externally | string }}"
+          traefik.http.routers.forem.rule: "Host(`{{ forem_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.forem.tls.certresolver: "letsencrypt"
+          traefik.http.routers.forem.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.forem.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.forem.loadbalancer.server.port: "3000"
+        memory: "{{ forem_web_memory }}"
+        command: bundle exec rails server -b 0.0.0.0
+
+    - name: Create Forem Sidekiq Docker Container
+      community.docker.docker_container:
+        name: "{{ forem_sidekiq_container_name }}"
+        image: "{{ forem_sidekiq_image_name }}:{{ forem_sidekiq_image_version }}"
+        pull: true
+        env: "{{ forem_sidekiq_env }}"
+        volumes:
+          - "{{ forem_data_directory }}/data:/app:cached"
+          - "{{ forem_data_directory }}/bundle:/usr/local/bundle"
+          - "{{ forem_data_directory }}/cypress:/root/.cache/Cypress"
+          - "{{ forem_data_directory }}/rails_cache:/app/tmp/cache"
+          - "{{ forem_data_directory }}/assets:/app/public/assets"
+          - "{{ forem_data_directory }}/node_modules:/app/node_modules"
+          - "{{ forem_data_directory }}/builds:/app/public/builds"
+          - "{{ forem_data_directory }}/history:/usr/local/hist"
+        networks:
+          - name: "{{ forem_network_name }}"
+        network_mode: "{{ forem_network_name }}"
+        container_default_behavior: no_defaults
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ forem_sidekiq_memory }}"
+        command: bundle exec sidekiq
+
+    - name: Create Forem Esbuild Docker Container
+      community.docker.docker_container:
+        name: "{{ forem_esbuild_container_name }}"
+        image: "{{ forem_esbuild_image_name }}:{{ forem_esbuild_image_version }}"
+        pull: true
+        env: "{{ forem_esbuild_env }}"
+        ports:
+          - "3333:3333"
+        volumes:
+          - "{{ forem_data_directory }}/data:/app:cached"
+          - "{{ forem_data_directory }}/bundle:/usr/local/bundle"
+          - "{{ forem_data_directory }}/node_modules:/app/node_modules"
+          - "{{ forem_data_directory }}/builds:/app/assets/builds"
+        networks:
+          - name: "{{ forem_network_name }}"
+        network_mode: "{{ forem_network_name }}"
+        container_default_behavior: no_defaults
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ forem_esbuild_memory }}"
+        command: yarn build --watch
+        mounts:
+          - type: tmpfs
+            target: /tmp
+          - type: tmpfs
+            target: /app/tmp/pids
+
+    - name: Create Forem Chromee Docker Container
+      community.docker.docker_container:
+        name: "{{ forem_chrome_container_name }}"
+        image: "{{ forem_chrome_image_name }}:{{ forem_chrome_image_version }}"
+        pull: true
+        env: "{{ forem_chrome_env }}"
+        ports:
+          - "3333:3333"
+        volumes:
+          - "{{ forem_data_directory }}:/app:cached"
+        networks:
+          - name: "{{ forem_network_name }}"
+        network_mode: "{{ forem_network_name }}"
+        container_default_behavior: no_defaults
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ forem_chrome_memory }}"
+
+
+
+  when: forem_enabled is true
+
+- name: Stop Forem
+  block:
+    - name: Stop Forem Redis
+      community.docker.docker_container:
+        name: "{{ forem_redis_container_name }}"
+        state: absent
+
+    - name: Stop Forem Db
+      community.docker.docker_container:
+        name: "{{ forem_db_container_name }}"
+        state: absent
+
+    - name: Stop Forem Sidekiq
+      community.docker.docker_container:
+        name: "{{ forem_sidekiq_container_name }}"
+        state: absent
+
+    - name: Stop Forem Seed
+      community.docker.docker_container:
+        name: "{{ forem_seed_container_name }}"
+        state: absent
+
+    - name: Stop Forem Webpacker
+      community.docker.docker_container:
+        name: "{{ forem_webpacker_container_name }}"
+        state: absent
+
+    - name: Stop Forem Yarn
+      community.docker.docker_container:
+        name: "{{ forem_yarn_container_name }}"
+        state: absent
+
+    - name: Stop Forem Bundle
+      community.docker.docker_container:
+        name: "{{ forem_bundle_container_name }}"
+        state: absent
+
+    - name: Stop Forem Db
+      community.docker.docker_container:
+        name: "{{ forem_db_container_name }}"
+        state: absent
+  when: forem_enabled is false
