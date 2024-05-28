@@ -56,7 +56,7 @@ uppy_companion_unsplash_secret: "***"
 uppy_companion_onedrive_key: "***"
 uppy_companion_onedrive_secret: "***"
 uppy_companion_google_keys_endpoint: "https://{{ uppy_hostname }}.{{ ansible_nas_domain }}/drive/test-dynamic-oauth-credentials?secret=development"
-uppy_companion_test_dynamic_oauth_credentials : "true"
+uppy_companion_test_dynamic_oauth_credentials: "true"
 uppy_companion_test_dynamic_oauth_credentials_secret: "development"
 uppy_vite_uploader: "tus"
 
@@ -117,9 +117,9 @@ uppy_env:
   COMPANION_ONEDRIVE_SECRET: "{{ uppy_companion_onedrive_secret }}"
 
   # To test dynamic Oauth against local companion (which is pointless but allows us to test it without Transloadit's servers), enable these:
-  #COMPANION_GOOGLE_KEYS_ENDPOINT: "{{ uppy_companion_google_keys_endpoint }}"
-  #COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS: "{{ uppy_companion_test_dynamic_oauth_credentials }}"
-  #COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET: "{{ uppy_companion_test_dynamic_oauth_credentials_secret }}"
+  # COMPANION_GOOGLE_KEYS_ENDPOINT: "{{ uppy_companion_google_keys_endpoint }}"
+  # COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS: "{{ uppy_companion_test_dynamic_oauth_credentials }}"
+  # COMPANION_TEST_DYNAMIC_OAUTH_CREDENTIALS_SECRET: "{{ uppy_companion_test_dynamic_oauth_credentials_secret }}"
 
 
   # Development environment
