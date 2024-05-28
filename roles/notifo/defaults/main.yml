@@ -26,8 +26,6 @@ notifo_group_id: "1000"
 
 
 # notifo
-notifo_mongo_initdb_root_username: "notifo"
-notifo_mongo_initdb_root_password: "notifo"
 notifo_urls_baseurl: "https://{{ notifo_hostname }}.{{ ansible_nas_domain }}"
 notifo_storage_mongodb_connectionstring: "mongodb://{{ notifo_mongo_container_name }}"
 notifo_identity_googleclient: ""

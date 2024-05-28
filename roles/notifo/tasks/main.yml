@@ -23,9 +23,6 @@
           - name: "{{ notifo_network_name }}"
         network_mode: "{{ notifo_network_name }}"
         container_default_behavior: no_defaults
-        env:
-          # MONGO_INITDB_ROOT_USERNAME: "{{ notifo_mongo_initdb_root_username }}"
-          # MONGO_INITDB_ROOT_PASSWORD: "{{ notifo_mongo_initdb_root_password }}"
         labels:
           traefik.enable: "false"
         restart_policy: always
