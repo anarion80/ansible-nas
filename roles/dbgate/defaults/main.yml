@@ -91,29 +91,29 @@ dbgate_env:
   USER_[connection id]: "" # user name for DB connection.
   PASSWORD_[connection id]: "" # password for DB connection.
   PASSWORD_MODE_[connection id]: "" # determines whether password and user name is stored or must be filled in by used. One of following values:
-    # askPassword # DbGate asks for password when connecting
-    # askUser # DbGate asks for username and password
+  # askPassword # DbGate asks for password when connecting
+  # askUser # DbGate asks for username and password
   PORT_[connection id]: "" # port for DB connection.
   FILE_[connection id]: "" # database file path (for SQLite).
   URL_[connection id]: "" # database URL (works for MongoDB, PostgreSQL, CockroachDb, Redshift).
   DATABASE_[connection id]: "" # default database name.
   READONLY_[connection id]: "" # connect in readonly mode
   ENGINE_[connection id]: "" # engine of connection (mandatory, name of engine with plugin), one of:
-    # mssql@dbgate-plugin-mssql # Microsoft SQL Server
-    # mysql@dbgate-plugin-mysql # MySQL
-    # mariadb@dbgate-plugin-mysql # MariaDB
-    # postgres@dbgate-plugin-postgres # PostgreSQL
-    # cockroach@dbgate-plugin-postgres # CockroachDB
-    # redshift@dbgate-plugin-postgres # Amazon Redshift
-    # sqlite@dbgate-plugin-sqlite # SQLite
-    # mongo@dbgate-plugin-mongo # MongoDB
+  # mssql@dbgate-plugin-mssql # Microsoft SQL Server
+  # mysql@dbgate-plugin-mysql # MySQL
+  # mariadb@dbgate-plugin-mysql # MariaDB
+  # postgres@dbgate-plugin-postgres # PostgreSQL
+  # cockroach@dbgate-plugin-postgres # CockroachDB
+  # redshift@dbgate-plugin-postgres # Amazon Redshift
+  # sqlite@dbgate-plugin-sqlite # SQLite
+  # mongo@dbgate-plugin-mongo # MongoDB
   USE_SSH_[connection id]: "" # set value 1 or true, when SSH tunnel should be used
   SSH_HOST_[connection id]: "" # SSH host name
   SSH_PORT_[connection id]: "" # SSH port number
   SSH_MODE_[connection id]: "" # one of following values
-    # userPassword # authenticate with user and password
-    # agent # authenticate with SSH agent
-    # keyFile # authenticate with key file
+  # userPassword # authenticate with user and password
+  # agent # authenticate with SSH agent
+  # keyFile # authenticate with key file
   SSH_LOGIN_[connection id]: "" # SSH login
   SSH_PASSWORD_[connection id]: "" # SSH password
   SSH_KEY_FILE_[connection id]: "" # full path to key file
@@ -128,8 +128,8 @@ dbgate_env:
   SETTINGS_[settings key]: "" # preconfigure settings value. Setting key could be listed from source codes, https://github.com/dbgate/dbgate/blob/master/packages/web/src/settings/
   SOCKET_PATH_[connection id]: "" # path to socket file, if connecting via socket
   AUTH_TYPE_[connection id]: "" # authentization type
-    # hostPort (default)
-    # socket # value is set implicitly, when settings SOCKET_PATH
-    # tedious # default portable authentization for MS SQL, using tedious driver
-    # sspi # Windows integrated authentization (Windows only, MS SQL), using native MSSQL driver
-    # sql # SQL authentization (Windows only, MS SQL), using native MSSQL driver
+  # hostPort (default)
+  # socket # value is set implicitly, when settings SOCKET_PATH
+  # tedious # default portable authentization for MS SQL, using tedious driver
+  # sspi # Windows integrated authentization (Windows only, MS SQL), using native MSSQL driver
+  # sql # SQL authentization (Windows only, MS SQL), using native MSSQL driver
