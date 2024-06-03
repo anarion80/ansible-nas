@@ -70,8 +70,8 @@ openwebui_image_size: "512x512"
 openwebui_image_steps: "50"
 openwebui_image_generation_model: ""
 openwebui_ollama_devices:
-  # - /dev/kfd:/dev/kfd
-  # - /dev/dri:/dev/dri
+#   - /dev/kfd:/dev/kfd
+#   - /dev/dri:/dev/dri
 
 openwebui_env:
   # Ollama URL for the backend to connect
