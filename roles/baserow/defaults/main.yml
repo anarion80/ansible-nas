@@ -187,7 +187,7 @@ baserow_max_import_file_size_mb: "512"
 baserow_frontend_same_site_cookie: "lax"
 
 baserow_caddy_global_conf: ""
-baserow_caddy_addresses: "{{ baserow_public_url}}, http://localhost, http://{{ ansible_default_ipv4.address }}"
+baserow_caddy_addresses: "{{ baserow_public_url }}, http://localhost, http://{{ ansible_default_ipv4.address }}"
 
 baserow_backend_env:
   SECRET_KEY: "{{ baserow_secret_key }}"

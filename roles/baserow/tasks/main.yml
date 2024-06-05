@@ -48,7 +48,7 @@
         restart_policy: always
         memory: "{{ baserow_db_memory }}"
         healthcheck:
-          test: [ "CMD-SHELL", "su postgres -c \"pg_isready -U {{ baserow_db_user }}\"" ]
+          test: ["CMD-SHELL", "su postgres -c \"pg_isready -U {{ baserow_db_user }}\""]
           interval: 10s
           timeout: 5s
           retries: 5
@@ -68,7 +68,7 @@
         memory: "{{ baserow_redis_memory }}"
         command: redis-server --requirepass {{ baserow_redis_password }}
         healthcheck:
-          test: [ "CMD", "redis-cli", "ping" ]
+          test: ["CMD", "redis-cli", "ping"]
 
     - name: Create Baserow Caddy Docker Container
       community.docker.docker_container:
@@ -153,7 +153,7 @@
         labels:
           traefik.enable: "false"
         healthcheck:
-          test: [ "CMD-SHELL", "/baserow/backend/docker/docker-entrypoint.sh celery-worker-healthcheck" ]
+          test: ["CMD-SHELL", "/baserow/backend/docker/docker-entrypoint.sh celery-worker-healthcheck"]
         command: celery-worker
 
     - name: Create Baserow Celery Export Docker Container
@@ -173,7 +173,7 @@
         labels:
           traefik.enable: "false"
         healthcheck:
-          test: [ "CMD-SHELL", "/baserow/backend/docker/docker-entrypoint.sh celery-exportworker-healthcheck" ]
+          test: ["CMD-SHELL", "/baserow/backend/docker/docker-entrypoint.sh celery-exportworker-healthcheck"]
         command: celery-exportworker
 
     - name: Create Baserow Celery Beat Docker Container
