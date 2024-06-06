@@ -112,7 +112,7 @@
         network_mode: "{{ grist_network_name }}"
         ports:
           - "{{ grist_port }}:8484"
-        env: "{{ grist_env}}"
+        env: "{{ grist_env }}"
         restart_policy: unless-stopped
         memory: "{{ grist_memory }}"
         capabilities:
