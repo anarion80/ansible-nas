@@ -19,15 +19,29 @@
         state: absent
       register: result_redis
 
-    - name: Try and stop and remove squirrel
+    - name: Try and stop and remove squirrel server
       community.docker.docker_container:
-        name: "{{ squirrel_container_name }}"
+        name: "{{ squirrel_server_container_name }}"
         state: absent
-      register: result
+      register: result_server
+
+    - name: Try and stop and remove squirrel client
+      community.docker.docker_container:
+        name: "{{ squirrel_client_container_name }}"
+        state: absent
+      register: result_client
+
+    - name: Try and stop and remove squirrel proxy
+      community.docker.docker_container:
+        name: "{{ squirrel_proxy_container_name }}"
+        state: absent
+      register: result_proxy
 
     - name: Check if squirrel is stopped
       ansible.builtin.assert:
         that:
           - not result_mongo.changed
           - not result_redis.changed
-          - not result.changed
+          - not result_server.changed
+          - not result_client.changed
+          - not result_proxy.changed
