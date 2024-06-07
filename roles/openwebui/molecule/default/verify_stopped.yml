@@ -7,20 +7,20 @@
       ansible.builtin.include_vars:
         file: ../../defaults/main.yml
 
-    - name: Try and stop and remove mmp agent
+    - name: Try and stop and remove openwebui ollama
       community.docker.docker_container:
-        name: "{{ mmp_agent_container_name }}"
+        name: "{{ openwebui_ollama_container_name }}"
         state: absent
-      register: result_agent
+      register: result_ollama
 
-    - name: Try and stop and remove mmp ui
+    - name: Try and stop and remove openwebui ui
       community.docker.docker_container:
-        name: "{{ mmp_ui_container_name }}"
+        name: "{{ openwebui_ui_container_name }}"
         state: absent
       register: result_ui
 
-    - name: Check if mmp is stopped
+    - name: Check if openwebui is stopped
       ansible.builtin.assert:
         that:
-          - not result_agent.changed
+          - not result_ollama.changed
           - not result_ui.changed

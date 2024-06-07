@@ -93,6 +93,10 @@
       tags:
         - barcodebuddy
 
+    - role: baserow
+      tags:
+        - baserow
+
     - role: bazarr
       tags:
         - bazarr
@@ -293,6 +297,10 @@
       tags:
         - graylog
 
+    - role: grist
+      tags:
+        - grist
+
     - role: grocy
       tags:
         - grocy
@@ -424,6 +432,10 @@
     - role: linkding
       tags:
         - linkding
+
+    - role: linkstack
+      tags:
+        - linkstack
 
     - role: linkwarden
       tags:
@@ -628,6 +640,10 @@
     - role: open-resume
       tags:
         - openresume
+
+    - role: openwebui
+      tags:
+        - openwebui
 
     - role: organizr
       tags:

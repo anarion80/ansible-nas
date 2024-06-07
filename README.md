@@ -27,6 +27,7 @@ If you have a spare domain name you can configure applications to be accessible 
 * [Authelia](https://www.authelia.com/) - The Single Sign-On Multi-Factor portal for web apps
 * [Authentik](https://goauthentik.io/) - an open-source Identity Provider focused on flexibility and versatility
 * [Barcode Buddy](https://github.com/Forceu/barcodebuddy/) - Barcode system for Grocy
+* [Baserow](https://gitlab.com/baserow/baserow) - an open source no-code database and Airtable alternative
 * [Bazarr](https://github.com/morpheus65535/bazarr) - companion to Radarr and Sonarr for downloading subtitles
 * [Beets](https://beets.io/) - media library management system for obsessive music geeks
 * [Blaze](https://github.com/blenderskool/blaze) - File sharing progressive web app
@@ -78,6 +79,7 @@ If you have a spare domain name you can configure applications to be accessible 
 * [Gotify](https://gotify.net/) - Self-hosted server for sending push notifications
 * [Grafana](https://grafana.com/) - Query, visualize, alert on, and understand your data no matter where it’s stored (via stats role).
 * [Graylog](https://www.graylog.org/) - Free and open source log management
+* [Grist](https://github.com/gristlabs/grist-core) - Grist is the evolution of spreadsheets.
 * [Grocy](https://grocy.info/) - web-based self-hosted groceries & household management solution for your home
 * [Guacamole](https://guacamole.apache.org/) - Web based remote desktop gateway, supports VNC, RDP and SSH
 * [HA Fusion](https://github.com/matt8707/ha-fusion) - A modern, easy-to-use and performant custom Home Assistant dashboard
@@ -112,6 +114,7 @@ If you have a spare domain name you can configure applications to be accessible 
 * [Lidarr](https://github.com/lidarr/Lidarr) - Music collection manager for Usenet and BitTorrent users
 * [Light LDAP](https://github.com/lldap/lldap) - Light LDAP implementation
 * [Linkding](https://github.com/sissbruecker/linkding) - Self-hosted bookmark service
+* [Linkstack](https://github.com/LinkStackOrg/LinkStack) - the ultimate solution for creating a personalized & professional profile page
 * [Linkwarden](https://linkwarden.app/) - Open-source collaborative bookmark manager to collect, organize and archive webpages
 * [Listmonk](https://listmonk.app/) - High performance, self-hosted, newsletter and mailing list manager
 * [Littlelink](https://github.com/techno-tim/littlelink-server) - Self-hosted alternative to linktree
@@ -161,6 +164,7 @@ If you have a spare domain name you can configure applications to be accessible 
 * [openHAB](https://www.openhab.org/) - A vendor and technology agnostic open source automation software for your home
 * [openLDAP](https://www.openldap.org/) - An open source implementation of the Lightweight Directory Access Protocol
 * [Open-resume](https://github.com/xitanggg/open-resume) - A powerful open-source resume builder and resume parser
+* [Open-WebUI](https://github.com/open-webui/open-webui) - User-friendly WebUI for LLMs (Formerly Ollama WebUI)
 * [Organizr](https://organizr.app/) - ORGANIZR aims to be your one stop shop for your Servers Frontend.
 * [Outline](https://github.com/outline/outline) - The fastest knowledge base for growing teams.
 * [Overleaf](https://github.com/overleaf/overleaf) - A web-based collaborative LaTeX editor
