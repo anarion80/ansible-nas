@@ -51,6 +51,9 @@ keycloak_https_key_store_password: "{{ keycloak_admin_password }}"
 keycloak_command:
   - start
   - --features=token-exchange,hostname:v2
-  - --hostname={{ keycloak_hostname }}.{{ ansible_nas_domain }}
+  - --hostname=https://{{ keycloak_hostname }}.{{ ansible_nas_domain }}
   - --https-certificate-file={{ keycloak_https_certificate_file }}
   - --https-certificate-key-file={{ keycloak_https_certificate_key_file }}
+  - --proxy-headers=xforwarded
+  - --hostname-backchannel-dynamic=true
+  - --http-enabled=true
