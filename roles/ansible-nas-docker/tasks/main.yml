@@ -16,7 +16,8 @@
 - name: Install docker python module
   community.general.pipx:
     name: docker
-    state: install_all
+    state: latest
+    install_deps: true
   register: result
   until: result is succeeded
 
