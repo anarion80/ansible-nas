@@ -3,10 +3,11 @@
   hosts: all
   tasks:
     - name: Install docker python module
-      ansible.builtin.pip:
-        name:
-          - docker
-          - urllib3<2
+      community.general.pipx:
+        name: "{{ item }}"
+      with_items:
+        - docker
+        - urllib3<2
 
     - name: Update repositories cache and install "gnupg" package
       ansible.builtin.apt:

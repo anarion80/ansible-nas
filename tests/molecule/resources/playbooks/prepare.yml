@@ -3,8 +3,9 @@
   hosts: all
   tasks:
     - name: Install docker python module
-      ansible.builtin.pip:
-        name:
-          - docker
-          - urllib3<2
-          - molecule-plugins[docker]
+      community.general.pipx:
+        name: "{{ item }}"
+      with_items:
+        - docker
+        - urllib3<2
+        - molecule-plugins[docker]

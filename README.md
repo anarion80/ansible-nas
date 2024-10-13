@@ -296,7 +296,7 @@ Read the [migrating from FreeNAS](https://ansible-nas.io/docs/further-configurat
 
 ## Requirements
 
-* Ansible NAS targets the latest Ubuntu LTS release, which is currently Ubuntu Server 22.04 LTS.
+* Ansible NAS targets the latest Ubuntu LTS release, which is currently Ubuntu Server 24.04 LTS.
 * You can run Ansible-NAS on whatever hardware you like, read the docs for more info. I use an HP Microserver.
 
 ## Getting Help

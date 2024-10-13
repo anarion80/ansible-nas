@@ -17,7 +17,7 @@ Developing Ansible-NAS features require a few things:
 ## Setup
 
 - Ansible requirements - `ansible-galaxy install -r requirements.yml`
-- Python requirements - `pip install -r requirements-dev.txt`
+- Python requirements - `pipx install -r requirements-dev.txt`
 - Node.js requirements - `pushd website && npm install && popd`
 
 ## IDE

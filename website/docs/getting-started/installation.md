@@ -8,8 +8,8 @@ Ansible-NAS is an Ansible playbook that sets up applications of your choice on y
 
 ## Requirements
 
-- A Linux environment with Ansible installed (in Ansible terms the "control node"). See the official [Installing Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) docs for more info.
-- SSH access to an Ubuntu 22.04 server that'll become your Ansible-NAS box. It's recommended to use a fresh Ubuntu Server 22.04 installation. Do not use non-LTS releases. Do not install Docker during the Ubuntu installation.
+- A Linux environment with Ansible installed (in Ansible terms the "control node"). See the official [Installing Ansible](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html) docs for more info. Use `pipx` install method to avoid problems with virtual environments on Ubuntu 24+.
+- SSH access to an Ubuntu 24.04 server that'll become your Ansible-NAS box. It's recommended to use a fresh Ubuntu Server 24.04 installation. Do not use non-LTS releases. Do not install Docker during the Ubuntu installation.
 
 :::tip
 
