@@ -121,6 +121,10 @@
       tags:
         - blocky
 
+    - role: booklogr
+      tags:
+        - booklogr
+
     - role: booksonic
       tags:
         - booksonic

@@ -1,0 +1,75 @@
+---
+booklogr_enabled: false
+booklogr_available_externally: false
+
+# directories
+booklogr_data_directory: "{{ docker_home }}/booklogr"
+
+# network
+booklogr_port: "8183"
+booklogr_db_port: "8184"
+booklogr_auth_db_port: "8188"
+booklogr_api_port: "8186"
+booklogr_auth_api_port: "8187"
+booklogr_hostname: "booklogr"
+booklogr_api_hostname: "booklogr-api"
+booklogr_auth_api_hostname: "booklogr-auth-api"
+booklogr_network_name: "booklogr"
+
+# specs
+booklogr_api_memory: 1g
+booklogr_auth_api_memory: 1g
+booklogr_web_memory: 1g
+booklogr_db_memory: 1g
+booklogr_auth_db_memory: 1g
+
+# docker
+booklogr_api_container_name: booklogr-api
+booklogr_api_image_name: "mozzo/booklogr"
+booklogr_api_image_version: latest
+booklogr_auth_api_container_name: booklogr-auth-api
+booklogr_auth_api_image_name: "mozzo/auth-server"
+booklogr_auth_api_image_version: 1.0.0
+booklogr_web_container_name: booklogr-web
+booklogr_web_image_name: "mozzo/booklogr-web"
+booklogr_web_image_version: latest
+booklogr_db_container_name: booklogr-db
+booklogr_db_image_name: postgres
+booklogr_db_image_version: latest
+booklogr_auth_db_container_name: booklogr-auth-db
+booklogr_auth_db_image_name: postgres
+booklogr_auth_db_image_version: latest
+
+# booklogr
+booklogr_db_pass: "change_me"
+booklogr_db_user: "booklogr"
+booklogr_db_name: "booklogr"
+booklogr_auth_db_pass: "change_me"
+booklogr_auth_db_user: "booklogr"
+booklogr_auth_db_name: "booklogr-auth-db"
+booklogr_database_url: "postgresql://{{ booklogr_db_user }}:{{ booklogr_db_pass }}@{{ booklogr_db_container_name }}:5432/{{ booklogr_db_name }}"
+booklogr_auth_database_url: "postgresql://{{ booklogr_auth_db_user }}:{{ booklogr_auth_db_pass }}@{{ booklogr_auth_db_container_name }}:5432/{{ booklogr_auth_db_name }}"
+booklogr_api_endpoint: "https://{{ booklogr_api_hostname }}.{{ ansible_nas_domain }}" # CHANGE THIS TO POINT TO THE EXTERNAL ADRESS THE USER CAN ACCESS
+booklogr_auth_api_endpoint: "https://{{ booklogr_auth_api_hostname }}.{{ ansible_nas_domain }}" # CHANGE THIS TO POINT TO THE EXTERNAL ADRESS THE USER CAN ACCESS
+booklogr_google_id: "XXX.apps.googleusercontent.com" # CHANGE THIS TO YOUR OWN GOOGLE ID
+booklogr_google_client_secret: ""
+booklogr_disable_homepage: "true"
+booklogr_auth_api_secret_key: "c8606c875d53fa372750e59256c458d756987a66032b7290bc135b655f863b245e39bc0db61a23e633f69849128bd6e584b68dddf3d84b609d6f826769d73820"
+booklogr_allow_registration: "true"
+booklogr_require_verification: "false"
+
+booklogr_env:
+  POSTGRES_PASSWORD: "{{ booklogr_db_pass }}"
+  POSTGRES_USER: "{{ booklogr_db_user }}"
+  POSTGRES_DB: "{{ booklogr_db_name }}"
+  DATABASE_URL: "{{ booklogr_database_url }}"
+  VITE_API_ENDPOINT: "{{ booklogr_api_endpoint }}"
+  VITE_AUTH_API_URL: "{{ booklogr_auth_api_endpoint }}"
+  VITE_GOOGLE_CLIENT_ID: "{{ booklogr_google_id }}"
+  VITE_DISABLE_HOMEPAGE: "{{ booklogr_disable_homepage }}"
+  AUTH_SECRET_KEY: "{{ booklogr_auth_api_secret_key }}"
+  AUTH_ALLOW_REGISTRATION: "{{ booklogr_allow_registration }}"
+  AUTH_REQUIRE_VERIFICATION: "{{ booklogr_require_verification }}"
+  GOOGLE_CLIENT_ID: "{{ booklogr_google_id }}"
+  GOOGLE_CLIENT_SECRET: "{{ booklogr_google_client_secret }}"
+  FLASK_APP: "api.app"

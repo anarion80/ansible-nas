@@ -1,0 +1,160 @@
+---
+- name: Start Booklogr
+  block:
+    - name: Create Booklogr Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ booklogr_data_directory }}"
+
+    - name: Create Booklogr network
+      community.docker.docker_network:
+        name: "{{ booklogr_network_name }}"
+
+    - name: Create Booklogr Db Docker Container
+      community.docker.docker_container:
+        name: "{{ booklogr_db_container_name }}"
+        image: "{{ booklogr_db_image_name }}:{{ booklogr_db_image_version }}"
+        pull: true
+        volumes:
+          - "{{ booklogr_data_directory }}/data:/var/lib/postgresql/db-data:rw"
+        ports:
+          - "{{ booklogr_db_port }}:5432"
+        networks:
+          - name: "{{ booklogr_network_name }}"
+        network_mode: "{{ booklogr_network_name }}"
+        container_default_behavior: no_defaults
+        env: "{{ booklogr_env }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ booklogr_db_memory }}"
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -d {{ booklogr_db_name }} -U {{ booklogr_db_user }}"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+
+    - name: Create Booklogr Auth Db Docker Container
+      community.docker.docker_container:
+        name: "{{ booklogr_auth_db_container_name }}"
+        image: "{{ booklogr_auth_db_image_name }}:{{ booklogr_auth_db_image_version }}"
+        pull: true
+        volumes:
+          - "{{ booklogr_data_directory }}/auth_data:/var/lib/postgresql/db_data:rw"
+        ports:
+          - "{{ booklogr_auth_db_port }}:5432"
+        networks:
+          - name: "{{ booklogr_network_name }}"
+        network_mode: "{{ booklogr_network_name }}"
+        container_default_behavior: no_defaults
+        env:
+          POSTGRES_PASSWORD: "{{ booklogr_auth_db_pass }}"
+          POSTGRES_USER: "{{ booklogr_auth_db_user }}"
+          POSTGRES_DB: "{{ booklogr_auth_db_name }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ booklogr_auth_db_memory }}"
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -d {{ booklogr_auth_db_name }} -U {{ booklogr_auth_db_user }}"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
+
+    - name: Create Booklogr API Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ booklogr_api_container_name }}"
+        image: "{{ booklogr_api_image_name }}:{{ booklogr_api_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ booklogr_network_name }}"
+        network_mode: "{{ booklogr_network_name }}"
+        ports:
+          - "{{ booklogr_api_port }}:5000"
+        env: "{{ booklogr_env }}"
+        restart_policy: unless-stopped
+        memory: "{{ booklogr_api_memory }}"
+        labels:
+          traefik.enable: "false"
+
+    - name: Create Booklogr Auth API Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ booklogr_auth_api_container_name }}"
+        image: "{{ booklogr_auth_api_image_name }}:{{ booklogr_auth_api_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ booklogr_network_name }}"
+        network_mode: "{{ booklogr_network_name }}"
+        ports:
+          - "{{ booklogr_auth_api_port }}:5000"
+        env:
+          "{{ booklogr_env | combine({'DATABASE_URL': booklogr_auth_database_url}) }}"
+          # "{{ booklogr_env }}"
+        restart_policy: unless-stopped
+        memory: "{{ booklogr_auth_api_memory }}"
+        labels:
+          traefik.enable: "{{ booklogr_available_externally | string }}"
+          traefik.http.routers.booklogr.rule: "Host(`{{ booklogr_auth_api_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.booklogr.tls.certresolver: "letsencrypt"
+          traefik.http.routers.booklogr.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.booklogr.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.booklogr.loadbalancer.server.port: "5000"
+
+    - name: Create Booklogr Web Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ booklogr_web_container_name }}"
+        image: "{{ booklogr_web_image_name }}:{{ booklogr_web_image_version }}"
+        pull: true
+        ports:
+          - "{{ booklogr_port }}:80"
+        networks:
+          - name: "{{ booklogr_network_name }}"
+        network_mode: "{{ booklogr_network_name }}"
+        env:
+          BL_API_ENDPOINT: "{{ booklogr_api_endpoint }}"
+          BL_AUTH_ENDPOINT: "{{ booklogr_auth_api_endpoint }}"
+          BL_GOOGLE_ID: "{{ booklogr_google_id }}"
+          BL_DISABLE_HOMEPAGE: "{{ booklogr_disable_homepage }}"
+        restart_policy: unless-stopped
+        memory: "{{ booklogr_web_memory }}"
+        labels:
+          traefik.enable: "{{ booklogr_available_externally | string }}"
+          traefik.http.routers.booklogr.rule: "Host(`{{ booklogr_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.booklogr.tls.certresolver: "letsencrypt"
+          traefik.http.routers.booklogr.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.booklogr.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.booklogr.loadbalancer.server.port: "80"
+  when: booklogr_enabled is true
+
+- name: Stop booklogr
+  block:
+    - name: Stop Booklogr db
+      community.docker.docker_container:
+        name: "{{ booklogr_db_container_name }}"
+        state: absent
+
+    - name: Stop Booklogr auth db
+      community.docker.docker_container:
+        name: "{{ booklogr_auth_db_container_name }}"
+        state: absent
+
+    - name: Stop Booklogr API
+      community.docker.docker_container:
+        name: "{{ booklogr_api_container_name }}"
+        state: absent
+
+    - name: Stop Booklogr Auth Api
+      community.docker.docker_container:
+        name: "{{ booklogr_auth_api_container_name }}"
+        state: absent
+
+    - name: Stop Booklogr Web
+      community.docker.docker_container:
+        name: "{{ booklogr_web_container_name }}"
+        state: absent
+  when: booklogr_enabled is false

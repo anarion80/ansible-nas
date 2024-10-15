@@ -33,6 +33,7 @@ If you have a spare domain name you can configure applications to be accessible 
 * [Beets](https://beets.io/) - media library management system for obsessive music geeks
 * [Blaze](https://github.com/blenderskool/blaze) - File sharing progressive web app
 * [Blocky](https://0xerr0r.github.io/blocky/) - Fast and lightweight DNS proxy as ad-blocker
+* [Booklogr](https://github.com/Mozzo1000/booklogr) - A simple, self-hosted service to keep track of your personal library
 * [Booksonic](https://booksonic.org/) - The selfhosted audiobook server
 * [Budibase](https://github.com/Budibase/budibase) - Low code platform for building business apps and workflows in minutes
 * [Calibre](https://calibre-ebook.com) - Calibre is a powerful and easy to use e-book manager.
