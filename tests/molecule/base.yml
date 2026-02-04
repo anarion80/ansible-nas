@@ -38,6 +38,12 @@ provisioner:
     converge: ../../../../tests/molecule/resources/playbooks/converge.yml
   env:
     ANSIBLE_ROLES_PATH: ../../../../roles/
+  config_options:
+    defaults:
+      callbacks_enabled: ansible.builtin.default
+      stdout_callback: ansible.builtin.default
+    callback_default:
+      result_format: yaml
 verifier:
   name: ansible
 scenario:
