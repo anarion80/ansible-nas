@@ -1,0 +1,21 @@
+---
+# This is an example playbook to execute Ansible tests.
+
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get Trailbase container state
+      community.docker.docker_container_info:
+        name: "{{ trailbase_container_name }}"
+      register: trailbase_result
+
+    - name: Check Trailbase is running
+      ansible.builtin.assert:
+        that:
+          - trailbase_result.container['State']['Status'] == "running"
+          - trailbase_result.container['State']['Restarting'] == false

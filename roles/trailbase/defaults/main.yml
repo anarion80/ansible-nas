@@ -1,0 +1,21 @@
+---
+trailbase_enabled: false
+trailbase_available_externally: false
+
+# directories
+trailbase_data_directory: "{{ docker_home }}/trailbase"
+
+# network
+trailbase_port: "4003"
+trailbase_hostname: "trailbase"
+
+# specs
+trailbase_memory: 1g
+
+# docker
+trailbase_container_name: trailbase
+trailbase_image_name: docker.io/trailbase/trailbase
+trailbase_image_version: latest
+
+# environment variables
+trailbase_rust_backtrace: "1"
