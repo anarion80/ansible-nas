@@ -72,4 +72,3 @@
         name: "{{ presenton_container_name }}"
         state: absent
   when: presenton_enabled is false
-

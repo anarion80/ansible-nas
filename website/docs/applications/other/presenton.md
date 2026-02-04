@@ -49,4 +49,3 @@ sidebar_position: 140
 | `presenton_dall_e_3_quality`           | DALL-E 3 quality setting      | `""`       |
 | `presenton_gpt_image_1_5_quality`      | GPT Image 1.5 quality setting | `""`       |
 | `presenton_image_provider`             | Image provider                | `""`       |
-
