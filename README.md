@@ -252,6 +252,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [TinyAuth](https://github.com/steveiliop56/tinyauth) - A lightweight authentication service that works with Traefik to provide authentication for your containers
 - [ToolJet](https://github.com/ToolJet/ToolJet) - Low-code platform for building business applications
 - [Traefik](https://traefik.io/) - Web proxy and SSL certificate manager
+- [TrailBase](https://trailbase.io/) - An open-source backend framework with integrated database, authentication, and file management
 - [Transmission](https://transmissionbt.com/) - BitTorrent client (with OpenVPN if you have a supported VPN provider)
 - [TriliumNext Notes](https://github.com/TriliumNext/Notes) - Hierarchical note taking application with focus on building large personal knowledge bases
 - [Tt-rss](https://tt-rss.org/) - free and open source web-based news feed (RSS/Atom) reader and aggregator

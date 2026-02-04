@@ -1,0 +1,42 @@
+---
+- name: Start Trailbase
+  block:
+    - name: Create Trailbase Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        owner: 1000
+        group: 1000
+        state: directory
+      with_items:
+        - "{{ trailbase_data_directory }}/traildepot"
+
+    - name: Trailbase Docker Container
+      community.docker.docker_container:
+        name: "{{ trailbase_container_name }}"
+        image: "{{ trailbase_image_name }}:{{ trailbase_image_version }}"
+        pull: true
+        volumes:
+          - "{{ trailbase_data_directory }}/traildepot:/app/traildepot:rw"
+        ports:
+          - "{{ trailbase_port }}:4000"
+        restart_policy: unless-stopped
+        memory: "{{ trailbase_memory }}"
+        env:
+          RUST_BACKTRACE: "{{ trailbase_rust_backtrace }}"
+          DATA_DIR: "/app/traildepot"
+        labels:
+          traefik.enable: "{{ trailbase_available_externally | string }}"
+          traefik.http.routers.trailbase.rule: "Host(`{{ trailbase_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.trailbase.tls.certresolver: "letsencrypt"
+          traefik.http.routers.trailbase.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.trailbase.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.trailbase.loadbalancer.server.port: "4000"
+  when: trailbase_enabled is true
+
+- name: Stop Trailbase
+  block:
+    - name: Stop Trailbase
+      community.docker.docker_container:
+        name: "{{ trailbase_container_name }}"
+        state: absent
+  when: trailbase_enabled is false
