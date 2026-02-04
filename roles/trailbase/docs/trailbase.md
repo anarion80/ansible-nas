@@ -32,4 +32,3 @@ Once deployed, you can access TrailBase at:
 ## Special Requirements
 
 TrailBase may require specific directory permissions to be set correctly for the traildepot folder as mentioned in the official documentation. Ensure your NAS has sufficient storage space for your intended usage.
-
