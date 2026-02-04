@@ -196,6 +196,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [PhotoStructure](https://photostructure.com/) - Your new home for all your photos & videos
 - [PhpMyAdmin](https://www.phpmyadmin.net/) - a tool intended to handle the administration of MySQL over the Web
 - [Pinchflat](https://github.com/kieraneglin/pinchflat/) - Your next YouTube media manager
+- [Presenton](https://github.com/presenton/presenton) - AI-powered presentation generator
 - [Piwigo](https://piwigo.org/) - Photo Gallery Software
 - [Plex](https://www.plex.tv/) - Plex Media Server
   - [Plex Autoscan](https://github.com/Cloudbox/autoscan) - automatic Plex library updates

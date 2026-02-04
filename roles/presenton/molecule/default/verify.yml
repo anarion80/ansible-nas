@@ -1,0 +1,20 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Inlude vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get presenton container state
+      community.docker.docker_container:
+        name: "{{ presenton_container_name }}"
+      register: result
+
+    - name: Check if presenton container is running
+      ansible.builtin.assert:
+        that:
+          - result.container['State']['Status'] == "running"
+          - result.container['State']['Restarting'] == false
+

@@ -1,0 +1,45 @@
+---
+presenton_enabled: false
+presenton_available_externally: false
+
+# directories
+presenton_data_directory: "{{ docker_home }}/presenton"
+
+# network
+presenton_port: "6001"
+presenton_hostname: "presenton"
+
+# specs
+presenton_memory: 2g
+
+# docker
+presenton_container_name: presenton
+presenton_image: "ghcr.io/presenton/presenton:latest"
+
+# environment variables
+presenton_anthropic_api_key: ""
+presenton_anthropic_model: ""
+presenton_can_change_keys: "false"
+presenton_comfyui_url: ""
+presenton_comfyui_workflow: ""
+presenton_custom_llm_api_key: ""
+presenton_custom_llm_url: ""
+presenton_custom_model: ""
+presenton_dall_e_3_quality: ""
+presenton_database_url: ""
+presenton_disable_anonymous_tracking: "false"
+presenton_disable_image_generation: "false"
+presenton_disable_thinking: "false"
+presenton_google_api_key: ""
+presenton_google_model: ""
+presenton_gpt_image_1_5_quality: ""
+presenton_image_provider: ""
+presenton_llm: "openai"
+presenton_ollama_model: ""
+presenton_ollama_url: ""
+presenton_openai_api_key: ""
+presenton_openai_model: ""
+presenton_pexels_api_key: ""
+presenton_pixabay_api_key: ""
+presenton_tool_calls: "true"
+presenton_web_grounding: "false"

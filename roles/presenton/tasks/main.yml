@@ -1,0 +1,75 @@
+---
+- name: Start Presenton
+  block:
+    - name: Create Presenton Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ presenton_data_directory }}"
+
+    - name: Presenton Docker Container
+      community.docker.docker_container:
+        name: "{{ presenton_container_name }}"
+        image: "{{ presenton_image }}"
+        pull: true
+        # device_requests:
+        #   - driver: nvidia
+        #     count: -1
+        #     capabilities:
+        #       - gpu
+        volumes:
+          - "{{ presenton_data_directory }}:/app_data:rw"
+        ports:
+          - "{{ presenton_port }}:80"
+        env:
+          ANTHROPIC_API_KEY: "{{ presenton_anthropic_api_key | default(omit, true) }}"
+          ANTHROPIC_MODEL: "{{ presenton_anthropic_model | default(omit, true) }}"
+          CAN_CHANGE_KEYS: "{{ presenton_can_change_keys | default(omit, true) }}"
+          COMFYUI_URL: "{{ presenton_comfyui_url | default(omit, true) }}"
+          COMFYUI_WORKFLOW: "{{ presenton_comfyui_workflow | default(omit, true) }}"
+          CUSTOM_LLM_API_KEY: "{{ presenton_custom_llm_api_key | default(omit, true) }}"
+          CUSTOM_LLM_URL: "{{ presenton_custom_llm_url | default(omit, true) }}"
+          CUSTOM_MODEL: "{{ presenton_custom_model | default(omit, true) }}"
+          DALL_E_3_QUALITY: "{{ presenton_dall_e_3_quality | default(omit, true) }}"
+          DATABASE_URL: "{{ presenton_database_url | default(omit, true) }}"
+          DISABLE_ANONYMOUS_TRACKING: "{{ presenton_disable_anonymous_tracking | default(omit, true) }}"
+          DISABLE_IMAGE_GENERATION: "{{ presenton_disable_image_generation | default(omit, true) }}"
+          DISABLE_THINKING: "{{ presenton_disable_thinking | default(omit, true) }}"
+          GOOGLE_API_KEY: "{{ presenton_google_api_key | default(omit, true) }}"
+          GOOGLE_MODEL: "{{ presenton_google_model | default(omit, true) }}"
+          GPT_IMAGE_1_5_QUALITY: "{{ presenton_gpt_image_1_5_quality | default(omit, true) }}"
+          IMAGE_PROVIDER: "{{ presenton_image_provider | default(omit, true) }}"
+          LLM: "{{ presenton_llm | default(omit, true) }}"
+          OLLAMA_MODEL: "{{ presenton_ollama_model | default(omit, true) }}"
+          OLLAMA_URL: "{{ presenton_ollama_url | default(omit, true) }}"
+          OPENAI_API_KEY: "{{ presenton_openai_api_key | default(omit, true) }}"
+          OPENAI_MODEL: "{{ presenton_openai_model | default(omit, true) }}"
+          PEXELS_API_KEY: "{{ presenton_pexels_api_key | default(omit, true) }}"
+          PIXABAY_API_KEY: "{{ presenton_pixabay_api_key | default(omit, true) }}"
+          TOOL_CALLS: "{{ presenton_tool_calls | default(omit, true) }}"
+          WEB_GROUNDING: "{{ presenton_web_grounding | default(omit, true) }}"
+        restart_policy: unless-stopped
+        memory: "{{ presenton_memory }}"
+        labels:
+          traefik.enable: "{{ presenton_available_externally | string }}"
+          traefik.http.routers.presenton.rule: "Host(`{{ presenton_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.presenton.tls.certresolver: "letsencrypt"
+          traefik.http.routers.presenton.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.presenton.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.presenton.loadbalancer.server.port: "80"
+          homepage.group: "AI & ML"
+          homepage.name: Presenton
+          homepage.icon: presenton.png
+          homepage.href: "http://{{ ansible_nas_domain }}:{{ presenton_port }}/"
+          homepage.description: "AI-powered presentation generator"
+  when: presenton_enabled is true
+
+- name: Stop Presenton
+  block:
+    - name: Stop Presenton
+      community.docker.docker_container:
+        name: "{{ presenton_container_name }}"
+        state: absent
+  when: presenton_enabled is false
+
