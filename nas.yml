@@ -400,6 +400,8 @@
       tags: [phpmyadmin]
     - role: pinchflat
       tags: [pinchflat]
+    - role: presenton
+      tags: [presenton]
     - role: piwigo
       tags: [piwigo]
     - role: plex
