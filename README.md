@@ -101,7 +101,6 @@ If you have a spare domain name you can configure applications to be accessible 
 - [Heimdall](https://heimdall.site/) - Home server dashboard
 - [Heyform](https://github.com/heyform/heyform) - an open-source form builder that allows anyone to create engaging conversational forms
 - [Hi.Events](https://github.com/HiEventsDev/hi.events) - Self-hosted event management and ticket selling platform
-- [Hoarder](https://github.com/hoarder-app/hoarder) - A self-hostable bookmark-everything app (links, notes and images)
 - [Homarr](https://github.com/ajnart/homarr) - Customizable browser's home page
 - [Home Assistant](https://www.home-assistant.io) - Open source home automation
 - [Homebridge](https://github.com/nfarina/homebridge) - Emulate the iOS HomeKit API
@@ -119,6 +118,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [Jackett](https://github.com/Jackett/Jackett) - API Support for your favorite torrent trackers
 - [Jellyfin](https://jellyfin.github.io) - The Free Software Media System
 - [Joomla](https://www.joomla.org/) - Open source content management system
+- [Karakeep](https://github.com/karakeep-app/karakeep) - A self-hostable bookmark-everything app (links, notes and images)
 - [Kavita](https://www.kavitareader.com/) - Kavita is a rocket fueled self-hosted digital library which supports a vast array of file formats
 - [Keycloak](https://www.keycloak.org/) - Open Source Identity and Access Management
 - [Komga](https://komga.org/) - a media server for your comics, mangas, BDs and magazines
