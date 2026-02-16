@@ -7,25 +7,25 @@
       ansible.builtin.include_vars:
         file: ../../defaults/main.yml
 
-    - name: Try and stop and remove hoarder search
+    - name: Try and stop and remove karakeep search
       community.docker.docker_container:
-        name: "{{ hoarder_search_container_name }}"
+        name: "{{ karakeep_search_container_name }}"
         state: absent
       register: result_search
 
-    - name: Try and stop and remove hoarder chrome
+    - name: Try and stop and remove karakeep chrome
       community.docker.docker_container:
-        name: "{{ hoarder_chrome_container_name }}"
+        name: "{{ karakeep_chrome_container_name }}"
         state: absent
       register: result_chrome
 
-    - name: Try and stop and remove hoarder web
+    - name: Try and stop and remove karakeep web
       community.docker.docker_container:
-        name: "{{ hoarder_web_container_name }}"
+        name: "{{ karakeep_web_container_name }}"
         state: absent
       register: result_web
 
-    - name: Check if hoarder is stopped
+    - name: Check if karakeep is stopped
       ansible.builtin.assert:
         that:
           - not result_search.changed

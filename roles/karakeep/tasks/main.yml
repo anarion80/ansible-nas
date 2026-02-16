@@ -1,0 +1,103 @@
+---
+- name: Start Karakeep
+  block:
+    - name: Create Karakeep Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items: ["{{ karakeep_data_directory }}"]
+
+    - name: Create Karakeep network
+      community.docker.docker_network:
+        name: "{{ karakeep_network_name }}"
+
+    - name: Create Karakeep Search Docker Container
+      community.docker.docker_container:
+        name: "{{ karakeep_search_container_name }}"
+        image: "{{ karakeep_search_image_name }}:{{ karakeep_search_image_version }}"
+        pull: true
+        volumes: ["{{ karakeep_data_directory }}/meilisearch:/meili_data:rw"]
+        networks:
+          - name: "{{ karakeep_network_name }}"
+        network_mode: "{{ karakeep_network_name }}"
+        container_default_behavior: no_defaults
+        ports: ["{{ karakeep_search_port }}:7700"]
+        env: "{{ karakeep_env }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ karakeep_search_memory }}"
+        healthcheck:
+          test: curl --fail http://localhost:7700/health || exit 1
+          interval: 15s
+          retries: 10
+          start_period: 20s
+          timeout: 10s
+
+    - name: Wait until Karakeep Search initializes and is healthy
+      community.docker.docker_container_info:
+        name: "{{ karakeep_search_container_name }}"
+      register: karakeep_result
+      until: karakeep_result.container.State.Health.Status == "healthy"
+      retries: 20
+      delay: 30
+
+    - name: Create Karakeep Chrome Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ karakeep_chrome_container_name }}"
+        image: "{{ karakeep_chrome_image_name }}:{{ karakeep_chrome_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ karakeep_network_name }}"
+        network_mode: "{{ karakeep_network_name }}"
+        restart_policy: unless-stopped
+        command:
+          - --no-sandbox
+          - --disable-gpu
+          - --disable-dev-shm-usage
+          - --remote-debugging-address=0.0.0.0
+          - --remote-debugging-port=9222
+          - --hide-scrollbars
+        memory: "{{ karakeep_chrome_memory }}"
+        labels:
+          traefik.enable: "false"
+
+    - name: Create Karakeep Web Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ karakeep_web_container_name }}"
+        image: "{{ karakeep_web_image_name }}:{{ karakeep_web_image_version }}"
+        pull: true
+        volumes: ["{{ karakeep_data_directory }}/data:/data"]
+        networks:
+          - name: "{{ karakeep_network_name }}"
+        network_mode: "{{ karakeep_network_name }}"
+        ports: ["{{ karakeep_port }}:3000"]
+        env: "{{ karakeep_env }}"
+        restart_policy: unless-stopped
+        memory: "{{ karakeep_web_memory }}"
+        labels:
+          traefik.enable: "{{ karakeep_available_externally | string }}"
+          traefik.http.routers.karakeep.rule: Host(`{{ karakeep_hostname }}.{{ ansible_nas_domain }}`)
+          traefik.http.routers.karakeep.tls.certresolver: letsencrypt
+          traefik.http.routers.karakeep.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.karakeep.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.karakeep.loadbalancer.server.port: "3000"
+  when: karakeep_enabled is true
+
+- name: Stop Karakeep
+  block:
+    - name: Stop Karakeep search
+      community.docker.docker_container:
+        name: "{{ karakeep_search_container_name }}"
+        state: absent
+    - name: Stop Karakeep chrome
+      community.docker.docker_container:
+        name: "{{ karakeep_chrome_container_name }}"
+        state: absent
+    - name: Stop Karakeep web
+      community.docker.docker_container:
+        name: "{{ karakeep_web_container_name }}"
+        state: absent
+  when: karakeep_enabled is false

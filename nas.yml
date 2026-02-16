@@ -210,8 +210,6 @@
       tags: [heyform]
     - role: hievents
       tags: [hievents]
-    - role: hoarder
-      tags: [hoarder]
     - role: homarr
       tags: [homarr]
     - role: homeassistant
@@ -244,6 +242,8 @@
       tags: [jellyfin]
     - role: joomla
       tags: [joomla]
+    - role: karakeep
+      tags: [karakeep]
     - role: kavita
       tags: [kavita]
     - role: keycloak

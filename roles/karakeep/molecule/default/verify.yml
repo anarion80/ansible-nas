@@ -7,22 +7,22 @@
       ansible.builtin.include_vars:
         file: ../../defaults/main.yml
 
-    - name: Get hoarder search container state
+    - name: Get karakeep search container state
       community.docker.docker_container:
-        name: "{{ hoarder_search_container_name }}"
+        name: "{{ karakeep_search_container_name }}"
       register: result_search
 
-    - name: Get hoarder chrome container state
+    - name: Get karakeep chrome container state
       community.docker.docker_container:
-        name: "{{ hoarder_chrome_container_name }}"
+        name: "{{ karakeep_chrome_container_name }}"
       register: result_chrome
 
-    - name: Get hoarder redis web container state
+    - name: Get karakeep redis web container state
       community.docker.docker_container:
-        name: "{{ hoarder_web_container_name }}"
+        name: "{{ karakeep_web_container_name }}"
       register: result_web
 
-    - name: Check if hoarder containers are running
+    - name: Check if karakeep containers are running
       ansible.builtin.assert:
         that:
           - result_search.container['State']['Status'] == "running"
