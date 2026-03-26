@@ -482,6 +482,8 @@
       tags: [stalwart]
     - role: standardnotes
       tags: [standardnotes]
+    - role: stashapp
+      tags: [stashapp]
     - role: stats
       tags: [stats]
     - role: stirlingpdf

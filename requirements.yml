@@ -3,18 +3,8 @@ roles:
   - name: geerlingguy.docker
     version: 7.1.0
 
-  - name: geerlingguy.nfs
-    version: 2.0.0
-
-  - name: stefangweichinger.ansible_rclone
-
-  - name: tigattack.mergerfs
-
-  - name: andrewrothstein.restic
-
 collections:
   - name: ansible.posix
-  - name: community.crypto
   - name: community.docker
   - name: community.general
   - name: community.windows
