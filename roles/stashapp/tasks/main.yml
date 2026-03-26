@@ -1,0 +1,55 @@
+---
+- name: Start Stashapp
+  block:
+    - name: Create Stashapp Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        mode: 0755
+      with_items:
+        - "{{ stashapp_data_directory }}"
+        - "{{ stashapp_config_directory }}"
+
+    - name: Stashapp Docker Container
+      community.docker.docker_container:
+        name: "{{ stashapp_container_name }}"
+        image: stashapp/stash:latest
+        pull: true
+        volumes:
+          - /etc/localtime:/etc/localtime:ro
+          - "{{ stashapp_config_directory }}/config:/root/.stash"
+          - "{{ stashapp_data_directory }}:/data:{{ stashapp_data_permissions }}"
+          - "{{ stashapp_config_directory }}/metadata:/metadata"
+          - "{{ stashapp_config_directory }}/cache:/cache"
+          - "{{ stashapp_config_directory }}/blobs:/blobs"
+          - "{{ stashapp_config_directory }}/generated:/generated"
+        ports:
+          - "{{ stashapp_port }}:9999"
+        env:
+          STASH_STASH: "/data/"
+          STASH_GENERATED: "/generated/"
+          STASH_METADATA: "/metadata/"
+          STACH_CACHE: "/cache/"
+          STASH_PORT: "9999"
+          TZ: "{{ ansible_nas_timezone }}"
+          PUID: "{{ stashapp_user_id }}"
+          PGID: "{{ stashapp_group_id }}"
+        restart_policy: unless-stopped
+        memory: "{{ stashapp_memory }}"
+        labels:
+          traefik.enable: "{{ stashapp_available_externally | string }}"
+          traefik.http.routers.stashapp.rule: "Host(`{{ stashapp_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.stashapp.tls.certresolver: "letsencrypt"
+          traefik.http.routers.stashapp.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.stashapp.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.stashapp.loadbalancer.server.port: "4040"
+  when: stashapp_enabled is true
+
+- name: Stop Stashapp
+  block:
+    - name: Stop stashapp
+      community.docker.docker_container:
+        name: "{{ stashapp_container_name }}"
+        state: absent
+  when: stashapp_enabled is false
+

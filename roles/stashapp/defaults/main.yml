@@ -1,0 +1,24 @@
+---
+stashapp_enabled: false
+stashapp_available_externally: false
+
+# directories
+stashapp_data_directory: "{{ docker_home }}/hello_world"
+stashapp_config_directory: "{{ docker_home }}/stash/config"
+
+# uid / gid
+stashapp_user_id: "0"
+stashapp_group_id: "0"
+
+# network
+stashapp_port: "9999"
+stashapp_hostname: "stashapp"
+
+stashapp_data_permissions: "rw"
+# specs
+stashapp_memory: "1g"
+
+# docker
+stashapp_container_name: "stashapp"
+stashapp_image_name: "stashapp/stash"
+stashapp_image_version: "latest"
