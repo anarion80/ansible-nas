@@ -79,19 +79,15 @@
           - "{{ docmost_data_directory }}/storage:/app/data/storage:rw"
         ports:
           - "{{ docmost_port }}:3000"
-        env:
-          APP_URL: "{{ docmost_app_url }}"
-          APP_SECRET: "{{ docmost_app_secret }}"
-          DATABASE_URL: "{{ docmost_database_url }}"
-          REDIS_URL: "{{ docmost_redis_url }}"
+        env: "{{ docmost_env }}"
         restart_policy: unless-stopped
         memory: "{{ docmost_memory }}"
         labels:
           traefik.enable: "{{ docmost_available_externally | string }}"
           traefik.http.routers.docmost.rule: "Host(`{{ docmost_hostname }}.{{ ansible_nas_domain }}`)"
-          # traefik.http.routers.docmost.tls.certresolver: "letsencrypt"
-          # traefik.http.routers.docmost.tls.domains[0].main: "{{ ansible_nas_domain }}"
-          # traefik.http.routers.docmost.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.routers.docmost.tls.certresolver: "letsencrypt"
+          traefik.http.routers.docmost.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.docmost.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
           traefik.http.services.docmost.loadbalancer.server.port: "3000"
   when: docmost_enabled is true
 
