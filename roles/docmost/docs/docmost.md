@@ -50,7 +50,7 @@ The following environment variables can be configured:
 
 ### Other Configuration
 
-- `docmost_drawio_url`: Draw.io server URL (default: <https://embed.diagrams.net>)
+- `docmost_drawio_url`: Draw.io server URL (default: `https://embed.diagrams.net`)
 - `docmost_disable_telemetry`: Disable telemetry (default: "false")
 
 It is recommended to change the default passwords and secrets for production use.
