@@ -5,6 +5,8 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
+        owner: "{{ outline_user_id }}"
+        group: "{{ outline_group_id }}"
       with_items:
         - "{{ outline_data_directory }}"
 
@@ -18,7 +20,7 @@
         image: "{{ outline_postgres_image_name }}:{{ outline_postgres_image_version }}"
         pull: true
         volumes:
-          - "{{ outline_data_directory }}/database:/var/lib/postgresql/data:rw"
+          - "{{ outline_data_directory }}/database:/var/lib/postgresql:rw"
         networks:
           - name: "{{ outline_network_name }}"
         network_mode: "{{ outline_network_name }}"
@@ -27,14 +29,18 @@
           POSTGRES_PASSWORD: "{{ outline_db_password }}"
           POSTGRES_USER: "{{ outline_db_user }}"
           POSTGRES_DB: "{{ outline_db_name }}"
-          PG_DATA: /var/lib/postgresql/data
+          PG_DATA: /var/lib/postgresql/{{ outline_postgres_image_version }}/docker
           PGSSLMODE: disable
         labels:
           traefik.enable: "false"
         restart_policy: always
         memory: "{{ outline_postgres_memory }}"
         healthcheck:
-          test: ["CMD-SHELL", "pg_isready -d {{ outline_db_name }} -U {{ outline_db_user }}"]
+          test:
+            [
+              "CMD-SHELL",
+              "pg_isready -d {{ outline_db_name }} -U {{ outline_db_user }}",
+            ]
           start_period: 20s
           interval: 30s
           retries: 3

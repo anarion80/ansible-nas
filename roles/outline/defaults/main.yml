@@ -25,7 +25,7 @@ outline_postgres_image_name: "docker.io/library/postgres"
 outline_redis_image_name: "redis"
 outline_portal_image_name: "steveltn/https-portal"
 outline_image_version: latest
-outline_postgres_image_version: latest
+outline_postgres_image_version: 18
 outline_redis_image_version: latest
 outline_portal_image_version: latest
 outline_user_id: "1000"
@@ -107,7 +107,6 @@ outline_rate_limiter_requests: "1000"
 outline_rate_limiter_duration_window: "60"
 outline_iframely_url: ""
 outline_iframely_api_key: ""
-
 
 outline_env:
   # –––––––––––––––– REQUIRED ––––––––––––––––
