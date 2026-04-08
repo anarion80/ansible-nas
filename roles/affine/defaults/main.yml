@@ -19,14 +19,14 @@ affine_migration_memory: 1g
 
 # docker
 affine_container_name: affine
-affine_image_name: "ghcr.io/toeverything/affine-graphql"
+affine_image_name: "ghcr.io/toeverything/affine"
 affine_image_version: stable
 affine_migration_container_name: affine_migration_job
-affine_migration_image_name: "ghcr.io/toeverything/affine-graphql"
+affine_migration_image_name: "ghcr.io/toeverything/affine"
 affine_migration_image_version: stable
 affine_db_container_name: affine-db
-affine_db_image_name: postgres
-affine_db_image_version: 16
+affine_db_image_name: pgvector/pgvector
+affine_db_image_version: pg16
 affine_redis_container_name: affine-redis
 affine_redis_image_name: redis
 affine_redis_image_version: latest

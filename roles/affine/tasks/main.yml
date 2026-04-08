@@ -3,26 +3,26 @@
   block:
     - name: Create Affine Directories
       ansible.builtin.file:
-        path: '{{ item }}'
+        path: "{{ item }}"
         state: directory
-      with_items: ['{{ affine_data_directory }}']
+      with_items: ["{{ affine_data_directory }}"]
     - name: Create Affine network
       community.docker.docker_network:
-        name: '{{ affine_network_name }}'
+        name: "{{ affine_network_name }}"
     - name: Create Affine Redis Docker Container
       community.docker.docker_container:
-        name: '{{ affine_redis_container_name }}'
-        image: '{{ affine_redis_image_name }}:{{ affine_redis_image_version }}'
+        name: "{{ affine_redis_container_name }}"
+        image: "{{ affine_redis_image_name }}:{{ affine_redis_image_version }}"
         pull: true
-        volumes: ['{{ affine_data_directory }}/redis:/data:rw']
+        volumes: ["{{ affine_data_directory }}/redis:/data:rw"]
         networks:
-          - name: '{{ affine_network_name }}'
-        network_mode: '{{ affine_network_name }}'
+          - name: "{{ affine_network_name }}"
+        network_mode: "{{ affine_network_name }}"
         container_default_behavior: no_defaults
         labels:
-          traefik.enable: 'false'
+          traefik.enable: "false"
         restart_policy: always
-        memory: '{{ affine_redis_memory }}'
+        memory: "{{ affine_redis_memory }}"
         healthcheck:
           test: [CMD, redis-cli, --raw, incr, ping]
           interval: 10s
@@ -30,38 +30,38 @@
           retries: 5
     - name: Create Affine Db Docker Container
       community.docker.docker_container:
-        name: '{{ affine_db_container_name }}'
-        image: '{{ affine_db_image_name }}:{{ affine_db_image_version }}'
+        name: "{{ affine_db_container_name }}"
+        image: "{{ affine_db_image_name }}:{{ affine_db_image_version }}"
         pull: true
         volumes:
-          - '{{ affine_data_directory }}/postgres:/var/lib/postgresql/data:rw'
+          - "{{ affine_data_directory }}/postgres:/var/lib/postgresql/data:rw"
         networks:
-          - name: '{{ affine_network_name }}'
-        network_mode: '{{ affine_network_name }}'
+          - name: "{{ affine_network_name }}"
+        network_mode: "{{ affine_network_name }}"
         container_default_behavior: no_defaults
         env:
-          POSTGRES_USER: '{{ affine_postgres_user }}'
-          POSTGRES_PASSWORD: '{{ affine_postgres_password }}'
-          POSTGRES_DB: '{{ affine_postgres_db }}'
-          PGDATA: /var/lib/postgresql/data/pgdata
+          POSTGRES_USER: "{{ affine_postgres_user }}"
+          POSTGRES_PASSWORD: "{{ affine_postgres_password }}"
+          POSTGRES_DB: "{{ affine_postgres_db }}"
+          POSTGRES_INITDB_ARGS: "--data-checksums"
         labels:
-          traefik.enable: 'false'
+          traefik.enable: "false"
         restart_policy: always
-        memory: '{{ affine_db_memory }}'
+        memory: "{{ affine_db_memory }}"
         healthcheck:
           test:
             - CMD
             - pg_isready
             - -U
-            - '{{ affine_postgres_user }}'
+            - "{{ affine_postgres_user }}"
             - -d
-            - '{{ affine_postgres_db }}'
+            - "{{ affine_postgres_db }}"
           interval: 10s
           timeout: 5s
           retries: 5
     - name: Wait until the DB is initialized and healthy
       community.docker.docker_container_info:
-        name: '{{ affine_db_container_name }}'
+        name: "{{ affine_db_container_name }}"
       register: affine_result
       until: affine_result.container.State.Health.Status == "healthy"
       retries: 20
@@ -69,48 +69,49 @@
     - name: Create Affine Migration Docker Container
       community.docker.docker_container:
         container_default_behavior: no_defaults
-        name: '{{ affine_migration_container_name }}'
-        image: '{{ affine_migration_image_name }}:{{ affine_migration_image_version
-          }}'
+        name: "{{ affine_migration_container_name }}"
+        image:
+          "{{ affine_migration_image_name }}:{{ affine_migration_image_version
+          }}"
         pull: true
         volumes:
-          - '{{ affine_data_directory }}/config:/root/.affine/config:rw'
-          - '{{ affine_data_directory }}/storage:/root/.affine/storage:rw'
+          - "{{ affine_data_directory }}/config:/root/.affine/config:rw"
+          - "{{ affine_data_directory }}/storage:/root/.affine/storage:rw"
         networks:
-          - name: '{{ affine_network_name }}'
-        network_mode: '{{ affine_network_name }}'
+          - name: "{{ affine_network_name }}"
+        network_mode: "{{ affine_network_name }}"
         command: [sh, -c, node ./scripts/self-host-predeploy.js]
         env:
-          NODE_OPTIONS: '{{ affine_node_options }}'
-          AFFINE_CONFIG_PATH: '{{ affine_config_path }}'
-          REDIS_SERVER_HOST: '{{ affine_redis_server_host }}'
+          AFFINE_CONFIG_PATH: "{{ affine_config_path }}"
+          REDIS_SERVER_HOST: "{{ affine_redis_server_host }}"
           # REDIS_SERVER_PORT: "{{ affine_redis_server_port }}"
           # REDIS_SERVER_USER: "{{ affine_redis_server_user }}"
           # REDIS_SERVER_PASSWORD: "{{ affine_redis_server_password }}"
           # REDIS_SERVER_DATABASE: "{{ affine_redis_server_database }}"
-          DATABASE_URL: postgres://{{ affine_postgres_user }}:{{ affine_postgres_password
+          DATABASE_URL:
+            postgres://{{ affine_postgres_user }}:{{ affine_postgres_password
             }}@{{ affine_db_container_name }}:5432/{{ affine_postgres_db }}
           NODE_ENV: production
-          AFFINE_ADMIN_EMAIL: '{{ affine_admin_email }}'
-          AFFINE_ADMIN_PASSWORD: '{{ affine_admin_password }}'
-          AFFINE_SERVER_HOST: '{{ affine_server_host }}'
-          AFFINE_SERVER_PORT: '{{ affine_server_port }}'
-          AFFINE_SERVER_HTTPS: '{{ affine_server_https }}'
-          MAILER_HOST: '{{ affine_mailer_host }}'
-          MAILER_PORT: '{{ affine_mailer_port }}'
-          MAILER_USER: '{{ affine_mailer_user }}'
-          MAILER_PASSWORD: '{{ affine_mailer_password }}'
-          MAILER_SENDER: '{{ affine_mailer_sender }}'
-          DB_USERNAME: '{{ affine_postgres_user }}'
-          DB_PASSWORD: '{{ affine_postgres_password }}'
-          DB_DATABASE: '{{ affine_postgres_db }}'
+          AFFINE_ADMIN_EMAIL: "{{ affine_admin_email }}"
+          AFFINE_ADMIN_PASSWORD: "{{ affine_admin_password }}"
+          AFFINE_SERVER_HOST: "{{ affine_server_host }}"
+          AFFINE_SERVER_PORT: "{{ affine_server_port }}"
+          AFFINE_SERVER_HTTPS: "{{ affine_server_https }}"
+          MAILER_HOST: "{{ affine_mailer_host }}"
+          MAILER_PORT: "{{ affine_mailer_port }}"
+          MAILER_USER: "{{ affine_mailer_user }}"
+          MAILER_PASSWORD: "{{ affine_mailer_password }}"
+          MAILER_SENDER: "{{ affine_mailer_sender }}"
+          DB_USERNAME: "{{ affine_postgres_user }}"
+          DB_PASSWORD: "{{ affine_postgres_password }}"
+          DB_DATABASE: "{{ affine_postgres_db }}"
           #  /Telemetry allows us to collect data on how you use the affine. This data will helps us improve the app and provide better features.
           # Uncomment next line if you wish to quit telemetry.
-          TELEMETRY_ENABLE: '{{ affine_telemetry_enable }}'
+          TELEMETRY_ENABLE: "{{ affine_telemetry_enable }}"
         restart_policy: false
-        memory: '{{ affine_migration_memory }}'
+        memory: "{{ affine_migration_memory }}"
         labels:
-          traefik.enable: 'false'
+          traefik.enable: "false"
       tags: molecule-idempotence-notest
     - name: Pause for 60 seconds to wait for DB to be initialized
       ansible.builtin.pause:
@@ -119,60 +120,57 @@
     - name: Create Affine Docker Container
       community.docker.docker_container:
         container_default_behavior: no_defaults
-        name: '{{ affine_container_name }}'
-        image: '{{ affine_image_name }}:{{ affine_image_version }}'
+        name: "{{ affine_container_name }}"
+        image: "{{ affine_image_name }}:{{ affine_image_version }}"
         pull: true
         volumes:
-          - '{{ affine_data_directory }}/config:/root/.affine/config:rw'
-          - '{{ affine_data_directory }}/storage:/root/.affine/storage:rw'
+          - "{{ affine_data_directory }}/config:/root/.affine/config:rw"
+          - "{{ affine_data_directory }}/storage:/root/.affine/storage:rw"
         networks:
-          - name: '{{ affine_network_name }}'
-        network_mode: '{{ affine_network_name }}'
-        ports: ['{{ affine_port_a }}:3010', '{{ affine_port_b }}:5555']
-        command:
-          - sh
-          - -c
-          - node ./scripts/self-host-predeploy && node ./dist/index.js
+          - name: "{{ affine_network_name }}"
+        network_mode: "{{ affine_network_name }}"
+        ports: ["{{ affine_port_a }}:3010", "{{ affine_port_b }}:5555"]
         env:
-          NODE_OPTIONS: '{{ affine_node_options }}'
-          AFFINE_CONFIG_PATH: '{{ affine_config_path }}'
-          REDIS_SERVER_HOST: '{{ affine_redis_server_host }}'
+          AFFINE_CONFIG_PATH: "{{ affine_config_path }}"
+          REDIS_SERVER_HOST: "{{ affine_redis_server_host }}"
           # REDIS_SERVER_PORT: "{{ affine_redis_server_port }}"
           # REDIS_SERVER_USER: "{{ affine_redis_server_user }}"
           # REDIS_SERVER_PASSWORD: "{{ affine_redis_server_password }}"
           # REDIS_SERVER_DATABASE: "{{ affine_redis_server_database }}"
-          DATABASE_URL: postgres://{{ affine_postgres_user }}:{{ affine_postgres_password
+          DATABASE_URL:
+            postgres://{{ affine_postgres_user }}:{{ affine_postgres_password
             }}@{{ affine_db_container_name }}:5432/{{ affine_postgres_db }}
           NODE_ENV: production
-          AFFINE_ADMIN_EMAIL: '{{ affine_admin_email }}'
-          AFFINE_ADMIN_PASSWORD: '{{ affine_admin_password }}'
-          AFFINE_SERVER_HOST: '{{ affine_server_host }}'
-          AFFINE_SERVER_PORT: '{{ affine_server_port }}'
-          AFFINE_SERVER_HTTPS: '{{ affine_server_https }}'
-          MAILER_HOST: '{{ affine_mailer_host }}'
-          MAILER_PORT: '{{ affine_mailer_port }}'
-          MAILER_USER: '{{ affine_mailer_user }}'
-          MAILER_PASSWORD: '{{ affine_mailer_password }}'
-          MAILER_SENDER: '{{ affine_mailer_sender }}'
-          DB_USERNAME: '{{ affine_postgres_user }}'
-          DB_PASSWORD: '{{ affine_postgres_password }}'
-          DB_DATABASE: '{{ affine_postgres_db }}'
+          AFFINE_ADMIN_EMAIL: "{{ affine_admin_email }}"
+          AFFINE_ADMIN_PASSWORD: "{{ affine_admin_password }}"
+          AFFINE_SERVER_HOST: "{{ affine_server_host }}"
+          AFFINE_SERVER_PORT: "{{ affine_server_port }}"
+          AFFINE_SERVER_HTTPS: "{{ affine_server_https }}"
+          MAILER_HOST: "{{ affine_mailer_host }}"
+          MAILER_PORT: "{{ affine_mailer_port }}"
+          MAILER_USER: "{{ affine_mailer_user }}"
+          MAILER_PASSWORD: "{{ affine_mailer_password }}"
+          MAILER_SENDER: "{{ affine_mailer_sender }}"
+          DB_USERNAME: "{{ affine_postgres_user }}"
+          DB_PASSWORD: "{{ affine_postgres_password }}"
+          DB_DATABASE: "{{ affine_postgres_db }}"
           # Telemetry allows us to collect data on how you use the affine. This data will helps us improve the app and provide better features.
           # Uncomment next line if you wish to quit telemetry.
-          TELEMETRY_ENABLE: '{{ affine_telemetry_enable }}'
+          TELEMETRY_ENABLE: "{{ affine_telemetry_enable }}"
         restart_policy: unless-stopped
-        memory: '{{ affine_memory }}'
+        memory: "{{ affine_memory }}"
         labels:
-          traefik.enable: '{{ affine_available_externally | string }}'
-          traefik.http.routers.affine.rule: Host(`{{ affine_hostname }}.{{ ansible_nas_domain
+          traefik.enable: "{{ affine_available_externally | string }}"
+          traefik.http.routers.affine.rule:
+            Host(`{{ affine_hostname }}.{{ ansible_nas_domain
             }}`)
-          traefik.http.routers.affine.tls.certresolver: letsencrypt
-          traefik.http.routers.affine.tls.domains[0].main: '{{ ansible_nas_domain }}'
-          traefik.http.routers.affine.tls.domains[0].sans: '*.{{ ansible_nas_domain }}'
-          traefik.http.services.affine.loadbalancer.server.port: '3010'
+          # traefik.http.routers.affine.tls.certresolver: letsencrypt
+          # traefik.http.routers.affine.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          # traefik.http.routers.affine.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.affine.loadbalancer.server.port: "3010"
     - name: Delete Affine Migration Container
       community.docker.docker_container:
-        name: '{{ affine_migration_container_name }}'
+        name: "{{ affine_migration_container_name }}"
         state: absent
       tags: molecule-idempotence-notest
   when: affine_enabled is true
@@ -180,14 +178,14 @@
   block:
     - name: Stop Affine redis
       community.docker.docker_container:
-        name: '{{ affine_redis_container_name }}'
+        name: "{{ affine_redis_container_name }}"
         state: absent
     - name: Stop Affine db
       community.docker.docker_container:
-        name: '{{ affine_db_container_name }}'
+        name: "{{ affine_db_container_name }}"
         state: absent
     - name: Stop Affine
       community.docker.docker_container:
-        name: '{{ affine_container_name }}'
+        name: "{{ affine_container_name }}"
         state: absent
   when: affine_enabled is false
