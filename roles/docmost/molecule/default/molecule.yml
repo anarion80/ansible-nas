@@ -1,0 +1,7 @@
+---
+provisioner:
+  inventory:
+    group_vars:
+      all:
+        docmost_enabled: true
+        docmost_app_secret: uqwUp02wS2XLBhK9SNe1JTZ4fkt0ZDb4yeJ3ij7mqSx3ln2wHVl9tLWw51l3DkTQ

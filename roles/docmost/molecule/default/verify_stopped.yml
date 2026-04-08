@@ -1,0 +1,33 @@
+---
+- name: Verify Stopped
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Try and stop and remove Docmost
+      community.docker.docker_container:
+        name: "{{ docmost_container_name }}"
+        state: absent
+      register: result
+
+    - name: Try and stop and remove Docmost Redis
+      community.docker.docker_container:
+        name: "{{ docmost_redis_container_name }}"
+        state: absent
+      register: result_redis
+
+    - name: Try and stop and remove Docmost DB
+      community.docker.docker_container:
+        name: "{{ docmost_db_container_name }}"
+        state: absent
+      register: result_db
+
+    - name: Check if Docmost containers are stopped
+      ansible.builtin.assert:
+        that:
+          - not result.changed
+          - not result_redis.changed
+          - not result_db.changed

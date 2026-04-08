@@ -1,0 +1,36 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get docmost db container state
+      community.docker.docker_container_info:
+        name: "{{ docmost_db_container_name }}"
+      register: result_db
+
+    - name: Get docmost container state
+      community.docker.docker_container_info:
+        name: "{{ docmost_container_name }}"
+      register: result
+
+    - name: Get docmost redis container state
+      community.docker.docker_container_info:
+        name: "{{ docmost_redis_container_name }}"
+      register: result_redis
+
+    - name: Check if docmost containers are running
+      ansible.builtin.assert:
+        that:
+          - result_db.exists
+          - result_db.container['State']['Status'] == "running"
+          - result_db.container['State']['Restarting'] == false
+          - result.exists
+          - result.container['State']['Status'] == "running"
+          - result.container['State']['Restarting'] == false
+          - result_redis.exists
+          - result_redis.container['State']['Status'] == "running"
+          - result_redis.container['State']['Restarting'] == false

@@ -1,0 +1,40 @@
+---
+docmost_enabled: false
+docmost_available_externally: false
+
+# directories
+docmost_data_directory: "{{ docker_home }}/docmost"
+
+# network
+docmost_port: "3038"
+docmost_hostname: "docmost"
+docmost_network_name: "docmost"
+
+# specs
+docmost_memory: 1g
+docmost_db_memory: 1g
+docmost_redis_memory: 512m
+
+# docker
+docmost_container_name: docmost
+docmost_image_name: "docmost/docmost"
+docmost_image_version: latest
+docmost_db_container_name: docmost-db
+docmost_db_image_name: "postgres"
+docmost_db_image_version: "18"
+docmost_redis_container_name: docmost-redis
+docmost_redis_image_name: "redis"
+docmost_redis_image_version: "8"
+docmost_user_id: "1000"
+docmost_group_id: "1000"
+
+# database
+docmost_db_name: "docmost"
+docmost_db_user: "docmost"
+docmost_db_pass: "STRONG_DB_PASSWORD"
+
+# environment variables
+docmost_app_url: "https://{{ docmost_hostname }}.{{ ansible_nas_domain }}"
+docmost_app_secret: "REPLACE_WITH_LONG_SECRET"
+docmost_database_url: "postgresql://{{ docmost_db_user }}:{{ docmost_db_pass }}@{{ docmost_db_container_name }}:5432/{{ docmost_db_name }}"
+docmost_redis_url: "redis://{{ docmost_redis_container_name }}:6379"

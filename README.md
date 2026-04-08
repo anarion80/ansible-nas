@@ -56,6 +56,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [Deluge](https://dev.deluge-torrent.org/) - A lightweight, Free Software, cross-platform BitTorrent client.
 - [Directus](https://github.com/directus/directus) - An instant REST+GraphQL API and intuitive no-code data collaboration app for any SQL database.
 - [Dockge](https://github.com/louislam/dockge) - A fancy, easy-to-use and reactive self-hosted docker compose.yaml stack-oriented manager
+- [Docmost](https://github.com/docmost/docmost) - Open-source collaborative document editor and knowledge base
 - [DokuWiki](https://www.dokuwiki.org/) - A simple to use and highly versatile Open Source wiki software that doesn't require a database.
 - [Domain Watchdog](https://github.com/maelgangloff/domain-watchdog) - DNS domain monitoring tool
 - [Dozzle](https://github.com/amir20/dozzle) - Realtime log viewer for docker containers
