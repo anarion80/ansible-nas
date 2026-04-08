@@ -26,11 +26,11 @@ standardnotes_app_memory: 4g
 # docker
 standardnotes_container_name: standardnotes
 standardnotes_image_name: "standardnotes/server"
-standardnotes_image_version: latest
+standardnotes_image_version: 9be3517093f8dd7bbdd7507c1e2ff059e6c9a889
 
 standardnotes_app_container_name: standardnotes-app
 standardnotes_app_image_name: "ghcr.io/jackyzy823/standardnotes-web"
-standardnotes_app_image_version: latest
+standardnotes_app_image_version: 3.165.10
 
 standardnotes_localstack_container_name: standardnotes-localstack
 standardnotes_localstack_image_name: "localstack/localstack"
