@@ -1,0 +1,105 @@
+---
+docmost_enabled: false
+docmost_available_externally: false
+
+# directories
+docmost_data_directory: "{{ docker_home }}/docmost"
+
+# network
+docmost_port: "3038"
+docmost_hostname: "docmost"
+docmost_network_name: "docmost"
+
+# specs
+docmost_memory: 1g
+docmost_db_memory: 1g
+docmost_redis_memory: 512m
+
+# docker
+docmost_container_name: docmost
+docmost_image_name: "docmost/docmost"
+docmost_image_version: latest
+docmost_db_container_name: docmost-db
+docmost_db_image_name: "postgres"
+docmost_db_image_version: "18"
+docmost_redis_container_name: docmost-redis
+docmost_redis_image_name: "redis"
+docmost_redis_image_version: "8"
+docmost_user_id: "1000"
+docmost_group_id: "1000"
+
+# database
+docmost_db_name: "docmost"
+docmost_db_user: "docmost"
+docmost_db_pass: "STRONG_DB_PASSWORD"
+
+# application configuration
+docmost_app_url: "https://{{ docmost_hostname }}.{{ ansible_nas_domain }}"
+docmost_app_secret: "REPLACE_WITH_LONG_SECRET"
+docmost_jwt_token_expires_in: "30d"
+
+# database configuration
+docmost_database_url: "postgresql://{{ docmost_db_user }}:{{ docmost_db_pass }}@{{ docmost_db_container_name }}:5432/{{ docmost_db_name }}"
+
+# redis configuration
+docmost_redis_url: "redis://{{ docmost_redis_container_name }}:6379"
+
+# storage configuration
+docmost_storage_driver: "local"
+docmost_file_upload_size_limit: "50mb"
+docmost_file_import_size_limit: "100mb"
+
+# s3 storage (optional)
+docmost_aws_s3_access_key_id: ""
+docmost_aws_s3_secret_access_key: ""
+docmost_aws_s3_region: ""
+docmost_aws_s3_bucket: ""
+docmost_aws_s3_endpoint: ""
+docmost_aws_s3_force_path_style: "false"
+
+# email configuration - smtp
+docmost_mail_driver: "smtp"
+docmost_smtp_host: ""
+docmost_smtp_port: ""
+docmost_smtp_username: ""
+docmost_smtp_password: ""
+docmost_smtp_secure: "false"
+docmost_mail_from_address: ""
+docmost_mail_from_name: "Docmost"
+
+# email configuration - postmark
+docmost_postmark_token: ""
+
+# draw.io configuration
+docmost_drawio_url: "https://embed.diagrams.net"
+
+# telemetry
+docmost_disable_telemetry: "true"
+
+# environment variables mapping
+docmost_env:
+  APP_URL: "{{ docmost_app_url | default(omit, true) }}"
+  APP_SECRET: "{{ docmost_app_secret | default(omit, true) }}"
+  JWT_TOKEN_EXPIRES_IN: "{{ docmost_jwt_token_expires_in | default(omit, true) }}"
+  DATABASE_URL: "{{ docmost_database_url | default(omit, true) }}"
+  REDIS_URL: "{{ docmost_redis_url | default(omit, true) }}"
+  STORAGE_DRIVER: "{{ docmost_storage_driver | default(omit, true) }}"
+  FILE_UPLOAD_SIZE_LIMIT: "{{ docmost_file_upload_size_limit | default(omit, true) }}"
+  FILE_IMPORT_SIZE_LIMIT: "{{ docmost_file_import_size_limit | default(omit, true) }}"
+  AWS_S3_ACCESS_KEY_ID: "{{ docmost_aws_s3_access_key_id | default(omit, true) }}"
+  AWS_S3_SECRET_ACCESS_KEY: "{{ docmost_aws_s3_secret_access_key | default(omit, true) }}"
+  AWS_S3_REGION: "{{ docmost_aws_s3_region | default(omit, true) }}"
+  AWS_S3_BUCKET: "{{ docmost_aws_s3_bucket | default(omit, true) }}"
+  AWS_S3_ENDPOINT: "{{ docmost_aws_s3_endpoint | default(omit, true) }}"
+  AWS_S3_FORCE_PATH_STYLE: "{{ docmost_aws_s3_force_path_style | default(omit, true) }}"
+  MAIL_DRIVER: "{{ docmost_mail_driver | default(omit, true) }}"
+  SMTP_HOST: "{{ docmost_smtp_host | default(omit, true) }}"
+  SMTP_PORT: "{{ docmost_smtp_port | default(omit, true) }}"
+  SMTP_USERNAME: "{{ docmost_smtp_username | default(omit, true) }}"
+  SMTP_PASSWORD: "{{ docmost_smtp_password | default(omit, true) }}"
+  SMTP_SECURE: "{{ docmost_smtp_secure | default(omit, true) }}"
+  MAIL_FROM_ADDRESS: "{{ docmost_mail_from_address | default(omit, true) }}"
+  MAIL_FROM_NAME: "{{ docmost_mail_from_name | default(omit, true) }}"
+  POSTMARK_TOKEN: "{{ docmost_postmark_token | default(omit, true) }}"
+  DRAWIO_URL: "{{ docmost_drawio_url | default(omit, true) }}"
+  DISABLE_TELEMETRY: "{{ docmost_disable_telemetry | default(omit, true) }}"

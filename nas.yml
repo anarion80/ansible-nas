@@ -120,6 +120,8 @@
       tags: [directus]
     - role: dockge
       tags: [dockge]
+    - role: docmost
+      tags: [docmost]
     - role: dokuwiki
       tags: [dokuwiki]
     - role: domain_watchdog

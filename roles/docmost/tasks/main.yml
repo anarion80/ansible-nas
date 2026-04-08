@@ -1,0 +1,108 @@
+---
+- name: Start Docmost
+  block:
+    - name: Create Docmost Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ docmost_data_directory }}"
+        - "{{ docmost_data_directory }}/storage"
+        - "{{ docmost_data_directory }}/db"
+        - "{{ docmost_data_directory }}/redis"
+
+    - name: Create Docmost network
+      community.docker.docker_network:
+        name: "{{ docmost_network_name }}"
+
+    - name: Create Docmost Postgres Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ docmost_db_container_name }}"
+        image: "{{ docmost_db_image_name }}:{{ docmost_db_image_version }}"
+        pull: true
+        volumes:
+          - "{{ docmost_data_directory }}/db:/var/lib/postgresql:rw"
+        networks:
+          - name: "{{ docmost_network_name }}"
+        network_mode: "{{ docmost_network_name }}"
+        env:
+          POSTGRES_PASSWORD: "{{ docmost_db_pass }}"
+          POSTGRES_USER: "{{ docmost_db_user }}"
+          POSTGRES_DB: "{{ docmost_db_name }}"
+          PG_DATA: /var/lib/postgresql/{{ docmost_db_image_version }}/docker
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ docmost_db_memory }}"
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U {{ docmost_db_user }}"]
+          start_period: 20s
+          interval: 5s
+          retries: 12
+          timeout: 5s
+
+    - name: Create Docmost Redis Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ docmost_redis_container_name }}"
+        image: "{{ docmost_redis_image_name }}:{{ docmost_redis_image_version }}"
+        pull: true
+        volumes:
+          - "{{ docmost_data_directory }}/redis:/data:rw"
+        networks:
+          - name: "{{ docmost_network_name }}"
+        network_mode: "{{ docmost_network_name }}"
+        command:
+          [
+            "redis-server",
+            "--appendonly",
+            "yes",
+            "--maxmemory-policy",
+            "noeviction",
+          ]
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ docmost_redis_memory }}"
+
+    - name: Create Docmost Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ docmost_container_name }}"
+        image: "{{ docmost_image_name }}:{{ docmost_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ docmost_network_name }}"
+        network_mode: "{{ docmost_network_name }}"
+        volumes:
+          - "{{ docmost_data_directory }}/storage:/app/data/storage:rw"
+        ports:
+          - "{{ docmost_port }}:3000"
+        env: "{{ docmost_env }}"
+        restart_policy: unless-stopped
+        memory: "{{ docmost_memory }}"
+        labels:
+          traefik.enable: "{{ docmost_available_externally | string }}"
+          traefik.http.routers.docmost.rule: "Host(`{{ docmost_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.docmost.tls.certresolver: "letsencrypt"
+          traefik.http.routers.docmost.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.docmost.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.docmost.loadbalancer.server.port: "3000"
+  when: docmost_enabled is true
+
+- name: Stop Docmost
+  block:
+    - name: Stop Docmost
+      community.docker.docker_container:
+        name: "{{ docmost_container_name }}"
+        state: absent
+    - name: Stop Docmost Redis
+      community.docker.docker_container:
+        name: "{{ docmost_redis_container_name }}"
+        state: absent
+    - name: Stop Docmost DB
+      community.docker.docker_container:
+        name: "{{ docmost_db_container_name }}"
+        state: absent
+  when: docmost_enabled is false
