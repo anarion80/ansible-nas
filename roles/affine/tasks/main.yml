@@ -59,6 +59,35 @@
           interval: 10s
           timeout: 5s
           retries: 5
+    - name: Create Affine Indexer Docker Container
+      community.docker.docker_container:
+        name: "{{ affine_indexer_container_name }}"
+        image: "{{ affine_indexer_image_name }}:{{ affine_indexer_image_version }}"
+        pull: true
+        volumes:
+          - "{{ affine_data_directory }}/indexer:/var/lib/manticore"
+        networks:
+          - name: "{{ affine_network_name }}"
+        network_mode: "{{ affine_network_name }}"
+        container_default_behavior: no_defaults
+        ulimits:
+          - nproc:65535:65535
+          - nofile:65535:65535
+          - memlock:-1:-1
+        env:
+          POSTGRES_USER: "{{ affine_postgres_user }}"
+          POSTGRES_PASSWORD: "{{ affine_postgres_password }}"
+          POSTGRES_DB: "{{ affine_postgres_db }}"
+          POSTGRES_INITDB_ARGS: "--data-checksums"
+        labels:
+          traefik.enable: "false"
+        restart_policy: always
+        memory: "{{ affine_indexer_memory }}"
+        healthcheck:
+          test: ["CMD", "wget", "-O-", "http://127.0.0.1:9308"]
+          interval: 10s
+          timeout: 5s
+          retries: 5
     - name: Wait until the DB is initialized and healthy
       community.docker.docker_container_info:
         name: "{{ affine_db_container_name }}"
@@ -108,6 +137,9 @@
           #  /Telemetry allows us to collect data on how you use the affine. This data will helps us improve the app and provide better features.
           # Uncomment next line if you wish to quit telemetry.
           TELEMETRY_ENABLE: "{{ affine_telemetry_enable }}"
+          AFFINE_INDEXER_ENABLED: "{{ affine_indexer_enabled }}"
+          AFFINE_INDEXER_SEARCH_ENDPOINT: "{{ affine_indexer_search_endpoint }}"
+          MANTICORE_DATA_LOCATION: "./manticore"
         restart_policy: false
         memory: "{{ affine_migration_memory }}"
         labels:
@@ -157,6 +189,9 @@
           # Telemetry allows us to collect data on how you use the affine. This data will helps us improve the app and provide better features.
           # Uncomment next line if you wish to quit telemetry.
           TELEMETRY_ENABLE: "{{ affine_telemetry_enable }}"
+          AFFINE_INDEXER_ENABLED: "{{ affine_indexer_enabled }}"
+          AFFINE_INDEXER_SEARCH_ENDPOINT: "{{ affine_indexer_search_endpoint }}"
+          MANTICORE_DATA_LOCATION: "./manticore"
         restart_policy: unless-stopped
         memory: "{{ affine_memory }}"
         labels:
@@ -164,9 +199,9 @@
           traefik.http.routers.affine.rule:
             Host(`{{ affine_hostname }}.{{ ansible_nas_domain
             }}`)
-          # traefik.http.routers.affine.tls.certresolver: letsencrypt
-          # traefik.http.routers.affine.tls.domains[0].main: "{{ ansible_nas_domain }}"
-          # traefik.http.routers.affine.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.routers.affine.tls.certresolver: letsencrypt
+          traefik.http.routers.affine.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.affine.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
           traefik.http.services.affine.loadbalancer.server.port: "3010"
     - name: Delete Affine Migration Container
       community.docker.docker_container:
