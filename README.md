@@ -85,6 +85,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [get_iplayer](https://github.com/get-iplayer/get_iplayer) - download programmes from BBC iplayer
 - [Ghost](https://ghost.org/) - Turn your audience into a business. Publishing, memberships, subscriptions and newsletters
 - [Ghostfolio](https://github.com/ghostfolio/ghostfolio) - Open Source Wealth Management Software
+- [Gramps Web](https://gramps-project.github.io/gramps-web/) - Web-based genealogy software for collaborative family tree research
 - [Gitea](https://gitea.io/en-us/) - Simple self-hosted GitHub clone
 - [GitLab](https://about.gitlab.com/features/) - Self-hosted GitHub clone of the highest order
 - [Glance](https://github.com/glanceapp/glance) - A self-hosted dashboard that puts all your feeds in one place

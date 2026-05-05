@@ -178,6 +178,8 @@
       tags: [ghost]
     - role: ghostfolio
       tags: [ghostfolio]
+    - role: grampsweb
+      tags: [grampsweb]
     - role: gitea
       tags: [gitea]
     - role: gitlab

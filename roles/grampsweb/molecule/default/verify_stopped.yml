@@ -1,0 +1,33 @@
+---
+- name: Verify Stopped
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Try and stop and remove Grampsweb
+      community.docker.docker_container:
+        name: "{{ grampsweb_container_name }}"
+        state: absent
+      register: result
+
+    - name: Try and stop and remove Grampsweb Celery
+      community.docker.docker_container:
+        name: "{{ grampsweb_celery_container_name }}"
+        state: absent
+      register: result_celery
+
+    - name: Try and stop and remove Grampsweb Redis
+      community.docker.docker_container:
+        name: "{{ grampsweb_redis_container_name }}"
+        state: absent
+      register: result_redis
+
+    - name: Check if Grampsweb containers are stopped
+      ansible.builtin.assert:
+        that:
+          - not result.changed
+          - not result_celery.changed
+          - not result_redis.changed

@@ -1,0 +1,211 @@
+---
+grampsweb_enabled: false
+grampsweb_available_externally: false
+
+# directories
+grampsweb_data_directory: "{{ docker_home }}/grampsweb"
+
+# network
+grampsweb_port: "3039"
+grampsweb_hostname: "grampsweb"
+grampsweb_network_name: "grampsweb"
+
+# specs
+grampsweb_memory: 1g
+grampsweb_celery_memory: 1g
+grampsweb_redis_memory: 256m
+
+# docker
+grampsweb_container_name: grampsweb
+grampsweb_image_name: "ghcr.io/gramps-project/grampsweb"
+grampsweb_image_version: latest
+grampsweb_celery_container_name: grampsweb_celery
+grampsweb_redis_container_name: grampsweb_redis
+grampsweb_redis_image_name: "docker.io/valkey/valkey"
+grampsweb_redis_image_version: "8-alpine"
+
+# user/group
+grampsweb_user_id: "1000"
+grampsweb_group_id: "1000"
+
+# ---------------------------------------------------------------------------
+# Gramps Web configuration options (via environment variables)
+# See: https://www.grampsweb.org/install_setup/configuration/
+# All options are prefixed with GRAMPSWEB_ when used as env vars.
+# ---------------------------------------------------------------------------
+
+# required settings
+grampsweb_tree: "Gramps Web"
+grampsweb_secret_key: ""
+grampsweb_user_db_uri: ""
+
+# optional settings
+grampsweb_media_base_dir: ""
+grampsweb_tree_id: ""
+grampsweb_search_index_db_uri: ""
+grampsweb_static_path: ""
+grampsweb_base_url: ""
+grampsweb_cors_origins: ""
+
+# email
+grampsweb_email_host: ""
+grampsweb_email_port: ""
+grampsweb_email_host_user: ""
+grampsweb_email_host_password: ""
+grampsweb_email_use_tls: ""
+grampsweb_email_use_ssl: ""
+grampsweb_email_use_starttls: ""
+grampsweb_default_from_email: ""
+
+# cache
+grampsweb_thumbnail_cache_config__cache_default_timeout: ""
+grampsweb_request_cache_config__cache_default_timeout: ""
+grampsweb_persistent_cache_config__cache_default_timeout: ""
+
+# celery
+grampsweb_celery_config__broker_url: "redis://{{ grampsweb_redis_container_name }}:6379/0"
+grampsweb_celery_config__result_backend: "redis://{{ grampsweb_redis_container_name }}:6379/0"
+
+# other
+grampsweb_ratelimit_storage_uri: "redis://{{ grampsweb_redis_container_name }}:6379/1"
+grampsweb_report_dir: ""
+grampsweb_export_dir: ""
+grampsweb_registration_disabled: ""
+grampsweb_disable_telemetry: "true"
+grampsweb_pillow_max_image_pixels: ""
+
+# postgresql
+grampsweb_postgres_user: ""
+grampsweb_postgres_password: ""
+
+# multi-tree settings
+grampsweb_media_prefix_tree: ""
+grampsweb_new_db_backend: ""
+grampsweb_postgres_host: ""
+grampsweb_postgres_port: ""
+
+# oidc authentication
+grampsweb_oidc_enabled: ""
+grampsweb_oidc_issuer: ""
+grampsweb_oidc_client_id: ""
+grampsweb_oidc_client_secret: ""
+grampsweb_oidc_name: ""
+grampsweb_oidc_scopes: ""
+grampsweb_oidc_username_claim: ""
+grampsweb_oidc_openid_config_url: ""
+grampsweb_oidc_disable_local_auth: ""
+grampsweb_oidc_auto_redirect: ""
+
+# built-in oidc providers
+grampsweb_oidc_google_client_id: ""
+grampsweb_oidc_google_client_secret: ""
+grampsweb_oidc_microsoft_client_id: ""
+grampsweb_oidc_microsoft_client_secret: ""
+grampsweb_oidc_github_client_id: ""
+grampsweb_oidc_github_client_secret: ""
+
+# oidc role mapping
+grampsweb_oidc_role_claim: ""
+grampsweb_oidc_group_admin: ""
+grampsweb_oidc_group_owner: ""
+grampsweb_oidc_group_editor: ""
+grampsweb_oidc_group_contributor: ""
+grampsweb_oidc_group_member: ""
+grampsweb_oidc_group_guest: ""
+
+# ai features
+grampsweb_llm_base_url: ""
+grampsweb_llm_model: ""
+grampsweb_vector_embedding_model: ""
+grampsweb_llm_max_context_length: ""
+grampsweb_llm_system_prompt: ""
+
+# ---------------------------------------------------------------------------
+# environment variables mapping
+# ---------------------------------------------------------------------------
+grampsweb_env:
+  # required
+  GRAMPSWEB_TREE: "{{ grampsweb_tree | default(omit, true) }}"
+  GRAMPSWEB_SECRET_KEY: "{{ grampsweb_secret_key | default(omit, true) }}"
+  GRAMPSWEB_USER_DB_URI: "{{ grampsweb_user_db_uri | default(omit, true) }}"
+
+  # optional
+  GRAMPSWEB_MEDIA_BASE_DIR: "{{ grampsweb_media_base_dir | default(omit, true) }}"
+  GRAMPSWEB_TREE_ID: "{{ grampsweb_tree_id | default(omit, true) }}"
+  GRAMPSWEB_SEARCH_INDEX_DB_URI: "{{ grampsweb_search_index_db_uri | default(omit, true) }}"
+  GRAMPSWEB_STATIC_PATH: "{{ grampsweb_static_path | default(omit, true) }}"
+  GRAMPSWEB_BASE_URL: "{{ grampsweb_base_url | default(omit, true) }}"
+  GRAMPSWEB_CORS_ORIGINS: "{{ grampsweb_cors_origins | default(omit, true) }}"
+
+  # email
+  GRAMPSWEB_EMAIL_HOST: "{{ grampsweb_email_host | default(omit, true) }}"
+  GRAMPSWEB_EMAIL_PORT: "{{ grampsweb_email_port | default(omit, true) }}"
+  GRAMPSWEB_EMAIL_HOST_USER: "{{ grampsweb_email_host_user | default(omit, true) }}"
+  GRAMPSWEB_EMAIL_HOST_PASSWORD: "{{ grampsweb_email_host_password | default(omit, true) }}"
+  GRAMPSWEB_EMAIL_USE_TLS: "{{ grampsweb_email_use_tls | default(omit, true) }}"
+  GRAMPSWEB_EMAIL_USE_SSL: "{{ grampsweb_email_use_ssl | default(omit, true) }}"
+  GRAMPSWEB_EMAIL_USE_STARTTLS: "{{ grampsweb_email_use_starttls | default(omit, true) }}"
+  GRAMPSWEB_DEFAULT_FROM_EMAIL: "{{ grampsweb_default_from_email | default(omit, true) }}"
+
+  # cache
+  GRAMPSWEB_THUMBNAIL_CACHE_CONFIG__CACHE_DEFAULT_TIMEOUT: "{{ grampsweb_thumbnail_cache_config__cache_default_timeout | default(omit, true) }}"
+  GRAMPSWEB_REQUEST_CACHE_CONFIG__CACHE_DEFAULT_TIMEOUT: "{{ grampsweb_request_cache_config__cache_default_timeout | default(omit, true) }}"
+  GRAMPSWEB_PERSISTENT_CACHE_CONFIG__CACHE_DEFAULT_TIMEOUT: "{{ grampsweb_persistent_cache_config__cache_default_timeout | default(omit, true) }}"
+
+  # celery
+  GRAMPSWEB_CELERY_CONFIG__broker_url: "{{ grampsweb_celery_config__broker_url | default(omit, true) }}"
+  GRAMPSWEB_CELERY_CONFIG__result_backend: "{{ grampsweb_celery_config__result_backend | default(omit, true) }}"
+
+  # other
+  GRAMPSWEB_RATELIMIT_STORAGE_URI: "{{ grampsweb_ratelimit_storage_uri | default(omit, true) }}"
+  GRAMPSWEB_REPORT_DIR: "{{ grampsweb_report_dir | default(omit, true) }}"
+  GRAMPSWEB_EXPORT_DIR: "{{ grampsweb_export_dir | default(omit, true) }}"
+  GRAMPSWEB_REGISTRATION_DISABLED: "{{ grampsweb_registration_disabled | default(omit, true) }}"
+  GRAMPSWEB_DISABLE_TELEMETRY: "{{ grampsweb_disable_telemetry | default(omit, true) }}"
+  GRAMPSWEB_PILLOW_MAX_IMAGE_PIXELS: "{{ grampsweb_pillow_max_image_pixels | default(omit, true) }}"
+
+  # postgresql
+  GRAMPSWEB_POSTGRES_USER: "{{ grampsweb_postgres_user | default(omit, true) }}"
+  GRAMPSWEB_POSTGRES_PASSWORD: "{{ grampsweb_postgres_password | default(omit, true) }}"
+
+  # multi-tree
+  GRAMPSWEB_MEDIA_PREFIX_TREE: "{{ grampsweb_media_prefix_tree | default(omit, true) }}"
+  GRAMPSWEB_NEW_DB_BACKEND: "{{ grampsweb_new_db_backend | default(omit, true) }}"
+  GRAMPSWEB_POSTGRES_HOST: "{{ grampsweb_postgres_host | default(omit, true) }}"
+  GRAMPSWEB_POSTGRES_PORT: "{{ grampsweb_postgres_port | default(omit, true) }}"
+
+  # oidc authentication
+  GRAMPSWEB_OIDC_ENABLED: "{{ grampsweb_oidc_enabled | default(omit, true) }}"
+  GRAMPSWEB_OIDC_ISSUER: "{{ grampsweb_oidc_issuer | default(omit, true) }}"
+  GRAMPSWEB_OIDC_CLIENT_ID: "{{ grampsweb_oidc_client_id | default(omit, true) }}"
+  GRAMPSWEB_OIDC_CLIENT_SECRET: "{{ grampsweb_oidc_client_secret | default(omit, true) }}"
+  GRAMPSWEB_OIDC_NAME: "{{ grampsweb_oidc_name | default(omit, true) }}"
+  GRAMPSWEB_OIDC_SCOPES: "{{ grampsweb_oidc_scopes | default(omit, true) }}"
+  GRAMPSWEB_OIDC_USERNAME_CLAIM: "{{ grampsweb_oidc_username_claim | default(omit, true) }}"
+  GRAMPSWEB_OIDC_OPENID_CONFIG_URL: "{{ grampsweb_oidc_openid_config_url | default(omit, true) }}"
+  GRAMPSWEB_OIDC_DISABLE_LOCAL_AUTH: "{{ grampsweb_oidc_disable_local_auth | default(omit, true) }}"
+  GRAMPSWEB_OIDC_AUTO_REDIRECT: "{{ grampsweb_oidc_auto_redirect | default(omit, true) }}"
+
+  # built-in oidc providers
+  GRAMPSWEB_OIDC_GOOGLE_CLIENT_ID: "{{ grampsweb_oidc_google_client_id | default(omit, true) }}"
+  GRAMPSWEB_OIDC_GOOGLE_CLIENT_SECRET: "{{ grampsweb_oidc_google_client_secret | default(omit, true) }}"
+  GRAMPSWEB_OIDC_MICROSOFT_CLIENT_ID: "{{ grampsweb_oidc_microsoft_client_id | default(omit, true) }}"
+  GRAMPSWEB_OIDC_MICROSOFT_CLIENT_SECRET: "{{ grampsweb_oidc_microsoft_client_secret | default(omit, true) }}"
+  GRAMPSWEB_OIDC_GITHUB_CLIENT_ID: "{{ grampsweb_oidc_github_client_id | default(omit, true) }}"
+  GRAMPSWEB_OIDC_GITHUB_CLIENT_SECRET: "{{ grampsweb_oidc_github_client_secret | default(omit, true) }}"
+
+  # oidc role mapping
+  GRAMPSWEB_OIDC_ROLE_CLAIM: "{{ grampsweb_oidc_role_claim | default(omit, true) }}"
+  GRAMPSWEB_OIDC_GROUP_ADMIN: "{{ grampsweb_oidc_group_admin | default(omit, true) }}"
+  GRAMPSWEB_OIDC_GROUP_OWNER: "{{ grampsweb_oidc_group_owner | default(omit, true) }}"
+  GRAMPSWEB_OIDC_GROUP_EDITOR: "{{ grampsweb_oidc_group_editor | default(omit, true) }}"
+  GRAMPSWEB_OIDC_GROUP_CONTRIBUTOR: "{{ grampsweb_oidc_group_contributor | default(omit, true) }}"
+  GRAMPSWEB_OIDC_GROUP_MEMBER: "{{ grampsweb_oidc_group_member | default(omit, true) }}"
+  GRAMPSWEB_OIDC_GROUP_GUEST: "{{ grampsweb_oidc_group_guest | default(omit, true) }}"
+
+  # ai features
+  GRAMPSWEB_LLM_BASE_URL: "{{ grampsweb_llm_base_url | default(omit, true) }}"
+  GRAMPSWEB_LLM_MODEL: "{{ grampsweb_llm_model | default(omit, true) }}"
+  GRAMPSWEB_VECTOR_EMBEDDING_MODEL: "{{ grampsweb_vector_embedding_model | default(omit, true) }}"
+  GRAMPSWEB_LLM_MAX_CONTEXT_LENGTH: "{{ grampsweb_llm_max_context_length | default(omit, true) }}"
+  GRAMPSWEB_LLM_SYSTEM_PROMPT: "{{ grampsweb_llm_system_prompt | default(omit, true) }}"

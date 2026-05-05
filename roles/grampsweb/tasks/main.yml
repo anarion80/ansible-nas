@@ -1,0 +1,100 @@
+---
+- name: Start Grampsweb
+  block:
+    - name: Create Grampsweb Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ grampsweb_data_directory }}"
+
+    - name: Create Grampsweb network
+      community.docker.docker_network:
+        name: "{{ grampsweb_network_name }}"
+
+    - name: Create Grampsweb Redis Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ grampsweb_redis_container_name }}"
+        image: "{{ grampsweb_redis_image_name }}:{{ grampsweb_redis_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ grampsweb_network_name }}"
+        network_mode: "{{ grampsweb_network_name }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ grampsweb_redis_memory }}"
+
+    - name: Create Grampsweb Celery Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ grampsweb_celery_container_name }}"
+        image: "{{ grampsweb_image_name }}:{{ grampsweb_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ grampsweb_network_name }}"
+        network_mode: "{{ grampsweb_network_name }}"
+        volumes:
+          - "{{ grampsweb_data_directory }}/users:/app/users:rw"
+          - "{{ grampsweb_data_directory }}/indexdir:/app/indexdir:rw"
+          - "{{ grampsweb_data_directory }}/thumbnail_cache:/app/thumbnail_cache:rw"
+          - "{{ grampsweb_data_directory }}/cache:/app/cache:rw"
+          - "{{ grampsweb_data_directory }}/secret:/app/secret:rw"
+          - "{{ grampsweb_data_directory }}/grampsdb:/root/.gramps/grampsdb:rw"
+          - "{{ grampsweb_data_directory }}/media:/app/media:rw"
+          - "{{ grampsweb_data_directory }}/tmp:/tmp:rw"
+        env: "{{ grampsweb_env }}"
+        command: "celery -A gramps_webapi.celery worker --loglevel=INFO --concurrency=2"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ grampsweb_celery_memory }}"
+
+    - name: Create Grampsweb Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ grampsweb_container_name }}"
+        image: "{{ grampsweb_image_name }}:{{ grampsweb_image_version }}"
+        pull: true
+        networks:
+          - name: "{{ grampsweb_network_name }}"
+        network_mode: "{{ grampsweb_network_name }}"
+        volumes:
+          - "{{ grampsweb_data_directory }}/users:/app/users:rw"
+          - "{{ grampsweb_data_directory }}/indexdir:/app/indexdir:rw"
+          - "{{ grampsweb_data_directory }}/thumbnail_cache:/app/thumbnail_cache:rw"
+          - "{{ grampsweb_data_directory }}/cache:/app/cache:rw"
+          - "{{ grampsweb_data_directory }}/secret:/app/secret:rw"
+          - "{{ grampsweb_data_directory }}/grampsdb:/root/.gramps/grampsdb:rw"
+          - "{{ grampsweb_data_directory }}/media:/app/media:rw"
+          - "{{ grampsweb_data_directory }}/tmp:/tmp:rw"
+        ports:
+          - "{{ grampsweb_port }}:5000"
+        env: "{{ grampsweb_env }}"
+        restart_policy: unless-stopped
+        memory: "{{ grampsweb_memory }}"
+        labels:
+          traefik.enable: "{{ grampsweb_available_externally | string }}"
+          traefik.http.routers.grampsweb.rule: "Host(`{{ grampsweb_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.grampsweb.tls.certresolver: "letsencrypt"
+          traefik.http.routers.grampsweb.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.grampsweb.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.grampsweb.loadbalancer.server.port: "5000"
+  when: grampsweb_enabled is true
+
+- name: Stop Grampsweb
+  block:
+    - name: Stop Grampsweb
+      community.docker.docker_container:
+        name: "{{ grampsweb_container_name }}"
+        state: absent
+    - name: Stop Grampsweb Celery
+      community.docker.docker_container:
+        name: "{{ grampsweb_celery_container_name }}"
+        state: absent
+    - name: Stop Grampsweb Redis
+      community.docker.docker_container:
+        name: "{{ grampsweb_redis_container_name }}"
+        state: absent
+  when: grampsweb_enabled is false
