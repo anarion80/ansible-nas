@@ -132,19 +132,111 @@ supabase_enable_phone_signup: "true"
 supabase_enable_phone_autoconfirm: "true"
 
 # OAuth - Google
-supabase_google_enabled: "false"
+supabase_google_enabled: ""
 supabase_google_client_id: ""
 supabase_google_secret: ""
 
 # OAuth - GitHub
-supabase_github_enabled: "false"
+supabase_github_enabled: ""
 supabase_github_client_id: ""
 supabase_github_secret: ""
+supabase_github_url: ""
 
 # OAuth - Azure
-supabase_azure_enabled: "false"
+supabase_azure_enabled: ""
 supabase_azure_client_id: ""
 supabase_azure_secret: ""
+supabase_azure_url: ""
+
+# OAuth - Apple
+supabase_apple_enabled: ""
+supabase_apple_client_id: ""
+supabase_apple_secret: ""
+
+# OAuth - Bitbucket
+supabase_bitbucket_enabled: ""
+supabase_bitbucket_client_id: ""
+supabase_bitbucket_secret: ""
+
+# OAuth - Discord
+supabase_discord_enabled: ""
+supabase_discord_client_id: ""
+supabase_discord_secret: ""
+
+# OAuth - Facebook
+supabase_facebook_enabled: ""
+supabase_facebook_client_id: ""
+supabase_facebook_secret: ""
+
+# OAuth - Figma
+supabase_figma_enabled: ""
+supabase_figma_client_id: ""
+supabase_figma_secret: ""
+
+# OAuth - GitLab
+supabase_gitlab_enabled: ""
+supabase_gitlab_client_id: ""
+supabase_gitlab_secret: ""
+supabase_gitlab_url: ""
+
+# OAuth - Kakao
+supabase_kakao_enabled: ""
+supabase_kakao_client_id: ""
+supabase_kakao_secret: ""
+
+# OAuth - Keycloak
+supabase_keycloak_enabled: ""
+supabase_keycloak_client_id: ""
+supabase_keycloak_secret: ""
+supabase_keycloak_url: ""
+
+# OAuth - LinkedIn OIDC
+supabase_linkedin_oidc_enabled: ""
+supabase_linkedin_oidc_client_id: ""
+supabase_linkedin_oidc_secret: ""
+
+# OAuth - Notion
+supabase_notion_enabled: ""
+supabase_notion_client_id: ""
+supabase_notion_secret: ""
+
+# OAuth - Slack OIDC
+supabase_slack_oidc_enabled: ""
+supabase_slack_oidc_client_id: ""
+supabase_slack_oidc_secret: ""
+
+# OAuth - Snapchat
+supabase_snapchat_enabled: ""
+supabase_snapchat_client_id: ""
+supabase_snapchat_secret: ""
+
+# OAuth - Spotify
+supabase_spotify_enabled: ""
+supabase_spotify_client_id: ""
+supabase_spotify_secret: ""
+
+# OAuth - Twitch
+supabase_twitch_enabled: ""
+supabase_twitch_client_id: ""
+supabase_twitch_secret: ""
+
+# OAuth - Twitter
+supabase_twitter_enabled: ""
+supabase_twitter_client_id: ""
+supabase_twitter_secret: ""
+
+# OAuth - WorkOS
+supabase_workos_enabled: ""
+supabase_workos_client_id: ""
+supabase_workos_secret: ""
+
+# OAuth - Zoom
+supabase_zoom_enabled: ""
+supabase_zoom_client_id: ""
+supabase_zoom_secret: ""
+
+# OAuth - Additional settings
+supabase_skip_nonce_check: ""
 
 # SMS provider
 supabase_sms_provider: ""
@@ -192,7 +284,14 @@ supabase_studio_default_project: "Default Project"
 supabase_openai_api_key: ""
 
 # Storage
+supabase_storage_backend: "file"
+supabase_storage_file_size_limit: "52428800"
 supabase_global_s3_bucket: "stub"
+supabase_global_s3_endpoint: ""
+supabase_global_s3_protocol: ""
+supabase_global_s3_force_path_style: ""
+supabase_aws_access_key_id: ""
+supabase_aws_secret_access_key: ""
 supabase_region: "stub"
 supabase_storage_tenant_id: "stub"
 
@@ -201,38 +300,15 @@ supabase_imgproxy_auto_webp: "true"
 
 # Edge Functions
 supabase_functions_verify_jwt: "false"
+supabase_functions_custom_env: {}
+supabase_functions_base_env:
+  JWT_SECRET: "{{ supabase_jwt_secret }}"
+  SUPABASE_URL: "http://kong:8000"
+  SUPABASE_PUBLIC_URL: "{{ supabase_public_url }}"
+  SUPABASE_ANON_KEY: "{{ supabase_anon_key }}"
+  SUPABASE_SERVICE_ROLE_KEY: "{{ supabase_service_role_key }}"
+  SUPABASE_DB_URL: "postgresql://postgres:{{ supabase_postgres_password }}@{{ supabase_postgres_host }}:{{ supabase_postgres_port }}/{{ supabase_postgres_db }}"
+  VERIFY_JWT: "{{ supabase_functions_verify_jwt }}"
 
 # Realtime
 supabase_realtime_db_enc_key: "supabaserealtime"
-
-# Auth environment variables
-supabase_auth_env:
-  GOTRUE_API_HOST: "0.0.0.0"
-  GOTRUE_API_PORT: "9999"
-  API_EXTERNAL_URL: "{{ supabase_api_external_url }}"
-  GOTRUE_DB_DRIVER: "postgres"
-  GOTRUE_DB_DATABASE_URL: "postgres://supabase_auth_admin:{{ supabase_postgres_password }}@{{ supabase_postgres_host }}:{{ supabase_postgres_port }}/{{ supabase_postgres_db }}"
-  GOTRUE_SITE_URL: "{{ supabase_site_url }}"
-  GOTRUE_URI_ALLOW_LIST: "{{ supabase_additional_redirect_urls }}"
-  GOTRUE_DISABLE_SIGNUP: "{{ supabase_disable_signup }}"
-  GOTRUE_JWT_ADMIN_ROLES: "service_role"
-  GOTRUE_JWT_AUD: "authenticated"
-  GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
-  GOTRUE_JWT_EXP: "{{ supabase_jwt_expiry }}"
-  GOTRUE_JWT_SECRET: "{{ supabase_jwt_secret }}"
-  GOTRUE_JWT_ISSUER: "{{ supabase_api_external_url }}/auth/v1"
-  GOTRUE_EXTERNAL_EMAIL_ENABLED: "{{ supabase_enable_email_signup }}"
-  GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: "{{ supabase_enable_anonymous_users }}"
-  GOTRUE_MAILER_AUTOCONFIRM: "{{ supabase_enable_email_autoconfirm }}"
-  GOTRUE_SMTP_ADMIN_EMAIL: "{{ supabase_smtp_admin_email }}"
-  GOTRUE_SMTP_HOST: "{{ supabase_smtp_host }}"
-  GOTRUE_SMTP_PORT: "{{ supabase_smtp_port }}"
-  GOTRUE_SMTP_USER: "{{ supabase_smtp_user }}"
-  GOTRUE_SMTP_PASS: "{{ supabase_smtp_pass }}"
-  GOTRUE_SMTP_SENDER_NAME: "{{ supabase_smtp_sender_name }}"
-  GOTRUE_MAILER_URLPATHS_INVITE: "{{ supabase_mailer_urlpaths_invite }}"
-  GOTRUE_MAILER_URLPATHS_CONFIRMATION: "{{ supabase_mailer_urlpaths_confirmation }}"
-  GOTRUE_MAILER_URLPATHS_RECOVERY: "{{ supabase_mailer_urlpaths_recovery }}"
-  GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: "{{ supabase_mailer_urlpaths_email_change }}"
-  GOTRUE_EXTERNAL_PHONE_ENABLED: "{{ supabase_enable_phone_signup }}"
-  GOTRUE_SMS_AUTOCONFIRM: "{{ supabase_enable_phone_autoconfirm }}"
