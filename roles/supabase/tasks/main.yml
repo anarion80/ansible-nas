@@ -1,0 +1,674 @@
+---
+- name: Start Supabase
+  block:
+    - name: Create Supabase Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ supabase_data_directory }}"
+        - "{{ supabase_data_directory }}/db/data"
+        - "{{ supabase_data_directory }}/storage"
+        - "{{ supabase_data_directory }}/functions"
+        - "{{ supabase_data_directory }}/functions/main"
+        - "{{ supabase_data_directory }}/snippets"
+        - "{{ supabase_data_directory }}/api"
+        - "{{ supabase_data_directory }}/db/init"
+        - "{{ supabase_data_directory }}/pooler"
+
+    - name: Set Supabase Kong directory ownership
+      ansible.builtin.file:
+        path: "{{ supabase_data_directory }}/api"
+        state: directory
+        owner: "1001"
+        group: "1001"
+        recurse: true
+
+    - name: Create Supabase network
+      community.docker.docker_network:
+        name: "{{ supabase_network_name }}"
+
+    - name: Template Supabase Kong config
+      ansible.builtin.template:
+        src: kong.yml.j2
+        dest: "{{ supabase_data_directory }}/api/kong.yml"
+        owner: "1001"
+        group: "1001"
+
+    - name: Template Supabase Kong entrypoint
+      ansible.builtin.template:
+        src: kong-entrypoint.sh.j2
+        dest: "{{ supabase_data_directory }}/api/kong-entrypoint.sh"
+        mode: "0755"
+        owner: "1001"
+        group: "1001"
+
+    - name: Template Supabase Pooler config
+      ansible.builtin.template:
+        src: pooler.exs.j2
+        dest: "{{ supabase_data_directory }}/pooler/pooler.exs"
+
+    - name: Template Supabase Edge Functions main entrypoint
+      ansible.builtin.template:
+        src: functions-main-index.ts.j2
+        dest: "{{ supabase_data_directory }}/functions/main/index.ts"
+
+    - name: Template Supabase DB init scripts
+      ansible.builtin.template:
+        src: "{{ item.src }}"
+        dest: "{{ supabase_data_directory }}/db/init/{{ item.dest }}"
+      with_items:
+        - { src: "realtime.sql.j2", dest: "99-realtime.sql" }
+        - { src: "webhooks.sql.j2", dest: "98-webhooks.sql" }
+        - { src: "roles.sql.j2", dest: "99-roles.sql" }
+        - { src: "jwt.sql.j2", dest: "99-jwt.sql" }
+        - { src: "_supabase.sql.j2", dest: "97-_supabase.sql" }
+        - { src: "logs.sql.j2", dest: "99-logs.sql" }
+        - { src: "pooler.sql.j2", dest: "99-pooler.sql" }
+
+    - name: Supabase Postgres Docker Container
+      community.docker.docker_container:
+        name: "{{ supabase_db_container_name }}"
+        image: "{{ supabase_db_image }}:{{ supabase_db_tag }}"
+        pull: true
+        volumes:
+          - "{{ supabase_data_directory }}/db/data:/var/lib/postgresql/data:Z"
+          - "supabase-db-config:/etc/postgresql-custom"
+        networks:
+          - name: "{{ supabase_network_name }}"
+        network_mode: "{{ supabase_network_name }}"
+        container_default_behavior: no_defaults
+        env:
+          POSTGRES_USER: "supabase_admin"
+          POSTGRES_HOST: "/var/run/postgresql"
+          PGPORT: "{{ supabase_postgres_port }}"
+          POSTGRES_PORT: "{{ supabase_postgres_port }}"
+          PGPASSWORD: "{{ supabase_postgres_password }}"
+          POSTGRES_PASSWORD: "{{ supabase_postgres_password }}"
+          PGDATABASE: "{{ supabase_postgres_db }}"
+          POSTGRES_DB: "{{ supabase_postgres_db }}"
+          JWT_SECRET: "{{ supabase_jwt_secret }}"
+          JWT_EXP: "{{ supabase_jwt_expiry }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ supabase_db_memory }}"
+        healthcheck:
+          test: ["CMD", "pg_isready", "-U", "postgres", "-h", "localhost"]
+          interval: 5s
+          timeout: 5s
+          retries: 10
+        command:
+          - "postgres"
+          - "-c"
+          - "config_file=/etc/postgresql/postgresql.conf"
+          - "-c"
+          - "log_min_messages=fatal"
+
+    - name: Wait for Supabase Postgres to be healthy
+      community.docker.docker_container_info:
+        name: "{{ supabase_db_container_name }}"
+      register: supabase_db_info
+      until: supabase_db_info.container.State.Health.Status == "healthy"
+      retries: 30
+      delay: 5
+
+    - name: Check if Supabase DB custom init has been done
+      community.docker.docker_container_exec:
+        container: "{{ supabase_db_container_name }}"
+        argv:
+          - psql
+          - -U
+          - supabase_admin
+          - -tAc
+          - "SELECT 1 FROM pg_database WHERE datname = '_supabase'"
+      register: supabase_db_initialized
+      changed_when: false
+
+    - name: Run Supabase DB custom init scripts
+      block:
+        - name: Create _supabase database
+          community.docker.docker_container_exec:
+            container: "{{ supabase_db_container_name }}"
+            argv:
+              - psql
+              - -U
+              - supabase_admin
+              - -c
+              - "CREATE DATABASE _supabase WITH OWNER supabase_admin;"
+
+        - name: Create _realtime schema
+          community.docker.docker_container_exec:
+            container: "{{ supabase_db_container_name }}"
+            argv:
+              - psql
+              - -U
+              - supabase_admin
+              - -c
+              - "CREATE SCHEMA IF NOT EXISTS _realtime; ALTER SCHEMA _realtime OWNER TO supabase_admin;"
+
+        - name: Create supabase_functions_admin role
+          community.docker.docker_container_exec:
+            container: "{{ supabase_db_container_name }}"
+            argv:
+              - psql
+              - -U
+              - supabase_admin
+              - -c
+              - >-
+                DO $$ BEGIN
+                  IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'supabase_functions_admin') THEN
+                    CREATE USER supabase_functions_admin NOINHERIT CREATEROLE LOGIN NOREPLICATION;
+                  END IF;
+                END $$;
+                CREATE SCHEMA IF NOT EXISTS supabase_functions AUTHORIZATION supabase_admin;
+                GRANT USAGE ON SCHEMA supabase_functions TO postgres, anon, authenticated, service_role;
+                ALTER DEFAULT PRIVILEGES IN SCHEMA supabase_functions GRANT ALL ON TABLES TO postgres, anon, authenticated, service_role;
+                ALTER DEFAULT PRIVILEGES IN SCHEMA supabase_functions GRANT ALL ON FUNCTIONS TO postgres, anon, authenticated, service_role;
+                ALTER DEFAULT PRIVILEGES IN SCHEMA supabase_functions GRANT ALL ON SEQUENCES TO postgres, anon, authenticated, service_role;
+                GRANT ALL PRIVILEGES ON SCHEMA supabase_functions TO supabase_functions_admin;
+                GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA supabase_functions TO supabase_functions_admin;
+                GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA supabase_functions TO supabase_functions_admin;
+                ALTER USER supabase_functions_admin SET search_path = 'supabase_functions';
+                GRANT supabase_functions_admin TO postgres;
+
+        - name: Run webhooks init script
+          community.docker.docker_container_exec:
+            container: "{{ supabase_db_container_name }}"
+            argv:
+              - psql
+              - -U
+              - supabase_admin
+            stdin: "{{ lookup('template', 'webhooks.sql.j2') }}"
+          register: supabase_webhooks_result
+          failed_when: false
+
+        - name: Create _analytics schema in _supabase
+          community.docker.docker_container_exec:
+            container: "{{ supabase_db_container_name }}"
+            argv:
+              - psql
+              - -U
+              - supabase_admin
+              - -d
+              - _supabase
+              - -c
+              - "CREATE SCHEMA IF NOT EXISTS _analytics; ALTER SCHEMA _analytics OWNER TO supabase_admin;"
+
+        - name: Create _supavisor schema in _supabase
+          community.docker.docker_container_exec:
+            container: "{{ supabase_db_container_name }}"
+            argv:
+              - psql
+              - -U
+              - supabase_admin
+              - -d
+              - _supabase
+              - -c
+              - "CREATE SCHEMA IF NOT EXISTS _supavisor; ALTER SCHEMA _supavisor OWNER TO supabase_admin;"
+      when: supabase_db_initialized.stdout != "1"
+
+    - name: Set Supabase DB role passwords
+      community.docker.docker_container_exec:
+        container: "{{ supabase_db_container_name }}"
+        argv:
+          - psql
+          - -U
+          - supabase_admin
+          - -c
+          - "ALTER USER authenticator WITH PASSWORD '{{ supabase_postgres_password }}'; ALTER USER pgbouncer WITH PASSWORD '{{ supabase_postgres_password }}'; ALTER USER supabase_auth_admin WITH PASSWORD '{{ supabase_postgres_password }}'; ALTER USER supabase_functions_admin WITH PASSWORD '{{ supabase_postgres_password }}'; ALTER USER supabase_storage_admin WITH PASSWORD '{{ supabase_postgres_password }}';"
+      changed_when: false
+
+    - name: Set Supabase DB JWT settings
+      community.docker.docker_container_exec:
+        container: "{{ supabase_db_container_name }}"
+        argv:
+          - psql
+          - -U
+          - supabase_admin
+          - -c
+          - "ALTER DATABASE postgres SET \"app.settings.jwt_secret\" TO '{{ supabase_jwt_secret }}'; ALTER DATABASE postgres SET \"app.settings.jwt_exp\" TO '{{ supabase_jwt_expiry }}';"
+      changed_when: false
+
+    - name: Supabase Supavisor Docker Container
+      community.docker.docker_container:
+        name: "{{ supabase_supavisor_container_name }}"
+        image: "{{ supabase_supavisor_image }}:{{ supabase_supavisor_tag }}"
+        pull: true
+        networks:
+          - name: "{{ supabase_network_name }}"
+        network_mode: "{{ supabase_network_name }}"
+        container_default_behavior: no_defaults
+        ports:
+          - "{{ supabase_db_port }}:5432"
+          - "{{ supabase_pooler_port }}:6543"
+        env:
+          PORT: "4000"
+          POSTGRES_PORT: "{{ supabase_postgres_port }}"
+          POSTGRES_HOST: "{{ supabase_postgres_host }}"
+          POSTGRES_DB: "{{ supabase_postgres_db }}"
+          POSTGRES_PASSWORD: "{{ supabase_postgres_password }}"
+          DATABASE_URL: "ecto://supabase_admin:{{ supabase_postgres_password }}@{{ supabase_postgres_host }}:{{ supabase_postgres_port }}/_supabase"
+          CLUSTER_POSTGRES: "true"
+          SECRET_KEY_BASE: "{{ supabase_secret_key_base }}"
+          VAULT_ENC_KEY: "{{ supabase_vault_enc_key }}"
+          API_JWT_SECRET: "{{ supabase_jwt_secret }}"
+          METRICS_JWT_SECRET: "{{ supabase_jwt_secret }}"
+          REGION: "local"
+          ERL_AFLAGS: "-proto_dist inet_tcp"
+          POOLER_TENANT_ID: "{{ supabase_pooler_tenant_id }}"
+          POOLER_DEFAULT_POOL_SIZE: "{{ supabase_pooler_default_pool_size }}"
+          POOLER_MAX_CLIENT_CONN: "{{ supabase_pooler_max_client_conn }}"
+          POOLER_POOL_MODE: "{{ supabase_pooler_pool_mode }}"
+          DB_POOL_SIZE: "{{ supabase_pooler_db_pool_size }}"
+          POOLER_INIT_SCRIPT: "{{ lookup('template', 'pooler.exs.j2') }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ supabase_supavisor_memory }}"
+        healthcheck:
+          test: ["CMD", "curl", "-sSfL", "--head", "-o", "/dev/null", "http://127.0.0.1:4000/api/health"]
+          interval: 10s
+          timeout: 5s
+          retries: 10
+          start_period: 30s
+        command:
+          - "/bin/sh"
+          - "-c"
+          - '/app/bin/migrate && /app/bin/supavisor eval "$POOLER_INIT_SCRIPT" && /app/bin/server'
+
+    - name: Supabase Meta Docker Container
+      community.docker.docker_container:
+        name: "{{ supabase_meta_container_name }}"
+        image: "{{ supabase_meta_image }}:{{ supabase_meta_tag }}"
+        pull: true
+        networks:
+          - name: "{{ supabase_network_name }}"
+            aliases:
+              - meta
+        network_mode: "{{ supabase_network_name }}"
+        container_default_behavior: no_defaults
+        env:
+          PG_META_PORT: "8080"
+          PG_META_DB_HOST: "{{ supabase_postgres_host }}"
+          PG_META_DB_PORT: "{{ supabase_postgres_port }}"
+          PG_META_DB_NAME: "{{ supabase_postgres_db }}"
+          PG_META_DB_USER: "supabase_admin"
+          PG_META_DB_PASSWORD: "{{ supabase_postgres_password }}"
+          CRYPTO_KEY: "{{ supabase_pg_meta_crypto_key }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ supabase_meta_memory }}"
+
+    - name: Supabase Auth Docker Container
+      community.docker.docker_container:
+        name: "{{ supabase_auth_container_name }}"
+        image: "{{ supabase_auth_image }}:{{ supabase_auth_tag }}"
+        pull: true
+        networks:
+          - name: "{{ supabase_network_name }}"
+            aliases:
+              - auth
+        network_mode: "{{ supabase_network_name }}"
+        container_default_behavior: no_defaults
+        env: "{{ supabase_auth_env }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ supabase_auth_memory }}"
+        healthcheck:
+          test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:9999/health"]
+          timeout: 5s
+          interval: 5s
+          retries: 3
+
+    - name: Supabase Rest Docker Container
+      community.docker.docker_container:
+        name: "{{ supabase_rest_container_name }}"
+        image: "{{ supabase_rest_image }}:{{ supabase_rest_tag }}"
+        pull: true
+        networks:
+          - name: "{{ supabase_network_name }}"
+            aliases:
+              - rest
+        network_mode: "{{ supabase_network_name }}"
+        container_default_behavior: no_defaults
+        env:
+          PGRST_DB_URI: "postgres://authenticator:{{ supabase_postgres_password }}@{{ supabase_postgres_host }}:{{ supabase_postgres_port }}/{{ supabase_postgres_db }}"
+          PGRST_DB_SCHEMAS: "{{ supabase_pgrst_db_schemas }}"
+          PGRST_DB_MAX_ROWS: "{{ supabase_pgrst_db_max_rows }}"
+          PGRST_DB_EXTRA_SEARCH_PATH: "{{ supabase_pgrst_db_extra_search_path }}"
+          PGRST_DB_ANON_ROLE: "anon"
+          PGRST_ADMIN_SERVER_PORT: "3001"
+          PGRST_ADMIN_SERVER_HOST: "localhost"
+          PGRST_JWT_SECRET: "{{ supabase_jwt_jwks | default(supabase_jwt_secret, true) }}"
+          PGRST_DB_USE_LEGACY_GUCS: "false"
+          PGRST_APP_SETTINGS_JWT_SECRET: "{{ supabase_jwt_secret }}"
+          PGRST_APP_SETTINGS_JWT_EXP: "{{ supabase_jwt_expiry }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ supabase_rest_memory }}"
+        healthcheck:
+          test: ["CMD", "postgrest", "--ready"]
+          interval: 5s
+          timeout: 5s
+          retries: 3
+        command: ["postgrest"]
+
+    - name: Start Supabase Realtime
+      block:
+        - name: Supabase Realtime Docker Container
+          community.docker.docker_container:
+            name: "realtime-dev.supabase-realtime"
+            image: "{{ supabase_realtime_image }}:{{ supabase_realtime_tag }}"
+            pull: true
+            networks:
+              - name: "{{ supabase_network_name }}"
+                aliases:
+                  - realtime-dev.supabase-realtime
+            network_mode: "{{ supabase_network_name }}"
+            container_default_behavior: no_defaults
+            env:
+              PORT: "4000"
+              DB_HOST: "{{ supabase_postgres_host }}"
+              DB_PORT: "{{ supabase_postgres_port }}"
+              DB_USER: "supabase_admin"
+              DB_PASSWORD: "{{ supabase_postgres_password }}"
+              DB_NAME: "{{ supabase_postgres_db }}"
+              DB_AFTER_CONNECT_QUERY: "SET search_path TO _realtime"
+              DB_ENC_KEY: "{{ supabase_realtime_db_enc_key }}"
+              API_JWT_SECRET: "{{ supabase_jwt_secret }}"
+              SECRET_KEY_BASE: "{{ supabase_secret_key_base }}"
+              METRICS_JWT_SECRET: "{{ supabase_jwt_secret }}"
+              ERL_AFLAGS: "-proto_dist inet_tcp"
+              DNS_NODES: "''"
+              RLIMIT_NOFILE: "10000"
+              APP_NAME: "realtime"
+              SEED_SELF_HOST: "true"
+              RUN_JANITOR: "true"
+              DISABLE_HEALTHCHECK_LOGGING: "true"
+            labels:
+              traefik.enable: "false"
+            restart_policy: unless-stopped
+            memory: "{{ supabase_realtime_memory }}"
+            healthcheck:
+              test: ["CMD-SHELL", "curl -sSfL --head -o /dev/null -H 'Authorization: Bearer {{ supabase_anon_key }}' http://localhost:4000/api/tenants/realtime-dev/health"]
+              timeout: 5s
+              interval: 30s
+              retries: 3
+              start_period: 10s
+      when: supabase_realtime_enabled is true
+
+    - name: Start Supabase Storage
+      block:
+        - name: Supabase Imgproxy Docker Container
+          community.docker.docker_container:
+            name: "{{ supabase_imgproxy_container_name }}"
+            image: "{{ supabase_imgproxy_image }}:{{ supabase_imgproxy_tag }}"
+            pull: true
+            volumes:
+              - "{{ supabase_data_directory }}/storage:/var/lib/storage:z"
+            networks:
+              - name: "{{ supabase_network_name }}"
+                aliases:
+                  - imgproxy
+            network_mode: "{{ supabase_network_name }}"
+            container_default_behavior: no_defaults
+            env:
+              IMGPROXY_BIND: ":5001"
+              IMGPROXY_LOCAL_FILESYSTEM_ROOT: "/"
+              IMGPROXY_USE_ETAG: "true"
+              IMGPROXY_AUTO_WEBP: "{{ supabase_imgproxy_auto_webp }}"
+              IMGPROXY_MAX_SRC_RESOLUTION: "16.8"
+            labels:
+              traefik.enable: "false"
+            restart_policy: unless-stopped
+            memory: "{{ supabase_imgproxy_memory }}"
+            healthcheck:
+              test: ["CMD", "imgproxy", "health"]
+              timeout: 5s
+              interval: 5s
+              retries: 3
+
+        - name: Supabase Storage Docker Container
+          community.docker.docker_container:
+            name: "{{ supabase_storage_container_name }}"
+            image: "{{ supabase_storage_image }}:{{ supabase_storage_tag }}"
+            pull: true
+            volumes:
+              - "{{ supabase_data_directory }}/storage:/var/lib/storage:z"
+            networks:
+              - name: "{{ supabase_network_name }}"
+                aliases:
+                  - storage
+            network_mode: "{{ supabase_network_name }}"
+            container_default_behavior: no_defaults
+            env:
+              ANON_KEY: "{{ supabase_anon_key }}"
+              SERVICE_KEY: "{{ supabase_service_role_key }}"
+              POSTGREST_URL: "http://rest:3000"
+              AUTH_JWT_SECRET: "{{ supabase_jwt_secret }}"
+              DATABASE_URL: "postgres://supabase_storage_admin:{{ supabase_postgres_password }}@{{ supabase_postgres_host }}:{{ supabase_postgres_port }}/{{ supabase_postgres_db }}"
+              STORAGE_PUBLIC_URL: "{{ supabase_public_url }}"
+              REQUEST_ALLOW_X_FORWARDED_PATH: "true"
+              FILE_SIZE_LIMIT: "52428800"
+              STORAGE_BACKEND: "file"
+              GLOBAL_S3_BUCKET: "{{ supabase_global_s3_bucket }}"
+              FILE_STORAGE_BACKEND_PATH: "/var/lib/storage"
+              TENANT_ID: "{{ supabase_storage_tenant_id }}"
+              REGION: "{{ supabase_region }}"
+              ENABLE_IMAGE_TRANSFORMATION: "true"
+              IMGPROXY_URL: "http://imgproxy:5001"
+              S3_PROTOCOL_ACCESS_KEY_ID: "{{ supabase_s3_protocol_access_key_id }}"
+              S3_PROTOCOL_ACCESS_KEY_SECRET: "{{ supabase_s3_protocol_access_key_secret }}"
+            labels:
+              traefik.enable: "false"
+            restart_policy: unless-stopped
+            memory: "{{ supabase_storage_memory }}"
+            healthcheck:
+              test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://storage:5000/status"]
+              timeout: 5s
+              interval: 5s
+              retries: 3
+              start_period: 10s
+      when: supabase_storage_enabled is true
+
+    - name: Supabase Kong Docker Container
+      community.docker.docker_container:
+        name: "{{ supabase_kong_container_name }}"
+        image: "{{ supabase_kong_image }}:{{ supabase_kong_tag }}"
+        pull: true
+        volumes:
+          - "{{ supabase_data_directory }}/api:/supabase-kong:ro"
+        networks:
+          - name: "{{ supabase_network_name }}"
+            aliases:
+              - kong
+              - api-gw
+        network_mode: "{{ supabase_network_name }}"
+        container_default_behavior: no_defaults
+        ports:
+          - "{{ supabase_kong_http_port }}:8000"
+          - "{{ supabase_kong_https_port }}:8443"
+        env:
+          KONG_DATABASE: "off"
+          KONG_DECLARATIVE_CONFIG: "/usr/local/kong/kong.yml"
+          KONG_DNS_ORDER: "LAST,A,CNAME"
+          KONG_DNS_NOT_FOUND_TTL: "1"
+          KONG_PLUGINS: "request-transformer,cors,key-auth,acl,basic-auth,request-termination,ip-restriction,post-function"
+          KONG_NGINX_PROXY_PROXY_BUFFER_SIZE: "160k"
+          KONG_NGINX_PROXY_PROXY_BUFFERS: "64 160k"
+          KONG_PROXY_ACCESS_LOG: "/dev/stdout combined"
+          SUPABASE_ANON_KEY: "{{ supabase_anon_key }}"
+          SUPABASE_SERVICE_KEY: "{{ supabase_service_role_key }}"
+          SUPABASE_PUBLISHABLE_KEY: "{{ supabase_publishable_key }}"
+          SUPABASE_SECRET_KEY: "{{ supabase_secret_key }}"
+          ANON_KEY_ASYMMETRIC: "{{ supabase_anon_key_asymmetric }}"
+          SERVICE_ROLE_KEY_ASYMMETRIC: "{{ supabase_service_role_key_asymmetric }}"
+          DASHBOARD_USERNAME: "{{ supabase_dashboard_username }}"
+          DASHBOARD_PASSWORD: "{{ supabase_dashboard_password }}"
+        labels:
+          traefik.enable: "{{ supabase_available_externally | string }}"
+          traefik.http.routers.supabase.rule: "Host(`{{ supabase_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.supabase.tls.certresolver: "letsencrypt"
+          traefik.http.routers.supabase.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.supabase.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.supabase.loadbalancer.server.port: "8000"
+        restart_policy: unless-stopped
+        memory: "{{ supabase_kong_memory }}"
+        healthcheck:
+          test: ["CMD", "kong", "health"]
+          interval: 5s
+          timeout: 5s
+          retries: 5
+        entrypoint: ["/bin/sh", "/supabase-kong/kong-entrypoint.sh"]
+
+    - name: Start Supabase Functions
+      block:
+        - name: Supabase Edge Functions Docker Container
+          community.docker.docker_container:
+            name: "{{ supabase_functions_container_name }}"
+            image: "{{ supabase_functions_image }}:{{ supabase_functions_tag }}"
+            pull: true
+            volumes:
+              - "{{ supabase_data_directory }}/functions:/home/deno/functions:z"
+            networks:
+              - name: "{{ supabase_network_name }}"
+                aliases:
+                  - functions
+            network_mode: "{{ supabase_network_name }}"
+            container_default_behavior: no_defaults
+            env:
+              JWT_SECRET: "{{ supabase_jwt_secret }}"
+              SUPABASE_URL: "http://kong:8000"
+              SUPABASE_PUBLIC_URL: "{{ supabase_public_url }}"
+              SUPABASE_ANON_KEY: "{{ supabase_anon_key }}"
+              SUPABASE_SERVICE_ROLE_KEY: "{{ supabase_service_role_key }}"
+              SUPABASE_DB_URL: "postgresql://postgres:{{ supabase_postgres_password }}@{{ supabase_postgres_host }}:{{ supabase_postgres_port }}/{{ supabase_postgres_db }}"
+              VERIFY_JWT: "{{ supabase_functions_verify_jwt }}"
+            labels:
+              traefik.enable: "false"
+            restart_policy: unless-stopped
+            memory: "{{ supabase_functions_memory }}"
+            healthcheck:
+              test: ["CMD-SHELL", "timeout 1 bash -c '</dev/tcp/127.0.0.1/9000'"]
+              interval: 5s
+              timeout: 5s
+              retries: 3
+            command: ["start", "--main-service", "/home/deno/functions/main"]
+      when: supabase_functions_enabled is true
+
+    - name: Supabase Studio Docker Container
+      community.docker.docker_container:
+        name: "{{ supabase_studio_container_name }}"
+        image: "{{ supabase_studio_image }}:{{ supabase_studio_tag }}"
+        pull: true
+        volumes:
+          - "{{ supabase_data_directory }}/snippets:/app/snippets:z"
+          - "{{ supabase_data_directory }}/functions:/app/edge-functions:ro,z"
+        networks:
+          - name: "{{ supabase_network_name }}"
+            aliases:
+              - studio
+        network_mode: "{{ supabase_network_name }}"
+        container_default_behavior: no_defaults
+        env:
+          HOSTNAME: "0.0.0.0"
+          STUDIO_PG_META_URL: "http://meta:8080"
+          POSTGRES_PORT: "{{ supabase_postgres_port }}"
+          POSTGRES_HOST: "{{ supabase_postgres_host }}"
+          POSTGRES_DB: "{{ supabase_postgres_db }}"
+          POSTGRES_PASSWORD: "{{ supabase_postgres_password }}"
+          PG_META_CRYPTO_KEY: "{{ supabase_pg_meta_crypto_key }}"
+          PGRST_DB_SCHEMAS: "{{ supabase_pgrst_db_schemas }}"
+          PGRST_DB_MAX_ROWS: "{{ supabase_pgrst_db_max_rows }}"
+          PGRST_DB_EXTRA_SEARCH_PATH: "{{ supabase_pgrst_db_extra_search_path }}"
+          DEFAULT_ORGANIZATION_NAME: "{{ supabase_studio_default_organization }}"
+          DEFAULT_PROJECT_NAME: "{{ supabase_studio_default_project }}"
+          OPENAI_API_KEY: "{{ supabase_openai_api_key }}"
+          SUPABASE_URL: "http://kong:8000"
+          SUPABASE_PUBLIC_URL: "{{ supabase_public_url }}"
+          SUPABASE_ANON_KEY: "{{ supabase_anon_key }}"
+          SUPABASE_SERVICE_KEY: "{{ supabase_service_role_key }}"
+          AUTH_JWT_SECRET: "{{ supabase_jwt_secret }}"
+          SUPABASE_PUBLISHABLE_KEY: "{{ supabase_publishable_key }}"
+          SUPABASE_SECRET_KEY: "{{ supabase_secret_key }}"
+          ENABLED_FEATURES_LOGS_ALL: "false"
+          SNIPPETS_MANAGEMENT_FOLDER: "/app/snippets"
+          EDGE_FUNCTIONS_MANAGEMENT_FOLDER: "/app/edge-functions"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ supabase_studio_memory }}"
+        healthcheck:
+          test: ["CMD-SHELL", "node -e \"fetch('http://localhost:3000/api/platform/profile').then((r) => {if (r.status !== 200) throw new Error(r.status)})\""]
+          timeout: 10s
+          interval: 5s
+          retries: 3
+          start_period: 20s
+  when: supabase_enabled is true
+
+- name: Stop Supabase
+  block:
+    - name: Stop Supabase Studio
+      community.docker.docker_container:
+        name: "{{ supabase_studio_container_name }}"
+        state: absent
+
+    - name: Stop Supabase Functions
+      community.docker.docker_container:
+        name: "{{ supabase_functions_container_name }}"
+        state: absent
+
+    - name: Stop Supabase Kong
+      community.docker.docker_container:
+        name: "{{ supabase_kong_container_name }}"
+        state: absent
+
+    - name: Stop Supabase Storage
+      community.docker.docker_container:
+        name: "{{ supabase_storage_container_name }}"
+        state: absent
+
+    - name: Stop Supabase Imgproxy
+      community.docker.docker_container:
+        name: "{{ supabase_imgproxy_container_name }}"
+        state: absent
+
+    - name: Stop Supabase Realtime
+      community.docker.docker_container:
+        name: "realtime-dev.supabase-realtime"
+        state: absent
+
+    - name: Stop Supabase Rest
+      community.docker.docker_container:
+        name: "{{ supabase_rest_container_name }}"
+        state: absent
+
+    - name: Stop Supabase Auth
+      community.docker.docker_container:
+        name: "{{ supabase_auth_container_name }}"
+        state: absent
+
+    - name: Stop Supabase Meta
+      community.docker.docker_container:
+        name: "{{ supabase_meta_container_name }}"
+        state: absent
+
+    - name: Stop Supabase Supavisor
+      community.docker.docker_container:
+        name: "{{ supabase_supavisor_container_name }}"
+        state: absent
+
+    - name: Stop Supabase Postgres
+      community.docker.docker_container:
+        name: "{{ supabase_db_container_name }}"
+        state: absent
+
+    - name: Delete Supabase Network
+      community.docker.docker_network:
+        name: "{{ supabase_network_name }}"
+        state: absent
+  when: supabase_enabled is false

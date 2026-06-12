@@ -1,0 +1,238 @@
+---
+supabase_enabled: false
+supabase_available_externally: false
+
+# Optional services
+supabase_realtime_enabled: true
+supabase_storage_enabled: true
+supabase_functions_enabled: true
+
+# directories
+supabase_data_directory: "{{ docker_home }}/supabase"
+
+# network
+supabase_network_name: "supabase"
+supabase_hostname: "supabase"
+
+# ports
+supabase_kong_http_port: "8186"
+supabase_kong_https_port: "8188"
+supabase_db_port: "5442"
+supabase_pooler_port: "6543"
+
+# specs
+supabase_db_memory: 1g
+supabase_supavisor_memory: 512m
+supabase_meta_memory: 256m
+supabase_auth_memory: 512m
+supabase_rest_memory: 256m
+supabase_realtime_memory: 512m
+supabase_storage_memory: 512m
+supabase_imgproxy_memory: 1g
+supabase_functions_memory: 512m
+supabase_kong_memory: 2g
+supabase_studio_memory: 512m
+
+# container names
+supabase_db_container_name: "supabase_db"
+supabase_supavisor_container_name: "supabase_pooler"
+supabase_meta_container_name: "supabase_meta"
+supabase_auth_container_name: "supabase_auth"
+supabase_rest_container_name: "supabase_rest"
+supabase_realtime_container_name: "supabase_realtime"
+supabase_storage_container_name: "supabase_storage"
+supabase_imgproxy_container_name: "supabase_imgproxy"
+supabase_functions_container_name: "supabase_functions"
+supabase_kong_container_name: "supabase_kong"
+supabase_studio_container_name: "supabase_studio"
+
+# images
+supabase_db_image: "supabase/postgres"
+supabase_db_tag: "15.8.1.085"
+supabase_supavisor_image: "supabase/supavisor"
+supabase_supavisor_tag: "2.9.5"
+supabase_meta_image: "supabase/postgres-meta"
+supabase_meta_tag: "v0.96.6"
+supabase_auth_image: "supabase/gotrue"
+supabase_auth_tag: "v2.189.0"
+supabase_rest_image: "postgrest/postgrest"
+supabase_rest_tag: "v14.12"
+supabase_realtime_image: "supabase/realtime"
+supabase_realtime_tag: "v2.102.3"
+supabase_storage_image: "supabase/storage-api"
+supabase_storage_tag: "v1.60.4"
+supabase_imgproxy_image: "darthsim/imgproxy"
+supabase_imgproxy_tag: "v3.30.1"
+supabase_functions_image: "supabase/edge-runtime"
+supabase_functions_tag: "v1.74.0"
+supabase_kong_image: "kong/kong"
+supabase_kong_tag: "3.9.1"
+supabase_studio_image: "supabase/studio"
+supabase_studio_tag: "2026.06.03-sha-0bca601"
+
+# database
+supabase_postgres_password: "your-super-secret-and-long-postgres-password"
+supabase_postgres_host: "{{ supabase_db_container_name }}"
+supabase_postgres_db: "postgres"
+supabase_postgres_port: "5432"
+
+# secrets - MUST be changed before first start
+supabase_jwt_secret: "your-super-secret-jwt-token-with-at-least-32-characters-long"
+supabase_anon_key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJhbm9uIiwKICAgICJpc3MiOiAic3VwYWJhc2UtZGVtbyIsCiAgICAiaWF0IjogMTY0MTc2OTIwMCwKICAgICJleHAiOiAxNzk5NTM1NjAwCn0.dc_X5iR_VP_qT0zsiyj_I_OZ2T9FtRU2BBNWN8Bu4GE"
+supabase_service_role_key: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyAgCiAgICAicm9sZSI6ICJzZXJ2aWNlX3JvbGUiLAogICAgImlzcyI6ICJzdXBhYmFzZS1kZW1vIiwKICAgICJpYXQiOiAxNjQxNzY5MjAwLAogICAgImV4cCI6IDE3OTk1MzU2MDAKfQ.DaYlNEoUrrEn2Ig7tqibS-PHK5vgusbcbo7X36XVt4Q"
+supabase_secret_key_base: "UpNVntn3cDxHJpq99YMc1T1AQgQpc8kfYTuRgBiYa15BLrx8etQoXz3gZv1/u2oq"
+supabase_vault_enc_key: "your-32-character-encryption-key"
+supabase_pg_meta_crypto_key: "your-encryption-key-32-chars-min"
+supabase_s3_protocol_access_key_id: "625729a08b95bf1b7ff351a663f3a23c"
+supabase_s3_protocol_access_key_secret: "850181e4652dd023b7a98c58ae0d2d34bd487ee0cc3254aed6eda37307425907"
+
+# asymmetric keys (optional, leave empty for legacy HS256 only)
+supabase_publishable_key: ""
+supabase_secret_key: ""
+supabase_anon_key_asymmetric: ""
+supabase_service_role_key_asymmetric: ""
+supabase_jwt_keys: ""
+supabase_jwt_jwks: ""
+
+# dashboard
+supabase_dashboard_username: "supabase"
+supabase_dashboard_password: "this_password_is_insecure_and_should_be_updated"
+
+# URLs
+supabase_public_url: "http://localhost:{{ supabase_kong_http_port }}"
+supabase_api_external_url: "http://localhost:{{ supabase_kong_http_port }}"
+supabase_site_url: "http://localhost:3000"
+supabase_additional_redirect_urls: ""
+
+# JWT
+supabase_jwt_expiry: "3600"
+supabase_disable_signup: "false"
+
+# email auth
+supabase_enable_email_signup: "true"
+supabase_enable_email_autoconfirm: "false"
+supabase_enable_anonymous_users: "false"
+
+# SMTP
+supabase_smtp_admin_email: "admin@example.com"
+supabase_smtp_host: "supabase-mail"
+supabase_smtp_port: "2500"
+supabase_smtp_user: "fake_mail_user"
+supabase_smtp_pass: "fake_mail_password"
+supabase_smtp_sender_name: "fake_sender"
+
+# mailer
+supabase_mailer_urlpaths_confirmation: "/auth/v1/verify"
+supabase_mailer_urlpaths_invite: "/auth/v1/verify"
+supabase_mailer_urlpaths_recovery: "/auth/v1/verify"
+supabase_mailer_urlpaths_email_change: "/auth/v1/verify"
+
+# phone auth
+supabase_enable_phone_signup: "true"
+supabase_enable_phone_autoconfirm: "true"
+
+# OAuth - Google
+supabase_google_enabled: "false"
+supabase_google_client_id: ""
+supabase_google_secret: ""
+
+# OAuth - GitHub
+supabase_github_enabled: "false"
+supabase_github_client_id: ""
+supabase_github_secret: ""
+
+# OAuth - Azure
+supabase_azure_enabled: "false"
+supabase_azure_client_id: ""
+supabase_azure_secret: ""
+
+# SMS provider
+supabase_sms_provider: ""
+supabase_sms_otp_exp: "60"
+supabase_sms_otp_length: "6"
+supabase_sms_max_frequency: "60s"
+supabase_sms_template: "Your code is {{ '{{ .Code }}' }}"
+supabase_sms_test_otp: ""
+
+# SMS - Twilio
+supabase_sms_twilio_account_sid: ""
+supabase_sms_twilio_auth_token: ""
+supabase_sms_twilio_message_service_sid: ""
+
+# MFA
+supabase_mfa_totp_enroll_enabled: "true"
+supabase_mfa_totp_verify_enabled: "true"
+supabase_mfa_phone_enroll_enabled: "false"
+supabase_mfa_phone_verify_enabled: "false"
+supabase_mfa_max_enrolled_factors: "10"
+
+# SAML
+supabase_saml_enabled: "false"
+supabase_saml_private_key: ""
+supabase_saml_allow_encrypted_assertions: "false"
+supabase_saml_relay_state_validity_period: "2m0s"
+supabase_saml_external_url: ""
+supabase_saml_rate_limit_assertion: "15"
+
+# Supavisor / Pooler
+supabase_pooler_tenant_id: "your-tenant-id"
+supabase_pooler_default_pool_size: "20"
+supabase_pooler_max_client_conn: "100"
+supabase_pooler_pool_mode: "transaction"
+supabase_pooler_db_pool_size: "5"
+
+# PostgREST / API
+supabase_pgrst_db_schemas: "public,storage,graphql_public"
+supabase_pgrst_db_max_rows: "1000"
+supabase_pgrst_db_extra_search_path: "public"
+
+# Studio
+supabase_studio_default_organization: "Default Organization"
+supabase_studio_default_project: "Default Project"
+supabase_openai_api_key: ""
+
+# Storage
+supabase_global_s3_bucket: "stub"
+supabase_region: "stub"
+supabase_storage_tenant_id: "stub"
+
+# imgproxy
+supabase_imgproxy_auto_webp: "true"
+
+# Edge Functions
+supabase_functions_verify_jwt: "false"
+
+# Realtime
+supabase_realtime_db_enc_key: "supabaserealtime"
+
+# Auth environment variables
+supabase_auth_env:
+  GOTRUE_API_HOST: "0.0.0.0"
+  GOTRUE_API_PORT: "9999"
+  API_EXTERNAL_URL: "{{ supabase_api_external_url }}"
+  GOTRUE_DB_DRIVER: "postgres"
+  GOTRUE_DB_DATABASE_URL: "postgres://supabase_auth_admin:{{ supabase_postgres_password }}@{{ supabase_postgres_host }}:{{ supabase_postgres_port }}/{{ supabase_postgres_db }}"
+  GOTRUE_SITE_URL: "{{ supabase_site_url }}"
+  GOTRUE_URI_ALLOW_LIST: "{{ supabase_additional_redirect_urls }}"
+  GOTRUE_DISABLE_SIGNUP: "{{ supabase_disable_signup }}"
+  GOTRUE_JWT_ADMIN_ROLES: "service_role"
+  GOTRUE_JWT_AUD: "authenticated"
+  GOTRUE_JWT_DEFAULT_GROUP_NAME: "authenticated"
+  GOTRUE_JWT_EXP: "{{ supabase_jwt_expiry }}"
+  GOTRUE_JWT_SECRET: "{{ supabase_jwt_secret }}"
+  GOTRUE_JWT_ISSUER: "{{ supabase_api_external_url }}/auth/v1"
+  GOTRUE_EXTERNAL_EMAIL_ENABLED: "{{ supabase_enable_email_signup }}"
+  GOTRUE_EXTERNAL_ANONYMOUS_USERS_ENABLED: "{{ supabase_enable_anonymous_users }}"
+  GOTRUE_MAILER_AUTOCONFIRM: "{{ supabase_enable_email_autoconfirm }}"
+  GOTRUE_SMTP_ADMIN_EMAIL: "{{ supabase_smtp_admin_email }}"
+  GOTRUE_SMTP_HOST: "{{ supabase_smtp_host }}"
+  GOTRUE_SMTP_PORT: "{{ supabase_smtp_port }}"
+  GOTRUE_SMTP_USER: "{{ supabase_smtp_user }}"
+  GOTRUE_SMTP_PASS: "{{ supabase_smtp_pass }}"
+  GOTRUE_SMTP_SENDER_NAME: "{{ supabase_smtp_sender_name }}"
+  GOTRUE_MAILER_URLPATHS_INVITE: "{{ supabase_mailer_urlpaths_invite }}"
+  GOTRUE_MAILER_URLPATHS_CONFIRMATION: "{{ supabase_mailer_urlpaths_confirmation }}"
+  GOTRUE_MAILER_URLPATHS_RECOVERY: "{{ supabase_mailer_urlpaths_recovery }}"
+  GOTRUE_MAILER_URLPATHS_EMAIL_CHANGE: "{{ supabase_mailer_urlpaths_email_change }}"
+  GOTRUE_EXTERNAL_PHONE_ENABLED: "{{ supabase_enable_phone_signup }}"
+  GOTRUE_SMS_AUTOCONFIRM: "{{ supabase_enable_phone_autoconfirm }}"
