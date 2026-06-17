@@ -1,0 +1,89 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get Supabase Postgres container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_db_container_name }}"
+      register: result_db
+
+    - name: Get Supabase Supavisor container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_supavisor_container_name }}"
+      register: result_supavisor
+
+    - name: Get Supabase Meta container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_meta_container_name }}"
+      register: result_meta
+
+    - name: Get Supabase Auth container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_auth_container_name }}"
+      register: result_auth
+
+    - name: Get Supabase Rest container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_rest_container_name }}"
+      register: result_rest
+
+    - name: Get Supabase Realtime container state
+      community.docker.docker_container_info:
+        name: "realtime-dev.supabase-realtime"
+      register: result_realtime
+
+    - name: Get Supabase Imgproxy container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_imgproxy_container_name }}"
+      register: result_imgproxy
+
+    - name: Get Supabase Storage container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_storage_container_name }}"
+      register: result_storage
+
+    - name: Get Supabase Kong container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_kong_container_name }}"
+      register: result_kong
+
+    - name: Get Supabase Functions container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_functions_container_name }}"
+      register: result_functions
+
+    - name: Get Supabase Studio container state
+      community.docker.docker_container_info:
+        name: "{{ supabase_studio_container_name }}"
+      register: result_studio
+
+    - name: Check if Supabase docker containers are running
+      ansible.builtin.assert:
+        that:
+          - result_db.container['State']['Status'] == "running"
+          - result_db.container['State']['Restarting'] == false
+          - result_supavisor.container['State']['Status'] == "running"
+          - result_supavisor.container['State']['Restarting'] == false
+          - result_meta.container['State']['Status'] == "running"
+          - result_meta.container['State']['Restarting'] == false
+          - result_auth.container['State']['Status'] == "running"
+          - result_auth.container['State']['Restarting'] == false
+          - result_rest.container['State']['Status'] == "running"
+          - result_rest.container['State']['Restarting'] == false
+          - result_realtime.container['State']['Status'] == "running"
+          - result_realtime.container['State']['Restarting'] == false
+          - result_imgproxy.container['State']['Status'] == "running"
+          - result_imgproxy.container['State']['Restarting'] == false
+          - result_storage.container['State']['Status'] == "running"
+          - result_storage.container['State']['Restarting'] == false
+          - result_kong.container['State']['Status'] == "running"
+          - result_kong.container['State']['Restarting'] == false
+          - result_functions.container['State']['Status'] == "running"
+          - result_functions.container['State']['Restarting'] == false
+          - result_studio.container['State']['Status'] == "running"
+          - result_studio.container['State']['Restarting'] == false

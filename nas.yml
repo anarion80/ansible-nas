@@ -492,6 +492,8 @@
       tags: [stirlingpdf]
     - role: suitecrm
       tags: [suitecrm]
+    - role: supabase
+      tags: [supabase]
     - role: superproductivity
       tags: [superproductivity]
     - role: syncthing

@@ -1,0 +1,89 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Try and stop and remove Supabase Postgres
+      community.docker.docker_container:
+        name: "{{ supabase_db_container_name }}"
+        state: absent
+      register: result_db
+
+    - name: Try and stop and remove Supabase Supavisor
+      community.docker.docker_container:
+        name: "{{ supabase_supavisor_container_name }}"
+        state: absent
+      register: result_supavisor
+
+    - name: Try and stop and remove Supabase Meta
+      community.docker.docker_container:
+        name: "{{ supabase_meta_container_name }}"
+        state: absent
+      register: result_meta
+
+    - name: Try and stop and remove Supabase Auth
+      community.docker.docker_container:
+        name: "{{ supabase_auth_container_name }}"
+        state: absent
+      register: result_auth
+
+    - name: Try and stop and remove Supabase Rest
+      community.docker.docker_container:
+        name: "{{ supabase_rest_container_name }}"
+        state: absent
+      register: result_rest
+
+    - name: Try and stop and remove Supabase Realtime
+      community.docker.docker_container:
+        name: "realtime-dev.supabase-realtime"
+        state: absent
+      register: result_realtime
+
+    - name: Try and stop and remove Supabase Imgproxy
+      community.docker.docker_container:
+        name: "{{ supabase_imgproxy_container_name }}"
+        state: absent
+      register: result_imgproxy
+
+    - name: Try and stop and remove Supabase Storage
+      community.docker.docker_container:
+        name: "{{ supabase_storage_container_name }}"
+        state: absent
+      register: result_storage
+
+    - name: Try and stop and remove Supabase Kong
+      community.docker.docker_container:
+        name: "{{ supabase_kong_container_name }}"
+        state: absent
+      register: result_kong
+
+    - name: Try and stop and remove Supabase Functions
+      community.docker.docker_container:
+        name: "{{ supabase_functions_container_name }}"
+        state: absent
+      register: result_functions
+
+    - name: Try and stop and remove Supabase Studio
+      community.docker.docker_container:
+        name: "{{ supabase_studio_container_name }}"
+        state: absent
+      register: result_studio
+
+    - name: Check if Supabase containers are stopped
+      ansible.builtin.assert:
+        that:
+          - not result_db.changed
+          - not result_supavisor.changed
+          - not result_meta.changed
+          - not result_auth.changed
+          - not result_rest.changed
+          - not result_realtime.changed
+          - not result_imgproxy.changed
+          - not result_storage.changed
+          - not result_kong.changed
+          - not result_functions.changed
+          - not result_studio.changed
