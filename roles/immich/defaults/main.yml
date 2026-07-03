@@ -33,10 +33,10 @@ immich_microservices_container_name: "immich_microservices"
 immich_machinelearning_container_name: "immich_machine_learning"
 immich_power_tools_container_name: "immich_power_tools"
 
-immich_postgres_image: "tensorchord/pgvecto-rs"
-immich_postgres_tag: "pg14-v0.2.0"
-immich_redis_image: "redis"
-immich_redis_tag: "6.2-alpine"
+immich_postgres_image: "ghcr.io/immich-app/postgres"
+immich_postgres_tag: "14-vectorchord0.4.3-pgvectors0.2.0"
+immich_redis_image: "docker.io/valkey/valkey"
+immich_redis_tag: "9"
 immich_server_image: "ghcr.io/immich-app/immich-server"
 immich_server_tag: "{{ immich_version }}"
 immich_microservices_image: "ghcr.io/immich-app/immich-server"
@@ -53,6 +53,7 @@ immich_db_password: "postgres" # $(pwgen -s 40 1)
 immich_db_username: "postgres"
 immich_db_name: "immich"
 immich_db_port: "5432"
+immich_db_storage_type: "HDD"
 
 # immich
 immich_version: "release"

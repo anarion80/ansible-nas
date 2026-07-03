@@ -29,32 +29,13 @@
           POSTGRES_USER: "{{ immich_db_username }}"
           POSTGRES_DB: "{{ immich_db_name }}"
           PG_DATA: /var/lib/postgresql/data
+          POSTGRES_INITDB_ARGS: '--data-checksums'
+          DB_STORAGE_TYPE: '{{ immich_db_storage_type }}'
         labels:
           traefik.enable: "false"
         restart_policy: always
         memory: "{{ immich_postgres_memory }}"
-        healthcheck:
-          test: ["CMD-SHELL", "pg_isready -d {{ immich_db_name }} -U {{ immich_db_username }}"]
-          start_period: 20s
-          interval: 30s
-          retries: 5
-          timeout: 5s
-        command:
-          [
-            'postgres',
-            '-c',
-            'shared_preload_libraries=vectors.so',
-            '-c',
-            'search_path="$$user", public, vectors',
-            '-c',
-            'logging_collector=on',
-            '-c',
-            'max_wal_size=2GB',
-            '-c',
-            'shared_buffers=512MB',
-            '-c',
-            'wal_compression=on',
-          ]
+        shm_size: 128M
 
     - name: Immich Redis Docker Container
       community.docker.docker_container:
@@ -71,7 +52,7 @@
         restart_policy: always
         memory: "{{ immich_redis_memory }}"
         healthcheck:
-          test: ["CMD-SHELL", "redis-cli ping | grep PONG"]
+          test: ["CMD-SHELL", "redis-cli ping || exit 1"]
           start_period: 20s
           interval: 30s
           retries: 5
