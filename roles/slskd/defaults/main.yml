@@ -1,0 +1,43 @@
+---
+slskd_enabled: false
+slskd_available_externally: false
+
+# directories
+slskd_data_directory: "{{ docker_home }}/slskd"
+slskd_music_directory: "{{ music_root }}"
+slskd_downloads_directory: "{{ downloads_root }}"
+
+# network
+slskd_port: "5030"
+slskd_https_port: "5031"
+slskd_listen_port: "50300"
+slskd_hostname: "slskd"
+
+# specs
+slskd_memory: 1g
+
+# docker
+slskd_container_name: slskd
+slskd_image_name: slskd/slskd
+slskd_image_version: latest
+slskd_user_id: "1000"
+slskd_group_id: "1000"
+
+# slskd
+slskd_remote_configuration: "true"
+slskd_shared_dir: "/music"
+slskd_downloads_dir: "/downloads"
+slskd_incomplete_dir: "/downloads/incomplete"
+slskd_soulseek_username: ""
+slskd_soulseek_password: ""
+
+slskd_env:
+  SLSKD_REMOTE_CONFIGURATION: "{{ slskd_remote_configuration }}"
+  SLSKD_SHARED_DIR: "{{ slskd_shared_dir }}"
+  SLSKD_DOWNLOADS_DIR: "{{ slskd_downloads_dir }}"
+  SLSKD_INCOMPLETE_DIR: "{{ slskd_incomplete_dir }}"
+  SLSKD_HTTP_PORT: "{{ slskd_port }}"
+  SLSKD_HTTPS_PORT: "{{ slskd_https_port }}"
+  SLSKD_SLSK_LISTEN_PORT: "{{ slskd_listen_port }}"
+  SLSKD_SLSK_USERNAME: "{{ slskd_soulseek_username }}"
+  SLSKD_SLSK_PASSWORD: "{{ slskd_soulseek_password }}"

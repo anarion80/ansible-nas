@@ -1,0 +1,20 @@
+---
+platforms:
+  - name: instance
+    image: geerlingguy/docker-ubuntu2204-ansible:latest
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /tmp:/tmp:rw
+    privileged: true
+    pre_build_image: true
+provisioner:
+  inventory:
+    group_vars:
+      all:
+        slskd_enabled: true
+        slskd_data_directory: /tmp/slskd
+        slskd_music_directory: /tmp/slskd/music
+        slskd_downloads_directory: /tmp/slskd/downloads
+  playbooks:
+    prepare: prepare.yml

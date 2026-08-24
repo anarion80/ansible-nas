@@ -472,6 +472,8 @@
       tags: [simplelogin]
     - role: siyuan
       tags: [siyuan]
+    - role: slskd
+      tags: [slskd]
     - role: snipeit
       tags: [snipeit]
     - role: sonarr

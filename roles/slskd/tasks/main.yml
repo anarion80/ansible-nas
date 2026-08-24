@@ -1,0 +1,47 @@
+---
+- name: Start Slskd
+  block:
+    - name: Create Slskd Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ slskd_user_id }}"
+        group: "{{ slskd_group_id }}"
+      with_items:
+        - "{{ slskd_data_directory }}"
+        - "{{ slskd_downloads_directory }}"
+        - "{{ slskd_downloads_directory }}/incomplete"
+
+    - name: Slskd Docker Container
+      community.docker.docker_container:
+        name: "{{ slskd_container_name }}"
+        image: "{{ slskd_image_name }}:{{ slskd_image_version }}"
+        pull: true
+        user: "{{ slskd_user_id }}:{{ slskd_group_id }}"
+        volumes:
+          - "{{ slskd_data_directory }}:/app:rw"
+          - "{{ slskd_music_directory }}:/music:rw"
+          - "{{ slskd_downloads_directory }}:/downloads:rw"
+        ports:
+          - "{{ slskd_port }}:5030"
+          - "{{ slskd_https_port }}:5031"
+          - "{{ slskd_listen_port }}:50300"
+        env: "{{ slskd_env }}"
+        restart_policy: unless-stopped
+        memory: "{{ slskd_memory }}"
+        labels:
+          traefik.enable: "{{ slskd_available_externally | string }}"
+          traefik.http.routers.slskd.rule: "Host(`{{ slskd_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.slskd.tls.certresolver: "letsencrypt"
+          traefik.http.routers.slskd.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.slskd.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.slskd.loadbalancer.server.port: "5030"
+  when: slskd_enabled is true
+
+- name: Stop Slskd
+  block:
+    - name: Stop Slskd
+      community.docker.docker_container:
+        name: "{{ slskd_container_name }}"
+        state: absent
+  when: slskd_enabled is false
