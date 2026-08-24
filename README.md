@@ -36,6 +36,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [Blaze](https://github.com/blenderskool/blaze) - File sharing progressive web app
 - [Blocky](https://0xerr0r.github.io/blocky/) - Fast and lightweight DNS proxy as ad-blocker
 - [BookLore](https://github.com/booklore-app/booklore) - An open-source application for managing and organizing your digital book collection
+- [BookOrbit](https://bookorbit.app/) - A self-hosted ebook platform for managing and reading your digital library
 - [Budibase](https://github.com/Budibase/budibase) - Low code platform for building business apps and workflows in minutes
 - [Calibre](https://calibre-ebook.com) - Calibre is a powerful and easy to use e-book manager.
 - [Calibre-web](https://github.com/janeczku/calibre-web) - Provides a clean interface for browsing, reading and downloading eBooks using an existing Calibre database.

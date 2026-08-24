@@ -1,0 +1,108 @@
+---
+- name: Start BookOrbit
+  block:
+    - name: Create BookOrbit Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ bookorbit_app_data_directory }}"
+        - "{{ bookorbit_postgres_data_directory }}"
+
+    - name: Create BookOrbit network
+      community.docker.docker_network:
+        name: "{{ bookorbit_network_name }}"
+
+    - name: Create BookOrbit Postgres Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ bookorbit_db_container_name }}"
+        image: "{{ bookorbit_db_image_name }}:{{ bookorbit_db_image_version }}"
+        pull: true
+        volumes:
+          - "{{ bookorbit_postgres_data_directory }}:/var/lib/postgresql/data:rw"
+        networks:
+          - name: "{{ bookorbit_network_name }}"
+        env: "{{ bookorbit_db_optional_env | default({}) | combine(bookorbit_db_env) }}"
+        restart_policy: unless-stopped
+        memory: "{{ bookorbit_db_memory }}"
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U {{ bookorbit_db_user }} -d {{ bookorbit_db_name }}"]
+          interval: 10s
+          timeout: 5s
+          retries: 10
+          start_period: 20s
+
+    - name: Wait for BookOrbit Postgres to be healthy
+      community.docker.docker_container_info:
+        name: "{{ bookorbit_db_container_name }}"
+      register: bookorbit_db_info
+      until: bookorbit_db_info.container.State.Health.Status == "healthy"
+      retries: 60
+      delay: 2
+
+    - name: Create BookOrbit Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ bookorbit_container_name }}"
+        image: "{{ bookorbit_image_name }}:{{ bookorbit_image_version }}"
+        pull: true
+        init: true
+        read_only: true
+        tmpfs:
+          - /tmp
+        cap_drop:
+          - ALL
+        capabilities:
+          - CHOWN
+          - DAC_OVERRIDE
+          - FOWNER
+          - SETGID
+          - SETUID
+        security_opts:
+          - no-new-privileges:true
+        stop_timeout: 30
+        volumes:
+          - "{{ bookorbit_books_directory }}:/books:rw"
+          - "{{ bookorbit_app_data_directory }}:/data:rw"
+        ports:
+          - "{{ bookorbit_port }}:{{ bookorbit_port_container }}"
+        networks:
+          - name: "{{ bookorbit_network_name }}"
+        env: "{{ bookorbit_optional_env | default({}) | combine(bookorbit_env) }}"
+        hostname: "{{ bookorbit_hostname }}"
+        restart_policy: unless-stopped
+        memory: "{{ bookorbit_memory }}"
+        healthcheck:
+          test:
+            - CMD
+            - node
+            - -e
+            - "const p=process.env.PORT||3000;fetch('http://127.0.0.1:'+p+'/api/v1/health').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"
+          interval: 30s
+          timeout: 5s
+          retries: 3
+          start_period: 20s
+        labels:
+          traefik.enable: "{{ bookorbit_available_externally | string }}"
+          traefik.http.routers.bookorbit.rule: "Host(`{{ bookorbit_hostname }}.{{ ansible_nas_domain }}`)"
+          # traefik.http.routers.bookorbit.tls.certresolver: "letsencrypt"
+          # traefik.http.routers.bookorbit.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          # traefik.http.routers.bookorbit.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.bookorbit.loadbalancer.server.port: "{{ bookorbit_port_container }}"
+  when: bookorbit_enabled is true
+
+- name: Stop BookOrbit
+  block:
+    - name: Stop BookOrbit containers
+      community.docker.docker_container:
+        name: "{{ item }}"
+        state: absent
+      loop:
+        - "{{ bookorbit_container_name }}"
+        - "{{ bookorbit_db_container_name }}"
+    - name: Remove BookOrbit network
+      community.docker.docker_network:
+        name: "{{ bookorbit_network_name }}"
+        state: absent
+  when: bookorbit_enabled is false

@@ -1,0 +1,90 @@
+---
+bookorbit_enabled: false
+bookorbit_available_externally: false
+
+# directories
+bookorbit_data_directory: "{{ docker_home }}/bookorbit"
+bookorbit_app_data_directory: "{{ bookorbit_data_directory }}/app"
+bookorbit_postgres_data_directory: "{{ bookorbit_data_directory }}/postgres"
+bookorbit_books_directory: "{{ books_root }}"
+
+# network
+bookorbit_port: "3041"
+bookorbit_port_container: "3000"
+bookorbit_hostname: "bookorbit"
+bookorbit_network_name: "bookorbit"
+
+# specs
+bookorbit_memory: 1g
+bookorbit_db_memory: 1g
+
+# docker
+bookorbit_container_name: bookorbit
+bookorbit_image_name: "ghcr.io/bookorbit/bookorbit"
+bookorbit_image_version: latest
+bookorbit_db_container_name: bookorbit-db
+bookorbit_db_image_name: "pgvector/pgvector"
+bookorbit_db_image_version: "pg18"
+bookorbit_user_id: "1000"
+bookorbit_group_id: "1000"
+
+# bookorbit specific settings
+bookorbit_timezone: "{{ ansible_nas_timezone }}"
+bookorbit_app_url: "https://{{ ansible_nas_domain }}:{{ bookorbit_port }}"
+bookorbit_client_url: "{{ bookorbit_app_url }}"
+bookorbit_node_max_old_space_size: "2048"
+bookorbit_book_dock_path: "/data/book-dock"
+bookorbit_library_browse_root: "/books"
+bookorbit_fix_permissions: "true"
+bookorbit_log_level: "info"
+bookorbit_oidc_allow_local_issuers: "false"
+bookorbit_csp_allow_cloudflare_insights: "false"
+
+# database settings
+bookorbit_db_name: "bookorbit"
+bookorbit_db_user: "bookorbit"
+bookorbit_db_pass: "your_secure_password"
+bookorbit_jwt_secret: "change-me-to-a-long-random-secret"
+bookorbit_setup_bootstrap_token: "change-me-to-a-long-random-secret"
+
+# main env dictionary for the container and for merging with optional environment variables
+bookorbit_env:
+  NODE_ENV: production
+  PORT: "{{ bookorbit_port_container }}"
+  POSTGRES_HOST: "{{ bookorbit_db_container_name }}"
+  POSTGRES_PORT: "5432"
+  POSTGRES_USER: "{{ bookorbit_db_user }}"
+  POSTGRES_PASSWORD: "{{ bookorbit_db_pass }}"
+  POSTGRES_DB: "{{ bookorbit_db_name }}"
+  JWT_SECRET: "{{ bookorbit_jwt_secret }}"
+  SETUP_BOOTSTRAP_TOKEN: "{{ bookorbit_setup_bootstrap_token }}"
+  APP_URL: "{{ bookorbit_app_url }}"
+  CLIENT_URL: "{{ bookorbit_client_url }}"
+  TZ: "{{ bookorbit_timezone }}"
+  PUID: "{{ bookorbit_user_id | quote }}"
+  PGID: "{{ bookorbit_group_id | quote }}"
+  NODE_MAX_OLD_SPACE_SIZE: "{{ bookorbit_node_max_old_space_size }}"
+  BOOK_DOCK_PATH: "{{ bookorbit_book_dock_path }}"
+  LIBRARY_BROWSE_ROOT: "{{ bookorbit_library_browse_root }}"
+  BOOKORBIT_FIX_PERMISSIONS: "{{ bookorbit_fix_permissions }}"
+  LOG_LEVEL: "{{ bookorbit_log_level }}"
+  OIDC_ALLOW_LOCAL_ISSUERS: "{{ bookorbit_oidc_allow_local_issuers }}"
+  CSP_ALLOW_CLOUDFLARE_INSIGHTS: "{{ bookorbit_csp_allow_cloudflare_insights }}"
+
+# optional environment variables, override/extend in your inventory
+bookorbit_optional_env:
+  DATABASE_URL: "" # external PostgreSQL connection string; empty uses the bundled postgres
+  # Recommended if you store SMTP provider credentials (generate: openssl rand -hex 32)
+  EMAIL_ENCRYPTION_KEY: ""
+  # Recommended if you store migration source credentials (generate: openssl rand -hex 32)
+  MIGRATION_ENCRYPTION_KEY: ""
+  # Absolute container path that authorizes local migration backup files.
+  # Mount a dedicated host directory at this path as read-only before enabling backup mode.
+  MIGRATION_IMPORT_ROOT: ""
+
+# database env dictionary for the container and for merging with optional environment variables
+bookorbit_db_env:
+  POSTGRES_USER: "{{ bookorbit_db_user }}"
+  POSTGRES_PASSWORD: "{{ bookorbit_db_pass }}"
+  POSTGRES_DB: "{{ bookorbit_db_name }}"
+  PGDATA: "/var/lib/postgresql/data/pgdata"
