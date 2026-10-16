@@ -11,16 +11,33 @@
         mode: '0644'
         force: true
 
-    - name: Add Hashicorp apt repository
-      ansible.builtin.apt_repository:
-        repo: "deb https://apt.releases.hashicorp.com {{ ansible_facts['lsb']['codename'] }} main"
+    - name: Install python3-debian, required by the deb822_repository module
+      ansible.builtin.apt:
+        name: python3-debian
         state: present
-        filename: hashicorp
+        update_cache: true
+        cache_valid_time: 3600
+
+    - name: Add Hashicorp apt repository
+      ansible.builtin.deb822_repository:
+        name: hashicorp
+        types: deb
+        uris: https://apt.releases.hashicorp.com
+        suites: "{{ ansible_facts['lsb']['codename'] }}"
+        components: main
+        signed_by: /etc/apt/trusted.gpg.d/hashicorp.asc
+        state: present
+
+    - name: Remove Hashicorp apt repository list from the deprecated apt_repository module
+      ansible.builtin.file:
+        path: /etc/apt/sources.list.d/hashicorp.list
+        state: absent
 
     - name: Install Nomad
       ansible.builtin.apt:
         name: nomad
         state: present
+        update_cache: true
 
     - name: Template Nomad config
       ansible.builtin.template:
