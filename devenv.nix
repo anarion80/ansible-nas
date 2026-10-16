@@ -20,11 +20,10 @@
   languages = {
     python = {
       enable = true;
-      version = "3.12";
+      version = "3.13";
       uv.enable = true;
       uv.sync.enable = true;
       venv.enable = true;
-      venv.requirements = ./requirements-dev.txt;
     };
     ansible = {
       enable = true;
@@ -45,7 +44,7 @@
   scripts.setup = {
     exec = ''
       echo '🛠️ Running setup'
-      uv pip sync requirements-dev.txt
+      uv sync
     '';
     description = "Install dependencies";
   };
