@@ -1,0 +1,28 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get Initiative Postgres container state
+      community.docker.docker_container_info:
+        name: "{{ initiative_db_container_name }}"
+      register: initiative_result_db
+
+    - name: Get Initiative container state
+      community.docker.docker_container_info:
+        name: "{{ initiative_container_name }}"
+      register: initiative_result
+
+    - name: Check if Initiative containers are running
+      ansible.builtin.assert:
+        that:
+          - initiative_result_db.exists
+          - initiative_result_db.container['State']['Status'] == "running"
+          - initiative_result_db.container['State']['Restarting'] == false
+          - initiative_result.exists
+          - initiative_result.container['State']['Status'] == "running"
+          - initiative_result.container['State']['Restarting'] == false
