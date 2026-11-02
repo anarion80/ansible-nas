@@ -1,0 +1,247 @@
+---
+initiative_enabled: false
+initiative_available_externally: false
+
+# directories
+initiative_data_directory: "{{ docker_home }}/initiative"
+initiative_postgres_data_directory: "{{ initiative_data_directory }}/postgres"
+initiative_uploads_directory: "{{ initiative_data_directory }}/uploads"
+
+# network
+initiative_port: "8190"
+initiative_port_container: "8173"
+initiative_hostname: "initiative"
+initiative_network_name: "initiative"
+
+# specs
+initiative_memory: 1g
+initiative_db_memory: 1g
+
+# docker
+initiative_container_name: initiative
+initiative_image_name: "ghcr.io/beyonders-studio/initiative"
+initiative_image_version: latest
+
+initiative_db_container_name: initiative-db
+initiative_db_image_name: "postgres"
+initiative_db_image_version: "17"
+initiative_db_port_container: "5432"
+
+# database
+initiative_db_name: "initiative"
+initiative_db_user: "initiative"
+# Only read when the database is first created, so keep it once set. Keep it alphanumeric,
+# it becomes part of the connection URL.
+initiative_db_password: "your_secure_password"
+
+# application
+# Signs sessions and encrypts stored data. Generate one with `openssl rand -hex 32`
+# and never change it on an existing install without PREVIOUS_SECRET_KEY.
+initiative_secret_key: "change-me-to-a-long-random-secret"
+initiative_app_url: "https://{{ initiative_hostname }}.{{ ansible_nas_domain }}"
+initiative_database_url: "postgresql+asyncpg://{{ initiative_db_user }}:{{ initiative_db_password }}@{{ initiative_db_container_name }}:{{ initiative_db_port_container }}/{{ initiative_db_name }}"
+# The app creates this user, chowns the uploads directory to it and drops privileges
+initiative_puid: "1000"
+initiative_pgid: "1000"
+initiative_auth_access_ttl_minutes: "15"
+initiative_auth_refresh_ttl_days: "30"
+# Which ways in the deployment permits: password, sso, passkey, totp, email_otp.
+# Read on the first boot only, an empty value keeps the built-in default.
+initiative_auth_login_methods: ""
+# Bootstrap owner, created on first boot. Leave empty and the first account to sign up
+# becomes the platform owner.
+initiative_first_owner_email: ""
+initiative_first_owner_password: ""
+
+# sign ups and communities (read on the first start only, Settings -> Platform owns them afterwards)
+initiative_enable_public_registration: "true"
+initiative_disable_guild_creation: "false"
+initiative_guild_creation_daily_limit: "5"
+initiative_hibp_check_enabled: "true"
+initiative_export_guild_cooldown_hours: "48"
+# Proxy header carrying the visitor's country, e.g. CF-IPCountry behind Cloudflare
+initiative_client_country_header: ""
+
+# reverse proxy
+initiative_behind_proxy: "true"
+# Only needed for a proxy on another machine that reaches Initiative over a public address
+initiative_forwarded_allow_ips: ""
+# Extra browser origins allowed to call the API, beyond initiative_app_url
+initiative_cors_allowed_origins: ""
+
+# logging, metrics and limits
+initiative_log_level: "INFO"
+# Prometheus bearer token for /api/v1/metrics, empty disables the endpoint
+initiative_metrics_token: ""
+initiative_faro_collector_url: ""
+initiative_rate_limit_default: "100/minute"
+initiative_rate_limit_storage_uri: "memory://"
+initiative_enable_mcp: "false"
+
+# single sign-on (seeds the sign-in provider on first boot, Settings -> Platform owns it afterwards)
+initiative_oidc_enabled: "false"
+initiative_oidc_issuer: ""
+initiative_oidc_client_id: ""
+initiative_oidc_client_secret: ""
+initiative_oidc_provider_name: ""
+initiative_oidc_scopes: "openid,profile,email,offline_access"
+
+# email (pre-fills the platform settings on first boot)
+initiative_smtp_host: ""
+initiative_smtp_port: "587"
+initiative_smtp_secure: "false"
+initiative_smtp_reject_unauthorized: "true"
+initiative_smtp_username: ""
+initiative_smtp_password: ""
+initiative_smtp_from_address: ""
+
+# push notifications (Firebase, read on first boot only)
+initiative_fcm_enabled: "false"
+initiative_fcm_project_id: ""
+initiative_fcm_application_id: ""
+initiative_fcm_api_key: ""
+initiative_fcm_sender_id: ""
+initiative_fcm_service_account_json: ""
+
+# captcha on public registration: hcaptcha, turnstile or recaptcha
+initiative_captcha_provider: ""
+initiative_captcha_site_key: ""
+initiative_captcha_secret_key: ""
+
+# file storage
+initiative_storage_backend: "local"
+initiative_uploads_dir: "uploads"
+initiative_s3_bucket: ""
+initiative_s3_region: ""
+initiative_s3_endpoint_url: ""
+initiative_s3_access_key_id: ""
+initiative_s3_secret_access_key: ""
+initiative_s3_use_path_style: "true"
+initiative_s3_local_fallback: "false"
+
+# community exports
+initiative_export_destination_dir: ""
+initiative_export_max_download_bytes: "2147483648"
+initiative_export_presigned_downloads: "false"
+
+# marketplace
+initiative_marketplace_extra_catalog_dir: ""
+initiative_marketplace_registry_url: ""
+initiative_marketplace_registry_token: ""
+initiative_marketplace_registry_ttl_seconds: ""
+initiative_marketplace_registry_root: ""
+initiative_plugin_services_config: ""
+
+# docker volumes
+initiative_volumes: # do not change!
+  - "{{ initiative_uploads_directory }}:/app/uploads:rw"
+
+# Add list items here to mount additional volumes, for settings that point at a file or
+# directory inside the container, for example a plug-in services file, a marketplace
+# catalog or a community export directory:
+# initiative_optional_volumes:
+#   - "/path/on/nas/plugin-services.json:/etc/initiative/plugin-services.json:ro"
+initiative_optional_volumes: []
+
+# advanced
+# How many helper processes each server process may run for plug-ins, 1 to 16
+initiative_expression_workers: "2"
+# Old key kept during a SECRET_KEY rotation, remove once the migration succeeds
+initiative_previous_secret_key: ""
+# Separate signing key for session tokens, falls back to initiative_secret_key
+initiative_jwt_signing_key: ""
+# Name the database logins yourself, for a pooler or a database set up elsewhere
+initiative_database_url_app: ""
+initiative_database_url_admin: ""
+initiative_database_url_bootstrap: ""
+initiative_database_url_listen: ""
+initiative_db_pool_size: "5"
+initiative_db_max_overflow: "10"
+
+# optional environment variables, merged into the environment of each container
+# Use these for settings that do not have a dedicated variable
+initiative_db_optional_env: {}
+initiative_optional_env: {}
+
+# database env
+initiative_db_env:
+  POSTGRES_USER: "{{ initiative_db_user }}"
+  POSTGRES_PASSWORD: "{{ initiative_db_password }}"
+  POSTGRES_DB: "{{ initiative_db_name }}"
+
+# application env
+initiative_env:
+  DATABASE_URL: "{{ initiative_database_url }}"
+  SECRET_KEY: "{{ initiative_secret_key }}"
+  APP_URL: "{{ initiative_app_url }}"
+  PUID: "{{ initiative_puid }}"
+  PGID: "{{ initiative_pgid }}"
+  AUTH_ACCESS_TTL_MINUTES: "{{ initiative_auth_access_ttl_minutes }}"
+  AUTH_REFRESH_TTL_DAYS: "{{ initiative_auth_refresh_ttl_days }}"
+  AUTH_LOGIN_METHODS: "{{ initiative_auth_login_methods | default(omit, true) }}"
+  FIRST_OWNER_EMAIL: "{{ initiative_first_owner_email | default(omit, true) }}"
+  FIRST_OWNER_PASSWORD: "{{ initiative_first_owner_password | default(omit, true) }}"
+  ENABLE_PUBLIC_REGISTRATION: "{{ initiative_enable_public_registration }}"
+  DISABLE_GUILD_CREATION: "{{ initiative_disable_guild_creation }}"
+  GUILD_CREATION_DAILY_LIMIT: "{{ initiative_guild_creation_daily_limit }}"
+  HIBP_CHECK_ENABLED: "{{ initiative_hibp_check_enabled }}"
+  EXPORT_GUILD_COOLDOWN_HOURS: "{{ initiative_export_guild_cooldown_hours }}"
+  CLIENT_COUNTRY_HEADER: "{{ initiative_client_country_header | default(omit, true) }}"
+  BEHIND_PROXY: "{{ initiative_behind_proxy }}"
+  FORWARDED_ALLOW_IPS: "{{ initiative_forwarded_allow_ips | default(omit, true) }}"
+  CORS_ALLOWED_ORIGINS: "{{ initiative_cors_allowed_origins | default(omit, true) }}"
+  LOG_LEVEL: "{{ initiative_log_level }}"
+  METRICS_TOKEN: "{{ initiative_metrics_token | default(omit, true) }}"
+  FARO_COLLECTOR_URL: "{{ initiative_faro_collector_url | default(omit, true) }}"
+  RATE_LIMIT_DEFAULT: "{{ initiative_rate_limit_default }}"
+  RATE_LIMIT_STORAGE_URI: "{{ initiative_rate_limit_storage_uri }}"
+  ENABLE_MCP: "{{ initiative_enable_mcp }}"
+  OIDC_ENABLED: "{{ initiative_oidc_enabled }}"
+  OIDC_ISSUER: "{{ initiative_oidc_issuer | default(omit, true) }}"
+  OIDC_CLIENT_ID: "{{ initiative_oidc_client_id | default(omit, true) }}"
+  OIDC_CLIENT_SECRET: "{{ initiative_oidc_client_secret | default(omit, true) }}"
+  OIDC_PROVIDER_NAME: "{{ initiative_oidc_provider_name | default(omit, true) }}"
+  OIDC_SCOPES: "{{ initiative_oidc_scopes }}"
+  SMTP_HOST: "{{ initiative_smtp_host | default(omit, true) }}"
+  SMTP_PORT: "{{ initiative_smtp_port }}"
+  SMTP_SECURE: "{{ initiative_smtp_secure }}"
+  SMTP_REJECT_UNAUTHORIZED: "{{ initiative_smtp_reject_unauthorized }}"
+  SMTP_USERNAME: "{{ initiative_smtp_username | default(omit, true) }}"
+  SMTP_PASSWORD: "{{ initiative_smtp_password | default(omit, true) }}"
+  SMTP_FROM_ADDRESS: "{{ initiative_smtp_from_address | default(omit, true) }}"
+  FCM_ENABLED: "{{ initiative_fcm_enabled }}"
+  FCM_PROJECT_ID: "{{ initiative_fcm_project_id | default(omit, true) }}"
+  FCM_APPLICATION_ID: "{{ initiative_fcm_application_id | default(omit, true) }}"
+  FCM_API_KEY: "{{ initiative_fcm_api_key | default(omit, true) }}"
+  FCM_SENDER_ID: "{{ initiative_fcm_sender_id | default(omit, true) }}"
+  FCM_SERVICE_ACCOUNT_JSON: "{{ initiative_fcm_service_account_json | default(omit, true) }}"
+  CAPTCHA_PROVIDER: "{{ initiative_captcha_provider | default(omit, true) }}"
+  CAPTCHA_SITE_KEY: "{{ initiative_captcha_site_key | default(omit, true) }}"
+  CAPTCHA_SECRET_KEY: "{{ initiative_captcha_secret_key | default(omit, true) }}"
+  STORAGE_BACKEND: "{{ initiative_storage_backend }}"
+  UPLOADS_DIR: "{{ initiative_uploads_dir }}"
+  S3_BUCKET: "{{ initiative_s3_bucket | default(omit, true) }}"
+  S3_REGION: "{{ initiative_s3_region | default(omit, true) }}"
+  S3_ENDPOINT_URL: "{{ initiative_s3_endpoint_url | default(omit, true) }}"
+  S3_ACCESS_KEY_ID: "{{ initiative_s3_access_key_id | default(omit, true) }}"
+  S3_SECRET_ACCESS_KEY: "{{ initiative_s3_secret_access_key | default(omit, true) }}"
+  S3_USE_PATH_STYLE: "{{ initiative_s3_use_path_style }}"
+  S3_LOCAL_FALLBACK: "{{ initiative_s3_local_fallback }}"
+  EXPORT_DESTINATION_DIR: "{{ initiative_export_destination_dir | default(omit, true) }}"
+  EXPORT_MAX_DOWNLOAD_BYTES: "{{ initiative_export_max_download_bytes }}"
+  EXPORT_PRESIGNED_DOWNLOADS: "{{ initiative_export_presigned_downloads }}"
+  MARKETPLACE_EXTRA_CATALOG_DIR: "{{ initiative_marketplace_extra_catalog_dir | default(omit, true) }}"
+  MARKETPLACE_REGISTRY_URL: "{{ initiative_marketplace_registry_url | default(omit, true) }}"
+  MARKETPLACE_REGISTRY_TOKEN: "{{ initiative_marketplace_registry_token | default(omit, true) }}"
+  MARKETPLACE_REGISTRY_TTL_SECONDS: "{{ initiative_marketplace_registry_ttl_seconds | default(omit, true) }}"
+  MARKETPLACE_REGISTRY_ROOT: "{{ initiative_marketplace_registry_root | default(omit, true) }}"
+  PLUGIN_SERVICES_CONFIG: "{{ initiative_plugin_services_config | default(omit, true) }}"
+  EXPRESSION_WORKERS: "{{ initiative_expression_workers }}"
+  PREVIOUS_SECRET_KEY: "{{ initiative_previous_secret_key | default(omit, true) }}"
+  JWT_SIGNING_KEY: "{{ initiative_jwt_signing_key | default(omit, true) }}"
+  DATABASE_URL_APP: "{{ initiative_database_url_app | default(omit, true) }}"
+  DATABASE_URL_ADMIN: "{{ initiative_database_url_admin | default(omit, true) }}"
+  DATABASE_URL_BOOTSTRAP: "{{ initiative_database_url_bootstrap | default(omit, true) }}"
+  DATABASE_URL_LISTEN: "{{ initiative_database_url_listen | default(omit, true) }}"
+  DB_POOL_SIZE: "{{ initiative_db_pool_size }}"
+  DB_MAX_OVERFLOW: "{{ initiative_db_max_overflow }}"

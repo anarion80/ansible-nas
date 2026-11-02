@@ -238,6 +238,8 @@
       tags: [icbinv]
     - role: immich
       tags: [immich]
+    - role: initiative
+      tags: [initiative]
     - role: input
       tags: [input]
     - role: invidious

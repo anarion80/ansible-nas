@@ -117,6 +117,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [Immich](https://immich.app/) - Self-hosted photo and video backup solution directly from your mobile phone.
 - [Input](https://github.com/deck9/input) - A privacy-focused, no-code, open-source form builder.
 - [Influxdb](https://github.com/influxdata/influxdb) - Time series database used for stats collection
+- [Initiative](https://github.com/beyonders-studio/initiative) - A shared workspace for projects, tasks, files, calendars and wikis
 - [Invidious](https://invidious.io/) - An open source alternative front-end to YouTube
 - [iSpy Agent DVR](https://www.ispyconnect.com/) - iSpy - Agent DVR is a video surveillance software
 - [Jackett](https://github.com/Jackett/Jackett) - API Support for your favorite torrent trackers

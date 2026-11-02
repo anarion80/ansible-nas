@@ -1,0 +1,33 @@
+---
+- name: Verify Stopped
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Try and stop and remove Initiative
+      community.docker.docker_container:
+        name: "{{ initiative_container_name }}"
+        state: absent
+      register: initiative_result
+
+    - name: Try and stop and remove Initiative Postgres
+      community.docker.docker_container:
+        name: "{{ initiative_db_container_name }}"
+        state: absent
+      register: initiative_result_db
+
+    - name: Try and remove Initiative network
+      community.docker.docker_network:
+        name: "{{ initiative_network_name }}"
+        state: absent
+      register: initiative_result_network
+
+    - name: Check if Initiative is stopped
+      ansible.builtin.assert:
+        that:
+          - not initiative_result.changed
+          - not initiative_result_db.changed
+          - not initiative_result_network.changed

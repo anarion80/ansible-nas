@@ -1,0 +1,92 @@
+---
+- name: Start Initiative
+  block:
+    - name: Create Initiative Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ initiative_postgres_data_directory }}"
+        - "{{ initiative_uploads_directory }}"
+
+    - name: Create Initiative network
+      community.docker.docker_network:
+        name: "{{ initiative_network_name }}"
+
+    - name: Create Initiative Postgres Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ initiative_db_container_name }}"
+        image: "{{ initiative_db_image_name }}:{{ initiative_db_image_version }}"
+        pull: true
+        volumes:
+          - "{{ initiative_postgres_data_directory }}:/var/lib/postgresql/data:rw"
+        networks:
+          - name: "{{ initiative_network_name }}"
+        env: "{{ initiative_db_optional_env | default({}) | combine(initiative_db_env) }}"
+        labels:
+          traefik.enable: "false"
+        log_driver: "json-file"
+        log_options:
+          max-size: "10m"
+          max-file: "5"
+        restart_policy: unless-stopped
+        memory: "{{ initiative_db_memory }}"
+        healthcheck:
+          test: ["CMD-SHELL", "pg_isready -U {{ initiative_db_user }}"]
+          interval: 5s
+          timeout: 5s
+          retries: 5
+
+    - name: Wait for Initiative Postgres to be healthy
+      community.docker.docker_container_info:
+        name: "{{ initiative_db_container_name }}"
+      register: initiative_db_info
+      until: initiative_db_info.container.State.Health.Status == "healthy"
+      retries: 60
+      delay: 5
+
+    - name: Create Initiative Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ initiative_container_name }}"
+        image: "{{ initiative_image_name }}:{{ initiative_image_version }}"
+        pull: true
+        volumes: "{{ initiative_volumes + initiative_optional_volumes | default([]) }}"
+        ports:
+          - "{{ initiative_port }}:{{ initiative_port_container }}"
+        networks:
+          - name: "{{ initiative_network_name }}"
+        env: "{{ initiative_optional_env | default({}) | combine(initiative_env) }}"
+        log_driver: "json-file"
+        log_options:
+          max-size: "10m"
+          max-file: "5"
+        restart_policy: unless-stopped
+        memory: "{{ initiative_memory }}"
+        labels:
+          traefik.enable: "{{ initiative_available_externally | string }}"
+          traefik.http.routers.initiative.rule: "Host(`{{ initiative_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.initiative.tls.certresolver: "letsencrypt"
+          traefik.http.routers.initiative.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.initiative.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.initiative.loadbalancer.server.port: "{{ initiative_port_container }}"
+  when: initiative_enabled is true
+
+- name: Stop Initiative
+  block:
+    - name: Stop Initiative
+      community.docker.docker_container:
+        name: "{{ initiative_container_name }}"
+        state: absent
+
+    - name: Stop Initiative Postgres
+      community.docker.docker_container:
+        name: "{{ initiative_db_container_name }}"
+        state: absent
+
+    - name: Remove Initiative network
+      community.docker.docker_network:
+        name: "{{ initiative_network_name }}"
+        state: absent
+  when: initiative_enabled is false
