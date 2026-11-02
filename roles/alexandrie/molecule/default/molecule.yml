@@ -1,0 +1,20 @@
+---
+platforms:
+  - name: instance
+    image: geerlingguy/docker-ubuntu2204-ansible:latest
+    volumes:
+      - /sys/fs/cgroup:/sys/fs/cgroup:rw
+      - /var/run/docker.sock:/var/run/docker.sock
+      # RustFS runs as UID/GID 10001 and requires writable bind mounts.
+      # Sharing /tmp with the host makes the data directories created inside the
+      # instance visible to the Docker daemon at the same path, so the ownership
+      # set by the role applies to the directories RustFS actually mounts.
+      - /tmp:/tmp:rw
+    cgroupns_mode: host
+    privileged: true
+    pre_build_image: true
+provisioner:
+  inventory:
+    group_vars:
+      all:
+        alexandrie_enabled: true

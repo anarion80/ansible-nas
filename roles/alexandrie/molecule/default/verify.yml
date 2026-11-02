@@ -1,0 +1,44 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get Alexandrie MySQL container state
+      community.docker.docker_container_info:
+        name: "{{ alexandrie_db_container_name }}"
+      register: result_db
+
+    - name: Get Alexandrie RustFS container state
+      community.docker.docker_container_info:
+        name: "{{ alexandrie_rustfs_container_name }}"
+      register: result_rustfs
+
+    - name: Get Alexandrie backend container state
+      community.docker.docker_container_info:
+        name: "{{ alexandrie_backend_container_name }}"
+      register: result_backend
+
+    - name: Get Alexandrie container state
+      community.docker.docker_container_info:
+        name: "{{ alexandrie_container_name }}"
+      register: result
+
+    - name: Check if Alexandrie containers are running
+      ansible.builtin.assert:
+        that:
+          - result_db.exists
+          - result_db.container['State']['Status'] == "running"
+          - result_db.container['State']['Restarting'] == false
+          - result_rustfs.exists
+          - result_rustfs.container['State']['Status'] == "running"
+          - result_rustfs.container['State']['Restarting'] == false
+          - result_backend.exists
+          - result_backend.container['State']['Status'] == "running"
+          - result_backend.container['State']['Restarting'] == false
+          - result.exists
+          - result.container['State']['Status'] == "running"
+          - result.container['State']['Restarting'] == false

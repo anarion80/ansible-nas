@@ -50,6 +50,8 @@
       tags: [affine]
     - role: airsonic
       tags: [airsonic]
+    - role: alexandrie
+      tags: [alexandrie]
     - role: apcupsd
       tags: [apcupsd]
     - role: appsmith

@@ -1,0 +1,185 @@
+---
+alexandrie_enabled: false
+alexandrie_available_externally: false
+
+# directories
+alexandrie_data_directory: "{{ docker_home }}/alexandrie"
+alexandrie_mysql_data_directory: "{{ alexandrie_data_directory }}/mysql"
+alexandrie_rustfs_data_directory: "{{ alexandrie_data_directory }}/rustfs"
+alexandrie_rustfs_logs_directory: "{{ alexandrie_data_directory }}/rustfs-logs"
+
+# network
+alexandrie_port: "8206"
+alexandrie_port_container: "8200"
+alexandrie_backend_port: "8207"
+alexandrie_backend_port_container: "8201"
+alexandrie_db_port: "3307"
+alexandrie_db_port_container: "3306"
+alexandrie_rustfs_port: "9006"
+alexandrie_rustfs_port_container: "9000"
+alexandrie_hostname: "alexandrie"
+alexandrie_api_hostname: "alexandrie-api"
+alexandrie_cdn_hostname: "alexandrie-cdn"
+alexandrie_network_name: "alexandrie"
+
+# specs
+alexandrie_memory: 1g
+alexandrie_backend_memory: 1g
+alexandrie_db_memory: 1g
+alexandrie_rustfs_memory: 1g
+
+# docker
+alexandrie_container_name: alexandrie
+alexandrie_image_name: "ghcr.io/smaug6739/alexandrie-frontend"
+alexandrie_image_version: latest
+
+alexandrie_backend_container_name: alexandrie-backend
+alexandrie_backend_image_name: "ghcr.io/smaug6739/alexandrie-backend"
+alexandrie_backend_image_version: latest
+
+alexandrie_db_container_name: alexandrie-db
+alexandrie_db_image_name: "mysql"
+alexandrie_db_image_version: "8.0"
+
+alexandrie_rustfs_container_name: alexandrie-rustfs
+alexandrie_rustfs_image_name: "rustfs/rustfs"
+alexandrie_rustfs_image_version: latest
+alexandrie_rustfs_user_id: "10001"
+alexandrie_rustfs_group_id: "10001"
+
+# database
+alexandrie_db_name: "alexandrie"
+alexandrie_db_user: "alexandrie"
+alexandrie_db_password: "your_secure_password"
+alexandrie_db_root_password: "your_secure_root_password"
+
+# object storage (S3 compatible)
+alexandrie_rustfs_access_key: "alexandrie-key"
+alexandrie_rustfs_secret_key: "alexandrie-secret"
+alexandrie_rustfs_console_enable: "false"
+alexandrie_rustfs_log_level: "info"
+alexandrie_bucket_name: "alexandrie"
+alexandrie_cdn_endpoint: "/alexandrie/"
+
+# application
+alexandrie_gin_mode: "release"
+alexandrie_jwt_secret: "change-me-to-a-long-random-secret"
+alexandrie_frontend_url: "https://{{ alexandrie_hostname }}.{{ ansible_nas_domain }}"
+alexandrie_api_url: "https://{{ alexandrie_api_hostname }}.{{ ansible_nas_domain }}"
+alexandrie_cdn_url: "https://{{ alexandrie_cdn_hostname }}.{{ ansible_nas_domain }}"
+# Must be the common domain of the frontend and the API (no protocol), otherwise logins will not stick
+alexandrie_cookie_domain: "{{ ansible_nas_domain }}"
+alexandrie_allow_unsecure: "true"
+# Comma-separated list of user IDs that get administrator privileges, e.g. "1"
+alexandrie_admin_accounts: ""
+alexandrie_disable_signup: "false"
+alexandrie_disable_native_login: "false"
+alexandrie_hide_native_login: "false"
+alexandrie_disable_landing: "false"
+# Provider name (as configured in alexandrie_oidc_providers) to redirect to automatically
+alexandrie_oidc_provider_auto_redirect: ""
+alexandrie_minio_secure: "false"
+alexandrie_minio_insecure_tls: "false"
+
+# optional backend files
+# Custom backend configuration file, see https://github.com/Smaug6739/Alexandrie/blob/main/backend/config.toml
+alexandrie_config_file: ""
+alexandrie_config_path: "/etc/alexandrie/config.toml"
+# CA certificate (PEM) used to validate a private/internal certificate on the S3 endpoint
+alexandrie_minio_ca_certificate: ""
+alexandrie_minio_ca_path: "/etc/alexandrie/minio-ca.crt"
+
+# OIDC providers, up to 10, exported to the backend as OIDC_<n>_* variables in list order.
+# Register <alexandrie_frontend_url>/login/oidc/callback as the redirect URI at each provider.
+# Set alexandrie_disable_native_login and/or alexandrie_hide_native_login for SSO-only deployments.
+alexandrie_oidc_providers: []
+#  - name: "Company SSO"
+#    config_url: "https://sso.example.com/realms/main/.well-known/openid-configuration"
+#    client_id: "alexandrie"
+#    client_secret: "a-confidential-secret"
+
+# email (SMTP, optional, only required for password reset)
+alexandrie_smtp_host: ""
+alexandrie_smtp_mail: ""
+alexandrie_smtp_mail_from: ""
+alexandrie_smtp_password: ""
+
+# optional environment variables, merged into the environment of each container
+# Use these for settings that do not have a dedicated variable
+alexandrie_db_optional_env: {}
+alexandrie_rustfs_optional_env: {}
+alexandrie_backend_optional_env: {}
+alexandrie_frontend_optional_env: {}
+
+# OIDC provider environment, generated from alexandrie_oidc_providers
+alexandrie_oidc_env: >-
+  {%- set ns = namespace(env={}) -%}
+  {%- for provider in alexandrie_oidc_providers -%}
+  {%- set ns.env = ns.env | combine({
+        'OIDC_' ~ loop.index ~ '_CONFIG_URL': provider.config_url | default(''),
+        'OIDC_' ~ loop.index ~ '_CLIENT_ID': provider.client_id | default(''),
+        'OIDC_' ~ loop.index ~ '_CLIENT_SECRET': provider.client_secret | default(''),
+        'OIDC_' ~ loop.index ~ '_PROVIDER_NAME': provider.name | default(''),
+      }) -%}
+  {%- endfor -%}
+  {{ ns.env }}
+
+# backend volumes, mounts the optional config.toml and CA certificate read-only
+alexandrie_backend_volumes: "{{ ([alexandrie_config_file ~ ':' ~ alexandrie_config_path ~ ':ro'] if alexandrie_config_file | length > 0 else []) + ([alexandrie_minio_ca_certificate ~ ':' ~ alexandrie_minio_ca_path ~ ':ro'] if alexandrie_minio_ca_certificate | length > 0 else []) }}"
+
+# database env
+alexandrie_db_env:
+  MYSQL_ROOT_PASSWORD: "{{ alexandrie_db_root_password }}"
+  MYSQL_DATABASE: "{{ alexandrie_db_name }}"
+  MYSQL_USER: "{{ alexandrie_db_user }}"
+  MYSQL_PASSWORD: "{{ alexandrie_db_password }}"
+
+# object storage env
+alexandrie_rustfs_env:
+  RUSTFS_ACCESS_KEY: "{{ alexandrie_rustfs_access_key }}"
+  RUSTFS_SECRET_KEY: "{{ alexandrie_rustfs_secret_key }}"
+  RUSTFS_CONSOLE_ENABLE: "{{ alexandrie_rustfs_console_enable }}"
+  RUSTFS_LOG_LEVEL: "{{ alexandrie_rustfs_log_level }}"
+
+# backend env
+alexandrie_backend_env:
+  BACKEND_PORT: "{{ alexandrie_backend_port_container }}"
+  GIN_MODE: "{{ alexandrie_gin_mode }}"
+  JWT_SECRET: "{{ alexandrie_jwt_secret }}"
+  COOKIE_DOMAIN: "{{ alexandrie_cookie_domain }}"
+  FRONTEND_URL: "{{ alexandrie_frontend_url }}"
+  ALLOW_UNSECURE: "{{ alexandrie_allow_unsecure }}"
+  ADMIN_ACCOUNTS: "{{ alexandrie_admin_accounts }}"
+  CONFIG_PATH: "{{ alexandrie_config_path if alexandrie_config_file | length > 0 else '' }}"
+  CONFIG_DISABLE_SIGNUP: "{{ alexandrie_disable_signup }}"
+  CONFIG_DISABLE_NATIVE_LOGIN: "{{ alexandrie_disable_native_login }}"
+  DATABASE_HOST: "{{ alexandrie_db_container_name }}"
+  DATABASE_PORT: "{{ alexandrie_db_port_container }}"
+  DATABASE_NAME: "{{ alexandrie_db_name }}"
+  DATABASE_USER: "{{ alexandrie_db_user }}"
+  DATABASE_PASSWORD: "{{ alexandrie_db_password }}"
+  MINIO_ENDPOINT: "{{ alexandrie_rustfs_container_name }}:{{ alexandrie_rustfs_port_container }}"
+  MINIO_PUBLIC_URL: "{{ alexandrie_cdn_url }}"
+  MINIO_SECURE: "{{ alexandrie_minio_secure }}"
+  MINIO_INSECURE_TLS: "{{ alexandrie_minio_insecure_tls }}"
+  MINIO_CA_PATH: "{{ alexandrie_minio_ca_path if alexandrie_minio_ca_certificate | length > 0 else '' }}"
+  MINIO_ACCESSKEY: "{{ alexandrie_rustfs_access_key }}"
+  MINIO_SECRETKEY: "{{ alexandrie_rustfs_secret_key }}"
+  MINIO_BUCKET: "{{ alexandrie_bucket_name }}"
+  SMTP_HOST: "{{ alexandrie_smtp_host }}"
+  SMTP_MAIL: "{{ alexandrie_smtp_mail }}"
+  SMTP_MAIL_FROM: "{{ alexandrie_smtp_mail_from }}"
+  SMTP_PASSWORD: "{{ alexandrie_smtp_password }}"
+
+# frontend env
+alexandrie_frontend_env:
+  PORT: "{{ alexandrie_port_container }}"
+  NUXT_PUBLIC_CONFIG_DISABLE_SIGNUP_PAGE: "{{ alexandrie_disable_signup }}"
+  NUXT_PUBLIC_CONFIG_DISABLE_NATIVE_LOGIN: "{{ alexandrie_disable_native_login }}"
+  NUXT_PUBLIC_CONFIG_HIDE_NATIVE_LOGIN: "{{ alexandrie_hide_native_login }}"
+  NUXT_PUBLIC_CONFIG_DISABLE_LANDING_PAGE: "{{ alexandrie_disable_landing }}"
+  NUXT_PUBLIC_CONFIG_OIDC_PROVIDER_AUTO_REDIRECT: "{{ alexandrie_oidc_provider_auto_redirect }}"
+  NUXT_PUBLIC_BASE_API: "{{ alexandrie_api_url }}"
+  NUXT_PUBLIC_BASE_CDN: "{{ alexandrie_cdn_url }}"
+  NUXT_PUBLIC_CDN_ENDPOINT: "{{ alexandrie_cdn_endpoint }}"
+  NUXT_PUBLIC_BASE_URL: "{{ alexandrie_frontend_url }}"
