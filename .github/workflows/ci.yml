@@ -25,7 +25,7 @@ jobs:
           # dataclasses._is_type attribute, so pin to a supported release.
           python-version: "3.14"
       - name: Install test dependencies
-        run: pip3 install ansible yamllint==1.37.1 ansible-lint==25.11.0
+        run: pip3 install ansible yamllint==1.38.0 ansible-lint==26.10.1
       - name: Ansible-lint
         run: ansible-lint nas.yml
       - name: Lint yaml files
