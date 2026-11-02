@@ -52,8 +52,7 @@
         name: "{{ initiative_container_name }}"
         image: "{{ initiative_image_name }}:{{ initiative_image_version }}"
         pull: true
-        volumes:
-          - "{{ initiative_uploads_directory }}:/app/uploads:rw"
+        volumes: "{{ initiative_volumes + initiative_optional_volumes | default([]) }}"
         ports:
           - "{{ initiative_port }}:{{ initiative_port_container }}"
         networks:

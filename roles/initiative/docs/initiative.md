@@ -44,3 +44,16 @@ Most other settings - single sign-on, SMTP, push notifications, captcha - only p
 the platform settings on the first start; afterwards they are managed under
 **Settings → Platform** in the app. Settings without a dedicated variable can be passed
 through `initiative_optional_env`.
+
+Settings that point at a file or directory inside the container
+(`initiative_plugin_services_config`, `initiative_marketplace_extra_catalog_dir`,
+`initiative_marketplace_registry_root`, `initiative_export_destination_dir`) need that
+path mounted through `initiative_optional_volumes`, for example:
+
+```yaml
+initiative_optional_volumes:
+  - "/path/on/nas/plugin-services.json:/etc/initiative/plugin-services.json:ro"
+```
+
+`initiative_expression_workers` caps the helper processes each server process may run
+for plug-ins (1 to 16, default `2`).

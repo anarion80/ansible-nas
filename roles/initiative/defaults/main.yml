@@ -132,7 +132,20 @@ initiative_marketplace_registry_ttl_seconds: ""
 initiative_marketplace_registry_root: ""
 initiative_plugin_services_config: ""
 
+# docker volumes
+initiative_volumes: # do not change!
+  - "{{ initiative_uploads_directory }}:/app/uploads:rw"
+
+# Add list items here to mount additional volumes, for settings that point at a file or
+# directory inside the container, for example a plug-in services file, a marketplace
+# catalog or a community export directory:
+# initiative_optional_volumes:
+#   - "/path/on/nas/plugin-services.json:/etc/initiative/plugin-services.json:ro"
+initiative_optional_volumes: []
+
 # advanced
+# How many helper processes each server process may run for plug-ins, 1 to 16
+initiative_expression_workers: "2"
 # Old key kept during a SECRET_KEY rotation, remove once the migration succeeds
 initiative_previous_secret_key: ""
 # Separate signing key for session tokens, falls back to initiative_secret_key
@@ -223,6 +236,7 @@ initiative_env:
   MARKETPLACE_REGISTRY_TTL_SECONDS: "{{ initiative_marketplace_registry_ttl_seconds | default(omit, true) }}"
   MARKETPLACE_REGISTRY_ROOT: "{{ initiative_marketplace_registry_root | default(omit, true) }}"
   PLUGIN_SERVICES_CONFIG: "{{ initiative_plugin_services_config | default(omit, true) }}"
+  EXPRESSION_WORKERS: "{{ initiative_expression_workers }}"
   PREVIOUS_SECRET_KEY: "{{ initiative_previous_secret_key | default(omit, true) }}"
   JWT_SIGNING_KEY: "{{ initiative_jwt_signing_key | default(omit, true) }}"
   DATABASE_URL_APP: "{{ initiative_database_url_app | default(omit, true) }}"
