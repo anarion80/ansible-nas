@@ -20,7 +20,10 @@ jobs:
       - name: Set up Python 3
         uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          # ansible-core 2.21 supports Python up to 3.14. "3.x" now resolves to
+          # 3.15, where ansible-core/ansible-lint crash on the removed
+          # dataclasses._is_type attribute, so pin to a supported release.
+          python-version: "3.14"
       - name: Install test dependencies
         run: pip3 install ansible yamllint==1.37.1 ansible-lint==25.11.0
       - name: Ansible-lint
