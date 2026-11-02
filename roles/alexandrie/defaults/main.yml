@@ -70,11 +70,33 @@ alexandrie_cdn_url: "https://{{ alexandrie_cdn_hostname }}.{{ ansible_nas_domain
 # Must be the common domain of the frontend and the API (no protocol), otherwise logins will not stick
 alexandrie_cookie_domain: "{{ ansible_nas_domain }}"
 alexandrie_allow_unsecure: "true"
+# Comma-separated list of user IDs that get administrator privileges, e.g. "1"
+alexandrie_admin_accounts: ""
 alexandrie_disable_signup: "false"
 alexandrie_disable_native_login: "false"
+alexandrie_hide_native_login: "false"
 alexandrie_disable_landing: "false"
+# Provider name (as configured in alexandrie_oidc_providers) to redirect to automatically
+alexandrie_oidc_provider_auto_redirect: ""
 alexandrie_minio_secure: "false"
 alexandrie_minio_insecure_tls: "false"
+
+# optional backend files
+# Custom backend configuration file, see https://github.com/Smaug6739/Alexandrie/blob/main/backend/config.toml
+alexandrie_config_file: ""
+alexandrie_config_path: "/etc/alexandrie/config.toml"
+# CA certificate (PEM) used to validate a private/internal certificate on the S3 endpoint
+alexandrie_minio_ca_certificate: ""
+alexandrie_minio_ca_path: "/etc/alexandrie/minio-ca.crt"
+
+# OIDC providers, up to 10, exported to the backend as OIDC_<n>_* variables in list order.
+# Register <alexandrie_frontend_url>/login/oidc/callback as the redirect URI at each provider.
+# Set alexandrie_disable_native_login and/or alexandrie_hide_native_login for SSO-only deployments.
+alexandrie_oidc_providers: []
+#  - name: "Company SSO"
+#    config_url: "https://sso.example.com/realms/main/.well-known/openid-configuration"
+#    client_id: "alexandrie"
+#    client_secret: "a-confidential-secret"
 
 # email (SMTP, optional, only required for password reset)
 alexandrie_smtp_host: ""
@@ -83,12 +105,27 @@ alexandrie_smtp_mail_from: ""
 alexandrie_smtp_password: ""
 
 # optional environment variables, merged into the environment of each container
-# Handy for settings without a dedicated variable, e.g. ADMIN_ACCOUNTS or OIDC_<i>_CONFIG_URL,
-# OIDC_<i>_CLIENT_ID, OIDC_<i>_CLIENT_SECRET and OIDC_<i>_PROVIDER_NAME on the backend.
+# Use these for settings that do not have a dedicated variable
 alexandrie_db_optional_env: {}
 alexandrie_rustfs_optional_env: {}
 alexandrie_backend_optional_env: {}
 alexandrie_frontend_optional_env: {}
+
+# OIDC provider environment, generated from alexandrie_oidc_providers
+alexandrie_oidc_env: >-
+  {%- set ns = namespace(env={}) -%}
+  {%- for provider in alexandrie_oidc_providers -%}
+  {%- set ns.env = ns.env | combine({
+        'OIDC_' ~ loop.index ~ '_CONFIG_URL': provider.config_url | default(''),
+        'OIDC_' ~ loop.index ~ '_CLIENT_ID': provider.client_id | default(''),
+        'OIDC_' ~ loop.index ~ '_CLIENT_SECRET': provider.client_secret | default(''),
+        'OIDC_' ~ loop.index ~ '_PROVIDER_NAME': provider.name | default(''),
+      }) -%}
+  {%- endfor -%}
+  {{ ns.env }}
+
+# backend volumes, mounts the optional config.toml and CA certificate read-only
+alexandrie_backend_volumes: "{{ ([alexandrie_config_file ~ ':' ~ alexandrie_config_path ~ ':ro'] if alexandrie_config_file | length > 0 else []) + ([alexandrie_minio_ca_certificate ~ ':' ~ alexandrie_minio_ca_path ~ ':ro'] if alexandrie_minio_ca_certificate | length > 0 else []) }}"
 
 # database env
 alexandrie_db_env:
@@ -112,6 +149,8 @@ alexandrie_backend_env:
   COOKIE_DOMAIN: "{{ alexandrie_cookie_domain }}"
   FRONTEND_URL: "{{ alexandrie_frontend_url }}"
   ALLOW_UNSECURE: "{{ alexandrie_allow_unsecure }}"
+  ADMIN_ACCOUNTS: "{{ alexandrie_admin_accounts }}"
+  CONFIG_PATH: "{{ alexandrie_config_path if alexandrie_config_file | length > 0 else '' }}"
   CONFIG_DISABLE_SIGNUP: "{{ alexandrie_disable_signup }}"
   CONFIG_DISABLE_NATIVE_LOGIN: "{{ alexandrie_disable_native_login }}"
   DATABASE_HOST: "{{ alexandrie_db_container_name }}"
@@ -123,6 +162,7 @@ alexandrie_backend_env:
   MINIO_PUBLIC_URL: "{{ alexandrie_cdn_url }}"
   MINIO_SECURE: "{{ alexandrie_minio_secure }}"
   MINIO_INSECURE_TLS: "{{ alexandrie_minio_insecure_tls }}"
+  MINIO_CA_PATH: "{{ alexandrie_minio_ca_path if alexandrie_minio_ca_certificate | length > 0 else '' }}"
   MINIO_ACCESSKEY: "{{ alexandrie_rustfs_access_key }}"
   MINIO_SECRETKEY: "{{ alexandrie_rustfs_secret_key }}"
   MINIO_BUCKET: "{{ alexandrie_bucket_name }}"
@@ -135,7 +175,10 @@ alexandrie_backend_env:
 alexandrie_frontend_env:
   PORT: "{{ alexandrie_port_container }}"
   NUXT_PUBLIC_CONFIG_DISABLE_SIGNUP_PAGE: "{{ alexandrie_disable_signup }}"
+  NUXT_PUBLIC_CONFIG_DISABLE_NATIVE_LOGIN: "{{ alexandrie_disable_native_login }}"
+  NUXT_PUBLIC_CONFIG_HIDE_NATIVE_LOGIN: "{{ alexandrie_hide_native_login }}"
   NUXT_PUBLIC_CONFIG_DISABLE_LANDING_PAGE: "{{ alexandrie_disable_landing }}"
+  NUXT_PUBLIC_CONFIG_OIDC_PROVIDER_AUTO_REDIRECT: "{{ alexandrie_oidc_provider_auto_redirect }}"
   NUXT_PUBLIC_BASE_API: "{{ alexandrie_api_url }}"
   NUXT_PUBLIC_BASE_CDN: "{{ alexandrie_cdn_url }}"
   NUXT_PUBLIC_CDN_ENDPOINT: "{{ alexandrie_cdn_endpoint }}"

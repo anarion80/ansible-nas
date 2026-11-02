@@ -43,21 +43,51 @@ without the protocol, otherwise logins appear to work but users are logged out i
 `alexandrie_cdn_endpoint` is the path under which uploaded files are served and must match
 `alexandrie_bucket_name` (`/alexandrie/` for the default bucket).
 
+### Users and administrators
+
+The first account is created from the web interface. To grant administrator rights, list the
+numeric account IDs in `alexandrie_admin_accounts`, for example `"1"` or `"1,4"`.
+
+### Single sign-on (OIDC)
+
+Alexandrie supports up to ten OIDC providers. Add them to `alexandrie_oidc_providers`; they are
+exported to the backend as `OIDC_1_*`, `OIDC_2_*`, ... in list order:
+
+```yaml
+alexandrie_oidc_providers:
+  - name: "Company SSO"
+    config_url: "https://sso.example.com/realms/main/.well-known/openid-configuration"
+    client_id: "alexandrie"
+    client_secret: "a-confidential-secret"
+  - name: "Google"
+    config_url: "https://accounts.google.com/.well-known/openid-configuration"
+    client_id: "google-client-id"
+    client_secret: "google-client-secret"
+```
+
+Register `<alexandrie_frontend_url>/login/oidc/callback` as the redirect URI at each provider.
+`name` is the label shown on the login page and is also the value for
+`alexandrie_oidc_provider_auto_redirect`.
+
+For an SSO-only instance set `alexandrie_disable_native_login: true`, and optionally
+`alexandrie_hide_native_login: true` to hide the local login form as well.
+
+### Feature flags
+
 Set `alexandrie_allow_unsecure: false` when Alexandrie is only reachable over HTTPS.
-Sign ups, the landing page and native login can be turned off with
-`alexandrie_disable_signup`, `alexandrie_disable_landing` and `alexandrie_disable_native_login`.
+Sign ups and the landing page can be turned off with `alexandrie_disable_signup` and
+`alexandrie_disable_landing`.
+
+### Email
 
 Password reset emails are optional and only sent when `alexandrie_smtp_host`,
 `alexandrie_smtp_mail` and `alexandrie_smtp_password` are set.
 
-Single sign-on (OIDC) providers and other settings without a dedicated variable can be
-added through `alexandrie_backend_optional_env`, for example:
+### Advanced
 
-```yaml
-alexandrie_backend_optional_env:
-  ADMIN_ACCOUNTS: "1"
-  OIDC_1_CONFIG_URL: "https://sso.example.com/.well-known/openid-configuration"
-  OIDC_1_CLIENT_ID: "alexandrie"
-  OIDC_1_CLIENT_SECRET: "change-me"
-  OIDC_1_PROVIDER_NAME: "Example SSO"
-```
+`alexandrie_config_file` mounts a custom backend `config.toml` and sets `CONFIG_PATH`;
+`alexandrie_minio_ca_certificate` mounts a PEM CA certificate and sets `MINIO_CA_PATH`, for an
+S3 endpoint using a certificate from a private CA.
+
+Settings without a dedicated variable can be passed through `alexandrie_backend_optional_env` and
+`alexandrie_frontend_optional_env`.

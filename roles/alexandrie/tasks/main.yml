@@ -1,6 +1,13 @@
 ---
 - name: Start Alexandrie
   block:
+    - name: Check Alexandrie OIDC provider count
+      ansible.builtin.assert:
+        that:
+          - alexandrie_oidc_providers | length <= 10
+        fail_msg: "Alexandrie supports at most 10 OIDC providers, but {{ alexandrie_oidc_providers | length }} are configured."
+        quiet: true
+
     - name: Create Alexandrie Directories
       ansible.builtin.file:
         path: "{{ item }}"
@@ -106,13 +113,14 @@
         name: "{{ alexandrie_backend_container_name }}"
         image: "{{ alexandrie_backend_image_name }}:{{ alexandrie_backend_image_version }}"
         pull: true
+        volumes: "{{ alexandrie_backend_volumes }}"
         ports:
           - "{{ alexandrie_backend_port }}:{{ alexandrie_backend_port_container }}"
         networks:
           - name: "{{ alexandrie_network_name }}"
         etc_hosts:
           localhost: host-gateway
-        env: "{{ alexandrie_backend_optional_env | default({}) | combine(alexandrie_backend_env) }}"
+        env: "{{ alexandrie_backend_optional_env | default({}) | combine(alexandrie_backend_env) | combine(alexandrie_oidc_env) }}"
         restart_policy: unless-stopped
         memory: "{{ alexandrie_backend_memory }}"
         labels:
