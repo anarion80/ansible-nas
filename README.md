@@ -22,6 +22,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [Admidio](https://www.admidio.org/) - a free online membership management
 - [Adventure Log](https://github.com/seanmorley15/AdventureLog) - Self-hostable travel tracker and trip planner.
 - [Airsonic](https://airsonic.github.io/) - catalog and stream music
+- [Alexandrie](https://github.com/Smaug6739/Alexandrie) - A self-hosted, open-source knowledge base with an extended Markdown editor
 - [Apcupsd](http://www.apcupsd.org/) - A daemon for controlling APC UPSes
 - [Appsmith](https://www.appsmith.com/) - low-code application platform to quickly build, deploy, and manage effective software
 - [Arcane](https://github.com/ofkm/arcane) - A self-hosted platform for managing and deploying applications with Docker

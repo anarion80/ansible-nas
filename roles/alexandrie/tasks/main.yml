@@ -1,0 +1,174 @@
+---
+- name: Start Alexandrie
+  block:
+    - name: Create Alexandrie Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ alexandrie_mysql_data_directory }}"
+
+    - name: Create Alexandrie RustFS Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+        owner: "{{ alexandrie_rustfs_user_id }}"
+        group: "{{ alexandrie_rustfs_group_id }}"
+      with_items:
+        - "{{ alexandrie_rustfs_data_directory }}"
+        - "{{ alexandrie_rustfs_logs_directory }}"
+
+    - name: Create Alexandrie network
+      community.docker.docker_network:
+        name: "{{ alexandrie_network_name }}"
+
+    - name: Create Alexandrie MySQL Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ alexandrie_db_container_name }}"
+        image: "{{ alexandrie_db_image_name }}:{{ alexandrie_db_image_version }}"
+        pull: true
+        volumes:
+          - "{{ alexandrie_mysql_data_directory }}:/var/lib/mysql:rw"
+        ports:
+          - "{{ alexandrie_db_port }}:{{ alexandrie_db_port_container }}"
+        networks:
+          - name: "{{ alexandrie_network_name }}"
+        env: "{{ alexandrie_db_optional_env | default({}) | combine(alexandrie_db_env) }}"
+        labels:
+          traefik.enable: "false"
+        restart_policy: unless-stopped
+        memory: "{{ alexandrie_db_memory }}"
+        healthcheck:
+          test:
+            [
+              "CMD-SHELL",
+              "mysql -u${MYSQL_USER} -p${MYSQL_PASSWORD} -e 'SELECT 1' ${MYSQL_DATABASE}",
+            ]
+          start_period: 30s
+          interval: 30s
+          timeout: 10s
+          retries: 5
+
+    - name: Wait for Alexandrie MySQL to be healthy
+      community.docker.docker_container_info:
+        name: "{{ alexandrie_db_container_name }}"
+      register: alexandrie_db_info
+      until: alexandrie_db_info.container.State.Health.Status == "healthy"
+      retries: 60
+      delay: 5
+
+    - name: Create Alexandrie RustFS Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ alexandrie_rustfs_container_name }}"
+        image: "{{ alexandrie_rustfs_image_name }}:{{ alexandrie_rustfs_image_version }}"
+        pull: true
+        volumes:
+          - "{{ alexandrie_rustfs_data_directory }}:/data:rw"
+          - "{{ alexandrie_rustfs_logs_directory }}:/logs:rw"
+        ports:
+          - "{{ alexandrie_rustfs_port }}:{{ alexandrie_rustfs_port_container }}"
+        networks:
+          - name: "{{ alexandrie_network_name }}"
+        env: "{{ alexandrie_rustfs_optional_env | default({}) | combine(alexandrie_rustfs_env) }}"
+        restart_policy: unless-stopped
+        memory: "{{ alexandrie_rustfs_memory }}"
+        healthcheck:
+          test:
+            [
+              "CMD-SHELL",
+              "curl -s -o /dev/null --connect-timeout 2 http://127.0.0.1:{{ alexandrie_rustfs_port_container }}",
+            ]
+          start_period: 20s
+          interval: 30s
+          timeout: 10s
+          retries: 3
+        labels:
+          traefik.enable: "{{ alexandrie_available_externally | string }}"
+          traefik.http.routers.alexandrie-cdn.rule: "Host(`{{ alexandrie_cdn_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.alexandrie-cdn.tls.certresolver: "letsencrypt"
+          traefik.http.routers.alexandrie-cdn.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.alexandrie-cdn.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.alexandrie-cdn.loadbalancer.server.port: "{{ alexandrie_rustfs_port_container }}"
+
+    - name: Wait for Alexandrie RustFS to be healthy
+      community.docker.docker_container_info:
+        name: "{{ alexandrie_rustfs_container_name }}"
+      register: alexandrie_rustfs_info
+      until: alexandrie_rustfs_info.container.State.Health.Status == "healthy"
+      retries: 60
+      delay: 5
+
+    - name: Create Alexandrie Backend Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ alexandrie_backend_container_name }}"
+        image: "{{ alexandrie_backend_image_name }}:{{ alexandrie_backend_image_version }}"
+        pull: true
+        ports:
+          - "{{ alexandrie_backend_port }}:{{ alexandrie_backend_port_container }}"
+        networks:
+          - name: "{{ alexandrie_network_name }}"
+        etc_hosts:
+          localhost: host-gateway
+        env: "{{ alexandrie_backend_optional_env | default({}) | combine(alexandrie_backend_env) }}"
+        restart_policy: unless-stopped
+        memory: "{{ alexandrie_backend_memory }}"
+        labels:
+          traefik.enable: "{{ alexandrie_available_externally | string }}"
+          traefik.http.routers.alexandrie-api.rule: "Host(`{{ alexandrie_api_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.alexandrie-api.tls.certresolver: "letsencrypt"
+          traefik.http.routers.alexandrie-api.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.alexandrie-api.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.alexandrie-api.loadbalancer.server.port: "{{ alexandrie_backend_port_container }}"
+
+    - name: Create Alexandrie Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ alexandrie_container_name }}"
+        image: "{{ alexandrie_image_name }}:{{ alexandrie_image_version }}"
+        pull: true
+        ports:
+          - "{{ alexandrie_port }}:{{ alexandrie_port_container }}"
+        networks:
+          - name: "{{ alexandrie_network_name }}"
+        env: "{{ alexandrie_frontend_optional_env | default({}) | combine(alexandrie_frontend_env) }}"
+        restart_policy: unless-stopped
+        memory: "{{ alexandrie_memory }}"
+        labels:
+          traefik.enable: "{{ alexandrie_available_externally | string }}"
+          traefik.http.routers.alexandrie.rule: "Host(`{{ alexandrie_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.alexandrie.tls.certresolver: "letsencrypt"
+          traefik.http.routers.alexandrie.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.alexandrie.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.alexandrie.loadbalancer.server.port: "{{ alexandrie_port_container }}"
+  when: alexandrie_enabled is true
+
+- name: Stop Alexandrie
+  block:
+    - name: Stop Alexandrie
+      community.docker.docker_container:
+        name: "{{ alexandrie_container_name }}"
+        state: absent
+
+    - name: Stop Alexandrie Backend
+      community.docker.docker_container:
+        name: "{{ alexandrie_backend_container_name }}"
+        state: absent
+
+    - name: Stop Alexandrie RustFS
+      community.docker.docker_container:
+        name: "{{ alexandrie_rustfs_container_name }}"
+        state: absent
+
+    - name: Stop Alexandrie MySQL
+      community.docker.docker_container:
+        name: "{{ alexandrie_db_container_name }}"
+        state: absent
+
+    - name: Remove Alexandrie network
+      community.docker.docker_network:
+        name: "{{ alexandrie_network_name }}"
+        state: absent
+  when: alexandrie_enabled is false
