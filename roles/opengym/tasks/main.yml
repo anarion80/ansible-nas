@@ -1,0 +1,79 @@
+---
+- name: Start OpenGym
+  block:
+    - name: Create OpenGym Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ opengym_api_data_directory }}"
+        - "{{ opengym_coach_auth_directory }}"
+
+    - name: Create OpenGym network
+      community.docker.docker_network:
+        name: "{{ opengym_network_name }}"
+
+    - name: Create OpenGym API Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ opengym_api_container_name }}"
+        image: "{{ opengym_api_image_name }}:{{ opengym_api_image_version }}"
+        pull: true
+        volumes:
+          - "{{ opengym_api_data_directory }}:/data:rw"
+          - "{{ opengym_coach_auth_directory }}:/coach-auth:rw"
+        networks:
+          - name: "{{ opengym_network_name }}"
+        env: "{{ opengym_api_optional_env | default({}) | combine(opengym_api_env) }}"
+        labels:
+          traefik.enable: "false"
+        log_driver: "json-file"
+        log_options:
+          max-size: "10m"
+          max-file: "5"
+        restart_policy: unless-stopped
+        memory: "{{ opengym_api_memory }}"
+
+    - name: Create OpenGym Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ opengym_web_container_name }}"
+        image: "{{ opengym_web_image_name }}:{{ opengym_web_image_version }}"
+        pull: true
+        ports:
+          - "{{ opengym_port }}:{{ opengym_port_container }}"
+        networks:
+          - name: "{{ opengym_network_name }}"
+        env: "{{ opengym_web_optional_env | default({}) | combine(opengym_web_env) }}"
+        log_driver: "json-file"
+        log_options:
+          max-size: "10m"
+          max-file: "5"
+        restart_policy: unless-stopped
+        memory: "{{ opengym_web_memory }}"
+        labels:
+          traefik.enable: "{{ opengym_available_externally | string }}"
+          traefik.http.routers.opengym.rule: "Host(`{{ opengym_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.opengym.tls.certresolver: "letsencrypt"
+          traefik.http.routers.opengym.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.opengym.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.opengym.loadbalancer.server.port: "{{ opengym_port_container }}"
+  when: opengym_enabled is true
+
+- name: Stop OpenGym
+  block:
+    - name: Stop OpenGym
+      community.docker.docker_container:
+        name: "{{ opengym_web_container_name }}"
+        state: absent
+
+    - name: Stop OpenGym API
+      community.docker.docker_container:
+        name: "{{ opengym_api_container_name }}"
+        state: absent
+
+    - name: Remove OpenGym network
+      community.docker.docker_network:
+        name: "{{ opengym_network_name }}"
+        state: absent
+  when: opengym_enabled is false

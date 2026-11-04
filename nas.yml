@@ -382,6 +382,8 @@
       tags: [ombi]
     - role: openbooks
       tags: [openbooks]
+    - role: opengym
+      tags: [opengym]
     - role: openhab
       tags: [openhab]
     - role: openldap

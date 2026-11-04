@@ -1,0 +1,153 @@
+---
+opengym_enabled: false
+opengym_available_externally: false
+
+# directories
+opengym_data_directory: "{{ docker_home }}/opengym"
+opengym_api_data_directory: "{{ opengym_data_directory }}/data"
+opengym_coach_auth_directory: "{{ opengym_data_directory }}/coach-auth"
+
+# network
+opengym_port: "8115"
+opengym_port_container: "80"
+opengym_api_port_container: "3000"
+opengym_hostname: "opengym"
+opengym_network_name: "opengym"
+# Serve openGym under a subpath such as "/gym" when the reverse proxy passes that prefix through,
+# no trailing slash. A proxy that strips the prefix needs this empty.
+opengym_base_path: ""
+# The CF-Connecting-IP header the web container lets through, "$http_cf_connecting_ip" only when
+# Cloudflare is in front. Empty drops the header, so a direct client cannot forge its address.
+opengym_cf_connecting_ip: ""
+
+# specs
+opengym_web_memory: 512m
+opengym_api_memory: 512m
+
+# docker
+opengym_web_container_name: opengym-web
+opengym_web_image_name: "ghcr.io/duartesantos8/opengym-web"
+opengym_web_image_version: latest
+
+opengym_api_container_name: opengym-api
+opengym_api_image_name: "ghcr.io/duartesantos8/opengym-api"
+opengym_api_image_version: latest
+
+# passkeys (WebAuthn)
+# The host people reach openGym at, without a scheme or a port. Changing it later
+# invalidates every existing passkey, they are bound to the host they were made on.
+opengym_rp_id: "{{ opengym_hostname }}.{{ ansible_nas_domain }}"
+# The exact address people type in the browser. Never contains a path.
+opengym_origin: "https://{{ opengym_rp_id }}"
+opengym_rp_name: "openGym"
+
+# accounts and sign-up
+# The first profile created becomes an admin. More admins can be listed by account id.
+# An admin is needed for the invite-only mode and for the AI Coach.
+opengym_first_user_admin: ""
+opengym_admin_uids: ""
+# Require an invite code to create a profile. Create your own profile before turning this on.
+opengym_invite_only: ""
+# Set to 0 to remove the "Continue without account" button
+opengym_allow_guest: ""
+# Default language for the sign-in screen and profiles that never picked one, e.g. "pt-BR"
+opengym_default_lang: ""
+# Name-and-password sign-in next to passkeys, for browsers that cannot make a passkey
+opengym_password_login: ""
+
+# reverse proxy
+# The web container overwrites X-Forwarded-For and X-Real-IP, so the API can trust them
+opengym_trust_proxy: "1"
+
+# sessions and push notifications
+opengym_session_days: ""
+# Contact address for the push services, defaults to opengym_origin
+opengym_vapid_subject: ""
+# Private addresses push services may resolve to, for example a DNS proxy or a split-horizon
+# resolver. Comma or space separated addresses, ranges and CIDR blocks. Empty blocks them all.
+opengym_allowed_private_ips: ""
+
+# activity log
+opengym_audit_log: ""
+opengym_audit_max: ""
+opengym_audit_days: ""
+# off (default), net for the network only, or full for the whole address
+opengym_audit_ip: ""
+
+# photos and videos of custom exercises, see docs/SELF_HOSTING.md in the openGym repository
+opengym_media_uploads: ""
+opengym_media_quota_mb: ""
+opengym_media_image_max_mb: ""
+opengym_media_gif_max_mb: ""
+opengym_media_video_max_mb: ""
+opengym_media_video_max_sec: ""
+opengym_media_gc_grace_days: ""
+opengym_media_uploads_per_hour: ""
+opengym_media_min_free_mb: ""
+# The web container's own body limit, keep it above opengym_media_video_max_mb
+opengym_media_upload_max: "48m"
+# The Content-Security-Policy the web container sends on every response. Empty keeps the image's
+# default; set it when a reverse proxy injects a script of its own that the default blocks.
+opengym_content_security_policy: ""
+
+# AI Coach
+# Kill switch that outranks the admin toggle, set to 1 to keep the Coach off for certain
+opengym_coach_disabled: ""
+opengym_coach_job_timeout_ms: ""
+
+# integrations (webhooks), off unless a provider is named, e.g. "webhook"
+opengym_integrations: ""
+# Let webhooks reach private addresses on your own network, only for trusted users
+opengym_integrations_allow_lan: ""
+
+# extra environment, merged into the environment of each container
+# Use these for settings that do not have a dedicated variable
+opengym_api_optional_env: {}
+opengym_web_optional_env: {}
+
+# API environment
+opengym_api_env:
+  RP_ID: "{{ opengym_rp_id }}"
+  ORIGIN: "{{ opengym_origin }}"
+  RP_NAME: "{{ opengym_rp_name }}"
+  PORT: "{{ opengym_api_port_container }}"
+  DATA_DIR: "/data"
+  TRUST_PROXY: "{{ opengym_trust_proxy }}"
+  SESSION_DAYS: "{{ opengym_session_days | default(omit, true) }}"
+  VAPID_SUBJECT: "{{ opengym_vapid_subject | default(omit, true) }}"
+  ALLOWED_PRIVATE_IPS: "{{ opengym_allowed_private_ips | default(omit, true) }}"
+  FIRST_USER_ADMIN: "{{ opengym_first_user_admin | default(omit, true) }}"
+  ADMIN_UIDS: "{{ opengym_admin_uids | default(omit, true) }}"
+  INVITE_ONLY: "{{ opengym_invite_only | default(omit, true) }}"
+  ALLOW_GUEST: "{{ opengym_allow_guest | default(omit, true) }}"
+  DEFAULT_LANG: "{{ opengym_default_lang | default(omit, true) }}"
+  PASSWORD_LOGIN: "{{ opengym_password_login | default(omit, true) }}"
+  AUDIT_LOG: "{{ opengym_audit_log | default(omit, true) }}"
+  AUDIT_MAX: "{{ opengym_audit_max | default(omit, true) }}"
+  AUDIT_DAYS: "{{ opengym_audit_days | default(omit, true) }}"
+  AUDIT_IP: "{{ opengym_audit_ip | default(omit, true) }}"
+  MEDIA_UPLOADS: "{{ opengym_media_uploads | default(omit, true) }}"
+  MEDIA_QUOTA_MB: "{{ opengym_media_quota_mb | default(omit, true) }}"
+  MEDIA_IMAGE_MAX_MB: "{{ opengym_media_image_max_mb | default(omit, true) }}"
+  MEDIA_GIF_MAX_MB: "{{ opengym_media_gif_max_mb | default(omit, true) }}"
+  MEDIA_VIDEO_MAX_MB: "{{ opengym_media_video_max_mb | default(omit, true) }}"
+  MEDIA_VIDEO_MAX_SEC: "{{ opengym_media_video_max_sec | default(omit, true) }}"
+  MEDIA_GC_GRACE_DAYS: "{{ opengym_media_gc_grace_days | default(omit, true) }}"
+  MEDIA_UPLOADS_PER_HOUR: "{{ opengym_media_uploads_per_hour | default(omit, true) }}"
+  MEDIA_MIN_FREE_MB: "{{ opengym_media_min_free_mb | default(omit, true) }}"
+  COACH_DISABLED: "{{ opengym_coach_disabled | default(omit, true) }}"
+  COACH_JOB_TIMEOUT_MS: "{{ opengym_coach_job_timeout_ms | default(omit, true) }}"
+  INTEGRATIONS: "{{ opengym_integrations | default(omit, true) }}"
+  INTEGRATIONS_ALLOW_LAN: "{{ opengym_integrations_allow_lan | default(omit, true) }}"
+
+# web environment
+opengym_web_env:
+  NGINX_PORT: "{{ opengym_port_container }}"
+  # The API container name, the web container proxies /api to it over the Docker network
+  BACKEND: "{{ opengym_api_container_name }}"
+  PORT: "{{ opengym_api_port_container }}"
+  RESOLVER: "127.0.0.11"
+  CF_CONNECTING_IP: "{{ opengym_cf_connecting_ip }}"
+  BASE_PATH: "{{ opengym_base_path }}"
+  MEDIA_UPLOAD_MAX: "{{ opengym_media_upload_max }}"
+  CONTENT_SECURITY_POLICY: "{{ opengym_content_security_policy | default(omit, true) }}"

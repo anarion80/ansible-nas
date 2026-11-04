@@ -1,0 +1,33 @@
+---
+- name: Verify Stopped
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Try and stop and remove OpenGym
+      community.docker.docker_container:
+        name: "{{ opengym_web_container_name }}"
+        state: absent
+      register: opengym_result
+
+    - name: Try and stop and remove OpenGym API
+      community.docker.docker_container:
+        name: "{{ opengym_api_container_name }}"
+        state: absent
+      register: opengym_api_result
+
+    - name: Try and remove OpenGym network
+      community.docker.docker_network:
+        name: "{{ opengym_network_name }}"
+        state: absent
+      register: opengym_network_result
+
+    - name: Check if OpenGym is stopped
+      ansible.builtin.assert:
+        that:
+          - not opengym_result.changed
+          - not opengym_api_result.changed
+          - not opengym_network_result.changed
