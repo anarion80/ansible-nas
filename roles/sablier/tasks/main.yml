@@ -1,0 +1,48 @@
+---
+- name: Start Sablier
+  block:
+    - name: Create Sablier Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ sablier_data_directory }}"
+        - "{{ sablier_strategy_dynamic_custom_themes_directory }}"
+
+    - name: Sablier Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ sablier_container_name }}"
+        image: "{{ sablier_image_name }}:{{ sablier_image_version }}"
+        pull: true
+        command: ["start"]
+        volumes:
+          - "{{ sablier_docker_socket }}:/var/run/docker.sock:rw"
+          - "{{ sablier_data_directory }}:/data:rw"
+          - "{{ sablier_strategy_dynamic_custom_themes_directory }}:{{ sablier_strategy_dynamic_custom_themes_path }}:ro"
+        ports:
+          - "{{ sablier_port }}:{{ sablier_server_port }}"
+        env: "{{ sablier_optional_env | default({}) | combine(sablier_env) }}"
+        labels:
+          traefik.enable: "false"
+        log_driver: "json-file"
+        log_options:
+          max-size: "10m"
+          max-file: "5"
+        restart_policy: unless-stopped
+        memory: "{{ sablier_memory }}"
+        healthcheck:
+          test: ["CMD", "/bin/sablier", "health", "--url", "http://localhost:{{ sablier_server_port }}/health"]
+          interval: 30s
+          timeout: 5s
+          retries: 3
+          start_period: 10s
+  when: sablier_enabled is true
+
+- name: Stop Sablier
+  block:
+    - name: Stop Sablier
+      community.docker.docker_container:
+        name: "{{ sablier_container_name }}"
+        state: absent
+  when: sablier_enabled is false

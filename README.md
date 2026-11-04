@@ -227,6 +227,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [RSS-Bridge](https://rss-bridge.github.io/rss-bridge/) - The RSS feed for websites missing it
 - [RSSHub](https://github.com/DIYgod/RSSHub) - An open source, easy to use, and extensible RSS feed generator.
 - [Ryot](https://github.com/ignisda/ryot) - A self hosted platform for tracking various facets of your life - media, fitness etc.
+- [Sablier](https://sablierapp.dev/) - Start your containers on demand, and shut them down automatically when there is no activity
 - [Sabnzbd](https://sabnzbd.org/) - A powerful usenet downloader that FreeNAS provides
 - [Seafile](https://www.seafile.com/en/home/) - High performance file syncing and sharing
 - [SearxNG](https://github.com/searxng/searxng) - Free internet metasearch engine

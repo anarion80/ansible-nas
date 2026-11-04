@@ -1,0 +1,102 @@
+---
+sablier_enabled: false
+
+# directories
+sablier_data_directory: "{{ docker_home }}/sablier"
+sablier_strategy_dynamic_custom_themes_directory: "{{ sablier_data_directory }}/themes"
+
+# network
+# The upstream compose file publishes port 10000, which Budibase already uses here
+sablier_port: "10002"
+sablier_server_port: "10000"
+
+# specs
+sablier_memory: 256m
+
+# docker
+sablier_container_name: sablier
+sablier_image_name: "sablierapp/sablier"
+sablier_image_version: "1.19.1"
+# Sablier starts and stops containers through the Docker API, the socket grants root access
+sablier_docker_socket: "/var/run/docker.sock"
+
+# provider
+# How to stop idle containers: "stop" or "pause"
+sablier_provider_docker_strategy: "stop"
+# Stop the opted-in containers that are already running when Sablier starts
+sablier_provider_auto_stop_on_startup: "true"
+# Keep stopping containers that are running but were not started by Sablier
+sablier_provider_auto_stop_externally_started: "false"
+# Give those containers a session instead of stopping them
+sablier_provider_auto_warm_externally_started: "false"
+# Report a one-shot container that exited 0 as completed
+sablier_provider_docker_honor_restart_policy: "false"
+# Refuse named requests for instances that are not labeled sablier.enable=true
+sablier_provider_reject_unlabeled_requests: "false"
+# Check sablier.enable=true again before stopping an expired instance
+sablier_provider_verify_enabled_on_expiration: "false"
+
+# server
+sablier_server_base_path: "/"
+sablier_server_metrics_enabled: "false"
+
+# sessions
+sablier_sessions_default_duration: "5m"
+sablier_sessions_expiration_interval: "20s"
+
+# strategy
+sablier_strategy_blocking_default_timeout: "1m"
+sablier_strategy_blocking_default_refresh_frequency: "5s"
+# Inside the container, the host side is sablier_strategy_dynamic_custom_themes_directory
+sablier_strategy_dynamic_custom_themes_path: "/etc/sablier/themes"
+sablier_strategy_dynamic_default_refresh_frequency: "5s"
+sablier_strategy_dynamic_default_theme: "hacker-terminal"
+sablier_strategy_dynamic_show_details_by_default: "true"
+
+# storage
+# Sessions live in memory unless a file inside the container is given, e.g. "/data/sessions.json"
+sablier_storage_file: ""
+
+# logging
+sablier_logging_level: "info"
+
+# tracing
+sablier_tracing_enabled: "false"
+sablier_tracing_endpoint: "http://localhost:4318"
+sablier_tracing_exporter_type: "otlphttp"
+sablier_tracing_sampling_rate: "1"
+sablier_tracing_service_name: "sablier"
+
+# extra environment, merged into the environment of the container
+# Use this for settings that do not have a dedicated variable, e.g. the DOCKER_HOST of a remote daemon
+sablier_optional_env: {}
+
+# environment variables
+sablier_env:
+  TZ: "{{ ansible_nas_timezone }}"
+  SABLIER_PROVIDER_NAME: "docker"
+  SABLIER_PROVIDER_DOCKER_STRATEGY: "{{ sablier_provider_docker_strategy }}"
+  SABLIER_PROVIDER_AUTO_STOP_ON_STARTUP: "{{ sablier_provider_auto_stop_on_startup }}"
+  SABLIER_PROVIDER_AUTO_STOP_EXTERNALLY_STARTED: "{{ sablier_provider_auto_stop_externally_started }}"
+  SABLIER_PROVIDER_AUTO_WARM_EXTERNALLY_STARTED: "{{ sablier_provider_auto_warm_externally_started }}"
+  SABLIER_PROVIDER_DOCKER_HONOR_RESTART_POLICY: "{{ sablier_provider_docker_honor_restart_policy }}"
+  SABLIER_PROVIDER_REJECT_UNLABELED_REQUESTS: "{{ sablier_provider_reject_unlabeled_requests }}"
+  SABLIER_PROVIDER_VERIFY_ENABLED_ON_EXPIRATION: "{{ sablier_provider_verify_enabled_on_expiration }}"
+  SABLIER_SERVER_PORT: "{{ sablier_server_port }}"
+  SABLIER_SERVER_BASE_PATH: "{{ sablier_server_base_path }}"
+  SABLIER_SERVER_METRICS_ENABLED: "{{ sablier_server_metrics_enabled }}"
+  SABLIER_SESSIONS_DEFAULT_DURATION: "{{ sablier_sessions_default_duration }}"
+  SABLIER_SESSIONS_EXPIRATION_INTERVAL: "{{ sablier_sessions_expiration_interval }}"
+  SABLIER_STRATEGY_BLOCKING_DEFAULT_TIMEOUT: "{{ sablier_strategy_blocking_default_timeout }}"
+  SABLIER_STRATEGY_BLOCKING_DEFAULT_REFRESH_FREQUENCY: "{{ sablier_strategy_blocking_default_refresh_frequency }}"
+  SABLIER_STRATEGY_DYNAMIC_CUSTOM_THEMES_PATH: "{{ sablier_strategy_dynamic_custom_themes_path }}"
+  SABLIER_STRATEGY_DYNAMIC_DEFAULT_REFRESH_FREQUENCY: "{{ sablier_strategy_dynamic_default_refresh_frequency }}"
+  SABLIER_STRATEGY_DYNAMIC_DEFAULT_THEME: "{{ sablier_strategy_dynamic_default_theme }}"
+  SABLIER_STRATEGY_DYNAMIC_SHOW_DETAILS_BY_DEFAULT: "{{ sablier_strategy_dynamic_show_details_by_default }}"
+  SABLIER_STORAGE_FILE: "{{ sablier_storage_file | default(omit, true) }}"
+  SABLIER_LOGGING_LEVEL: "{{ sablier_logging_level }}"
+  SABLIER_TRACING_ENABLED: "{{ sablier_tracing_enabled }}"
+  SABLIER_TRACING_ENDPOINT: "{{ sablier_tracing_endpoint }}"
+  SABLIER_TRACING_EXPORTER_TYPE: "{{ sablier_tracing_exporter_type }}"
+  SABLIER_TRACING_SAMPLING_RATE: "{{ sablier_tracing_sampling_rate }}"
+  SABLIER_TRACING_SERVICE_NAME: "{{ sablier_tracing_service_name }}"
