@@ -1,0 +1,28 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get OpenGym API container state
+      community.docker.docker_container_info:
+        name: "{{ opengym_api_container_name }}"
+      register: opengym_api_result
+
+    - name: Get OpenGym container state
+      community.docker.docker_container_info:
+        name: "{{ opengym_web_container_name }}"
+      register: opengym_result
+
+    - name: Check if OpenGym containers are running
+      ansible.builtin.assert:
+        that:
+          - opengym_api_result.exists
+          - opengym_api_result.container['State']['Status'] == "running"
+          - opengym_api_result.container['State']['Restarting'] == false
+          - opengym_result.exists
+          - opengym_result.container['State']['Status'] == "running"
+          - opengym_result.container['State']['Restarting'] == false

@@ -187,6 +187,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [OliveTin](https://github.com/OliveTin/OliveTin) - safe and simple access to predefined shell commands
 - [Ombi](https://ombi.io/) - web application that automatically gives your users the ability to request content
 - [Openbooks](https://github.com/evan-buss/openbooks) - Search and Download eBooks
+- [OpenGym](https://github.com/DuarteSantos8/openGym) - A self-hosted gym and body-weight tracker with routines, workouts, progress and passkey sign-in
 - [openHAB](https://www.openhab.org/) - A vendor and technology agnostic open source automation software for your home
 - [openLDAP](https://www.openldap.org/) - An open source implementation of the Lightweight Directory Access Protocol
 - [Open-resume](https://github.com/xitanggg/open-resume) - A powerful open-source resume builder and resume parser
