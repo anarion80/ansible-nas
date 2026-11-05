@@ -3,9 +3,45 @@
   hosts: all
   gather_facts: false
   tasks:
+    # include_vars takes precedence over inventory variables, so remember the molecule data
+    # directory before the role defaults shadow it
+    - name: Remember the Traefik data directory
+      ansible.builtin.set_fact:
+        traefik_verify_data_directory: "{{ traefik_data_directory }}"
+
     - name: Include vars
       ansible.builtin.include_vars:
         file: ../../defaults/main.yml
+
+    - name: Get Traefik static configuration
+      ansible.builtin.slurp:
+        src: "{{ traefik_verify_data_directory }}/traefik.toml"
+      register: traefik_static_config
+
+    - name: Get Sablier plugin dynamic configuration
+      ansible.builtin.slurp:
+        src: "{{ traefik_verify_data_directory }}/dynamic/sablier.yml"
+      register: traefik_sablier_config
+
+    - name: Parse Sablier plugin dynamic configuration
+      ansible.builtin.set_fact:
+        traefik_sablier_dynamic_config: "{{ traefik_sablier_config.content | b64decode | from_yaml }}"
+
+    - name: Check that the Sablier plugin is registered in the static configuration
+      ansible.builtin.assert:
+        that:
+          - "'[providers.file]' in (traefik_static_config.content | b64decode)"
+          - "'[experimental.plugins.sablier]' in (traefik_static_config.content | b64decode)"
+          - "'github.com/sablierapp/sablier-traefik-plugin' in (traefik_static_config.content | b64decode)"
+          - "'version = \"' ~ traefik_sablier_plugin_version ~ '\"' in (traefik_static_config.content | b64decode)"
+
+    - name: Check that the Sablier middleware is configured
+      ansible.builtin.assert:
+        that:
+          - traefik_sablier_dynamic_config.http.middlewares[traefik_sablier_plugin_middleware_name].plugin.sablier.sablierUrl == traefik_sablier_plugin_url
+          - traefik_sablier_dynamic_config.http.middlewares[traefik_sablier_plugin_middleware_name].plugin.sablier.group == traefik_sablier_plugin_group
+          - traefik_sablier_dynamic_config.http.middlewares[traefik_sablier_plugin_middleware_name].plugin.sablier.sessionDuration == traefik_sablier_plugin_session_duration
+          - traefik_sablier_dynamic_config.http.middlewares[traefik_sablier_plugin_middleware_name].plugin.sablier.dynamic.theme == traefik_sablier_plugin_dynamic_theme
 
     - name: Get traefik container state
       community.docker.docker_container:

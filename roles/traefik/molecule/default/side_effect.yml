@@ -1,8 +1,31 @@
 ---
-- name: Stop
+- name: Disable the Sablier plugin and stop Traefik
   hosts: all
   become: true
   tasks:
+    - name: "Include {{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }} role without the Sablier plugin"
+      ansible.builtin.include_role:
+        name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"
+      vars:
+        traefik_sablier_plugin_enabled: false
+
+    - name: Get the Sablier plugin middleware state
+      ansible.builtin.stat:
+        path: "{{ traefik_data_directory }}/dynamic/sablier.yml"
+      register: traefik_sablier_config
+
+    - name: Get the Traefik static configuration
+      ansible.builtin.slurp:
+        src: "{{ traefik_data_directory }}/traefik.toml"
+      register: traefik_static_config
+
+    - name: Check that the Sablier plugin is removed
+      ansible.builtin.assert:
+        that:
+          - not traefik_sablier_config.stat.exists
+          - "'sablier-traefik-plugin' not in (traefik_static_config.content | b64decode)"
+          - "'[providers.file]' not in (traefik_static_config.content | b64decode)"
+
     - name: "Include {{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }} role"
       ansible.builtin.include_role:
         name: "{{ lookup('env', 'MOLECULE_PROJECT_DIRECTORY') | basename }}"

@@ -1,0 +1,19 @@
+---
+- name: Verify Stopped
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Try and stop and remove Sablier
+      community.docker.docker_container:
+        name: "{{ sablier_container_name }}"
+        state: absent
+      register: sablier_result
+
+    - name: Check if Sablier is stopped
+      ansible.builtin.assert:
+        that:
+          - not sablier_result.changed

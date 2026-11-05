@@ -4,6 +4,7 @@ provisioner:
     group_vars:
       all:
         traefik_enabled: true
+        traefik_sablier_plugin_enabled: true
         ansible_nas_email: me@example.com
         traefik_data_directory: "/tmp/traefik"
 platforms:

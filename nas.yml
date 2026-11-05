@@ -458,6 +458,8 @@
       tags: [rsshub]
     - role: ryot
       tags: [ryot]
+    - role: sablier
+      tags: [sablier]
     - role: sabnzbd
       tags: [sabnzbd]
     - role: seafile

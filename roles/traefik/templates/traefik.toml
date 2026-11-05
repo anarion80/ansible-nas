@@ -24,6 +24,10 @@
   providersThrottleDuration = "2s"
   [providers.docker]
     exposedbydefault = false
+{% if traefik_sablier_plugin_enabled %}
+  [providers.file]
+    directory = "/etc/traefik/dynamic"
+{% endif %}
 
 [api]
   insecure = true
@@ -47,3 +51,8 @@
 
 [metrics]
   [metrics.prometheus]
+{% if traefik_sablier_plugin_enabled %}
+[experimental.plugins.sablier]
+  moduleName = "github.com/sablierapp/sablier-traefik-plugin"
+  version = "{{ traefik_sablier_plugin_version }}"
+{% endif %}
