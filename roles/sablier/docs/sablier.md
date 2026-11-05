@@ -26,9 +26,11 @@ session expires. Sablier also stops opted-in containers when it starts itself, w
 
 Sablier is called by a reverse proxy, not by a browser, so the role publishes the API on the host
 but does not add a Traefik router for it. The Traefik integration is a middleware plugin
-([sablier-traefik-plugin](https://github.com/sablierapp/sablier-traefik-plugin)) that is configured
-on the Traefik side. Traefik in Ansible-NAS runs with host networking, so an endpoint of
-`http://127.0.0.1:10002` reaches Sablier. Any proxy that can make an HTTP call works as well:
+([sablier-traefik-plugin](https://github.com/sablierapp/sablier-traefik-plugin)). Set
+`traefik_sablier_plugin_enabled: true` in the Traefik role, then attach the `sablier@file`
+middleware to the routers of the containers Sablier should manage. Traefik in Ansible-NAS runs
+with host networking, so an endpoint of `http://127.0.0.1:10002` reaches Sablier. Any proxy that
+can make an HTTP call works as well:
 
 - `/api/strategies/blocking?group=<group>&session_duration=<duration>` holds the request until the
   containers of the group are ready

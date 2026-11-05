@@ -1,0 +1,30 @@
+# Managed by Ansible-NAS
+# Middleware for https://github.com/sablierapp/sablier-traefik-plugin
+# Reference it from a router as "{{ traefik_sablier_plugin_middleware_name }}@file"
+http:
+  middlewares:
+    {{ traefik_sablier_plugin_middleware_name }}:
+      plugin:
+        sablier:
+          sablierUrl: "{{ traefik_sablier_plugin_url }}"
+          group: "{{ traefik_sablier_plugin_group }}"
+          sessionDuration: "{{ traefik_sablier_plugin_session_duration }}"
+          keepAliveInterval: "{{ traefik_sablier_plugin_keep_alive_interval }}"
+          failOpen: {{ traefik_sablier_plugin_fail_open | bool | lower }}
+          dialTimeout: "{{ traefik_sablier_plugin_dial_timeout }}"
+{% if traefik_sablier_plugin_ignore_user_agent | length > 0 %}
+          ignoreUserAgent:
+{% for pattern in traefik_sablier_plugin_ignore_user_agent %}
+            - {{ pattern | to_json }}
+{% endfor %}
+{% endif %}
+{% if traefik_sablier_plugin_strategy == 'blocking' %}
+          blocking:
+            timeout: "{{ traefik_sablier_plugin_blocking_timeout }}"
+{% else %}
+          dynamic:
+            displayName: "{{ traefik_sablier_plugin_dynamic_display_name }}"
+            showDetails: {{ traefik_sablier_plugin_dynamic_show_details | bool | lower }}
+            theme: "{{ traefik_sablier_plugin_dynamic_theme }}"
+            refreshFrequency: "{{ traefik_sablier_plugin_dynamic_refresh_frequency }}"
+{% endif %}

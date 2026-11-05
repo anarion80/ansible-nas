@@ -8,6 +8,8 @@ traefik_enabled: false
 
 # directories
 traefik_data_directory: "{{ docker_home }}/traefik"
+# File provider directory, mounted at /etc/traefik/dynamic
+traefik_dynamic_config_directory: "{{ traefik_data_directory }}/dynamic"
 
 # network
 traefik_port_http: "80"
@@ -33,3 +35,29 @@ traefik_acme_server: "https://acme-v02.api.letsencrypt.org/directory" # producti
 
 # specs
 traefik_memory: 1g
+
+# Sablier plugin
+# Registers https://github.com/sablierapp/sablier-traefik-plugin in the Traefik static configuration
+# and adds a middleware definition to the file provider. The middleware is named after
+# traefik_sablier_plugin_middleware_name and is referenced as "<name>@file" from a router.
+traefik_sablier_plugin_enabled: false
+traefik_sablier_plugin_version: "v1.4.0"
+traefik_sablier_plugin_middleware_name: "sablier"
+# Traefik runs with host networking, so the Sablier API is reachable on the loopback interface
+traefik_sablier_plugin_url: "http://127.0.0.1:{{ sablier_port | default('10002', true) }}"
+traefik_sablier_plugin_group: "default"
+traefik_sablier_plugin_session_duration: "5m"
+# Disabled when empty, must be shorter than traefik_sablier_plugin_session_duration
+traefik_sablier_plugin_keep_alive_interval: ""
+traefik_sablier_plugin_fail_open: false
+# Give up connecting to Sablier after this time, disabled when empty
+traefik_sablier_plugin_dial_timeout: "2s"
+# Requests with a matching User-Agent are answered immediately without waking the containers
+traefik_sablier_plugin_ignore_user_agent: []
+# Only one strategy can be used: "dynamic" shows a waiting page, "blocking" waits for the containers
+traefik_sablier_plugin_strategy: "dynamic"
+traefik_sablier_plugin_dynamic_display_name: "Sablier"
+traefik_sablier_plugin_dynamic_show_details: true
+traefik_sablier_plugin_dynamic_theme: "hacker-terminal"
+traefik_sablier_plugin_dynamic_refresh_frequency: "5s"
+traefik_sablier_plugin_blocking_timeout: "1m"

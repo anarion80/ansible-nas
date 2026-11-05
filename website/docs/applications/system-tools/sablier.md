@@ -23,9 +23,10 @@ group with `sablier.group`.
 
 Sablier is called by a reverse proxy, so the role publishes the API on the host but does not add a
 Traefik router for it. The Traefik integration is the
-[sablier-traefik-plugin](https://github.com/sablierapp/sablier-traefik-plugin) middleware, which is
-configured on the Traefik side. Traefik in Ansible-NAS runs with host networking, so
-`http://127.0.0.1:10002` reaches Sablier.
+[sablier-traefik-plugin](https://github.com/sablierapp/sablier-traefik-plugin) middleware. Set
+`traefik_sablier_plugin_enabled: true` in the Traefik role, then attach the `sablier@file`
+middleware to the routers of the containers Sablier should manage. Traefik in Ansible-NAS runs
+with host networking, so `http://127.0.0.1:10002` reaches Sablier.
 
 ## Configuration
 
