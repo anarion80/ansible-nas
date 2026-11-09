@@ -3,8 +3,6 @@ title: "BookOrbit"
 description: "A self-hosted ebook platform for managing and reading your digital library"
 ---
 
-# BookOrbit
-
 Homepage: [https://bookorbit.app/](https://bookorbit.app/)
 
 A self-hosted ebook platform for managing and reading your digital library.
