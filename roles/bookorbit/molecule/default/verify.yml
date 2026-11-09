@@ -17,6 +17,23 @@
         name: "{{ bookorbit_container_name }}"
       register: result
 
+    - name: Get bookorbit metadata provider container states
+      community.docker.docker_container_info:
+        name: "{{ item.container_name }}"
+      loop: "{{ bookorbit_metadata_providers }}"
+      loop_control:
+        label: "{{ item.key }}"
+      register: result_providers
+
+    - name: Check if bookorbit metadata provider containers are running
+      ansible.builtin.assert:
+        that:
+          - item.container['State']['Status'] == "running"
+          - item.container['State']['Restarting'] == false
+      loop: "{{ result_providers.results }}"
+      loop_control:
+        label: "{{ item.item.key }}"
+
     - name: Check if bookorbit containers are running
       ansible.builtin.assert:
         that:
@@ -24,3 +41,9 @@
           - result_db.container['State']['Restarting'] == false
           - result.container['State']['Status'] == "running"
           - result.container['State']['Restarting'] == false
+
+    - name: Check if the import directory is mounted read-only
+      ansible.builtin.assert:
+        that:
+          - result.container['Mounts'] | selectattr('Destination', 'equalto', '/import') | list | length == 1
+          - result.container['Mounts'] | selectattr('Destination', 'equalto', '/import') | map(attribute='RW') | first == false

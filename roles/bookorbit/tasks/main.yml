@@ -8,6 +8,7 @@
       with_items:
         - "{{ bookorbit_app_data_directory }}"
         - "{{ bookorbit_postgres_data_directory }}"
+        - "{{ bookorbit_import_directory }}"
 
     - name: Create BookOrbit network
       community.docker.docker_network:
@@ -65,6 +66,7 @@
         volumes:
           - "{{ bookorbit_books_directory }}:/books:rw"
           - "{{ bookorbit_app_data_directory }}:/data:rw"
+          - "{{ bookorbit_import_directory }}:/import:ro"
         ports:
           - "{{ bookorbit_port }}:{{ bookorbit_port_container }}"
         networks:
@@ -90,10 +92,48 @@
           traefik.http.routers.bookorbit.tls.domains[0].main: "{{ ansible_nas_domain }}"
           traefik.http.routers.bookorbit.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
           traefik.http.services.bookorbit.loadbalancer.server.port: "{{ bookorbit_port_container }}"
+
+    - name: Create BookOrbit metadata provider containers
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ item.container_name }}"
+        image: "{{ item.image_name }}:{{ bookorbit_metadata_provider_image_version }}"
+        pull: true
+        init: true
+        read_only: true
+        cap_drop:
+          - ALL
+        security_opts:
+          - no-new-privileges:true
+        networks:
+          - name: "{{ bookorbit_network_name }}"
+        env: "{{ bookorbit_metadata_providers_optional_env[item.key] | default({}) }}"
+        restart_policy: unless-stopped
+        memory: "{{ bookorbit_metadata_provider_memory }}"
+      loop: "{{ bookorbit_metadata_providers }}"
+      loop_control:
+        label: "{{ item.key }}"
+      when: item.key in bookorbit_metadata_providers_enabled
+
+    - name: Remove disabled BookOrbit metadata provider containers
+      community.docker.docker_container:
+        name: "{{ item.container_name }}"
+        state: absent
+      loop: "{{ bookorbit_metadata_providers }}"
+      loop_control:
+        label: "{{ item.key }}"
+      when: item.key not in bookorbit_metadata_providers_enabled
   when: bookorbit_enabled is true
 
 - name: Stop BookOrbit
   block:
+    - name: Stop BookOrbit metadata provider containers
+      community.docker.docker_container:
+        name: "{{ item.container_name }}"
+        state: absent
+      loop: "{{ bookorbit_metadata_providers }}"
+      loop_control:
+        label: "{{ item.key }}"
     - name: Stop BookOrbit containers
       community.docker.docker_container:
         name: "{{ item }}"

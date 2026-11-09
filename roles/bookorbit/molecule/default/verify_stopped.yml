@@ -19,8 +19,25 @@
         state: absent
       register: result_db
 
+    - name: Try and stop and remove bookorbit metadata provider containers
+      community.docker.docker_container:
+        name: "{{ item.container_name }}"
+        state: absent
+      loop: "{{ bookorbit_metadata_providers }}"
+      loop_control:
+        label: "{{ item.key }}"
+      register: result_providers
+
     - name: Check if bookorbit is stopped
       ansible.builtin.assert:
         that:
           - not result.changed
           - not result_db.changed
+
+    - name: Check if bookorbit metadata provider containers are stopped
+      ansible.builtin.assert:
+        that:
+          - not item.changed
+      loop: "{{ result_providers.results }}"
+      loop_control:
+        label: "{{ item.item.key }}"

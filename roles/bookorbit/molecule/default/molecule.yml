@@ -4,3 +4,14 @@ provisioner:
     group_vars:
       all:
         bookorbit_enabled: true
+        bookorbit_metadata_providers_enabled:
+          - audiosilo
+          - douban
+          - fantlab
+          - jnovelclub
+          - libris
+          - lubimyczytac
+          - mangabaka
+          - romanceio
+          - soundbooththeater
+          - yandexbooks
