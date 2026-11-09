@@ -79,6 +79,9 @@ bookorbit_optional_env:
   EMAIL_ENCRYPTION_KEY: ""
   # Recommended if you store migration source credentials (generate: openssl rand -hex 32)
   MIGRATION_ENCRYPTION_KEY: ""
+  # Required before a download client or indexer can be saved; credentials are refused
+  # rather than stored in the clear without it (generate: openssl rand -hex 32)
+  BOOK_REQUEST_ENCRYPTION_KEY: ""
   # Absolute container path that authorizes local migration backup files.
   # Mount a dedicated host directory at this path as read-only before enabling backup mode.
   MIGRATION_IMPORT_ROOT: ""
