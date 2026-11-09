@@ -470,6 +470,8 @@
       tags: [scribblers]
     - role: shaarli
       tags: [shaarli]
+    - role: shelfmark
+      tags: [shelfmark]
     - role: shiori
       tags: [shiori]
     - role: servas
