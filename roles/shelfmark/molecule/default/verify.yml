@@ -17,6 +17,7 @@
         that:
           - result.container['State']['Status'] == "running"
           - result.container['State']['Restarting'] == false
+          - result.container['Config']['User'] == "1000:1000"
 
     - name: Check if shelfmark volumes are mounted
       ansible.builtin.assert:
@@ -26,6 +27,12 @@
         - /config
         - /books
         - /downloads
+
+    - name: Check if shelfmark scratch and log directories are tmpfs
+      ansible.builtin.assert:
+        that:
+          - "'/tmp' in result.container['HostConfig']['Tmpfs']"
+          - "'/var/log/shelfmark' in result.container['HostConfig']['Tmpfs']"
 
     - name: Check that only set environment variables are passed
       ansible.builtin.assert:

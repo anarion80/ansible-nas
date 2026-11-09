@@ -5,6 +5,8 @@
       ansible.builtin.file:
         path: "{{ item }}"
         state: directory
+        owner: "{{ shelfmark_user_id }}"
+        group: "{{ shelfmark_group_id }}"
       with_items:
         - "{{ shelfmark_config_directory }}"
 
@@ -17,8 +19,14 @@
         container_default_behavior: no_defaults
         name: "{{ shelfmark_container_name }}"
         image: "{{ shelfmark_image_name }}:{{ shelfmark_image_version }}"
+        user: "{{ shelfmark_container_user }}"
         pull: true
         init: true
+        # the image keeps its runtime scratch and log directories owned by uid 1000,
+        # so mount them as fresh tmpfs to keep non-root container users working
+        tmpfs:
+          - /tmp:mode=1777
+          - /var/log/shelfmark:mode=1777
         networks:
           - name: "{{ shelfmark_network_name }}"
         volumes:

@@ -16,7 +16,7 @@ shelfmark_hostname: "shelfmark"
 shelfmark_network_name: "shelfmark"
 
 # specs
-shelfmark_memory: 1g
+shelfmark_memory: 2g
 
 # docker
 shelfmark_container_name: shelfmark
@@ -24,6 +24,8 @@ shelfmark_image_name: "ghcr.io/calibrain/shelfmark"
 shelfmark_image_version: latest
 shelfmark_user_id: "1000"
 shelfmark_group_id: "1000"
+# user:group the container runs as, for example "1001:1001"
+shelfmark_container_user: "{{ shelfmark_user_id }}:{{ shelfmark_group_id }}"
 
 # shelfmark specific settings
 shelfmark_timezone: "{{ ansible_nas_timezone }}"
