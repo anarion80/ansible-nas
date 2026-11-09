@@ -45,7 +45,7 @@
           homepage.group: Media
           homepage.name: Plex
           homepage.icon: plex
-          homepage.href: http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:32400
+          homepage.href: http://{{ ansible_facts['default_ipv4']['address'] }}:32400
           homepage.description: Media server
 
     - name: Start Plex Autoscan

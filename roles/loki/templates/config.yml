@@ -20,7 +20,7 @@ common:
   replication_factor: 1
   storage:
     s3:
-      endpoint: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ minio_api_port }}"
+      endpoint: "{{ ansible_facts['default_ipv4']['address'] }}:{{ minio_api_port }}"
       insecure: true
       bucketnames: loki-data
       access_key_id: "{{ minio_admin_username }}"

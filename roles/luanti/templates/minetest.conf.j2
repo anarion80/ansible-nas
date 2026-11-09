@@ -1116,7 +1116,7 @@
 #    Leave this blank to start a local server.
 #    Note that the address field in the main menu overrides this setting.
 #    type: string
-address = {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+address = {{ ansible_facts['default_ipv4']['address'] }}
 
 #    Port to connect to (UDP).
 #    Note that the port field in the main menu overrides this setting.
@@ -1193,11 +1193,11 @@ server_description = {{ luanti_description }}
 
 #    Domain name of server, to be displayed in the serverlist.
 #    type: string
-server_address = {{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+server_address = {{ ansible_facts['default_ipv4']['address'] }}
 
 #    Homepage of server, to be displayed in the serverlist.
 #    type: string
-server_url = https://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}
+server_url = https://{{ ansible_facts['default_ipv4']['address'] }}
 
 #    Automatically report to the serverlist.
 #    type: bool

@@ -56,7 +56,7 @@
         volumes:
           - "/var/run/docker.sock:/var/run/docker.sock:rw"
         env:
-          WOODPECKER_SERVER: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ woodpecker_ci_port_grpc }}"
+          WOODPECKER_SERVER: "{{ ansible_facts['default_ipv4']['address'] }}:{{ woodpecker_ci_port_grpc }}"
           WOODPECKER_AGENT_SECRET: "{{ woodpecker_ci_agent_secret }}"
           WOODPECKER_LOG_LEVEL: "{{ woodpecker_ci_log_level }}"
         restart_policy: unless-stopped

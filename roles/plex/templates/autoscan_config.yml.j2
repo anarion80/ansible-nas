@@ -41,5 +41,5 @@ triggers:
 
 targets:
   plex:
-    - url: http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:32400/ # URL of your Plex server
+    - url: http://{{ ansible_facts['default_ipv4']['address'] }}:32400/ # URL of your Plex server
       token: "{{ plex_api_token | default("") }}" # Plex API Token

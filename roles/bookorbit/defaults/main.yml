@@ -30,7 +30,7 @@ bookorbit_group_id: "1000"
 
 # bookorbit specific settings
 bookorbit_timezone: "{{ ansible_nas_timezone }}"
-bookorbit_app_url: "https://{{ ansible_hostname}}.{{ ansible_nas_domain }}"
+bookorbit_app_url: "https://{{ ansible_facts['hostname'] }}.{{ ansible_nas_domain }}"
 bookorbit_client_url: "{{ bookorbit_app_url }}"
 bookorbit_node_max_old_space_size: "2048"
 bookorbit_book_dock_path: "/data/book-dock"
