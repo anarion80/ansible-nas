@@ -1,0 +1,28 @@
+---
+- name: Verify
+  hosts: all
+  gather_facts: false
+  tasks:
+    - name: Include vars
+      ansible.builtin.include_vars:
+        file: ../../defaults/main.yml
+
+    - name: Get shelfmark container state
+      community.docker.docker_container_info:
+        name: "{{ shelfmark_container_name }}"
+      register: result
+
+    - name: Check if shelfmark container is running
+      ansible.builtin.assert:
+        that:
+          - result.container['State']['Status'] == "running"
+          - result.container['State']['Restarting'] == false
+
+    - name: Check if shelfmark volumes are mounted
+      ansible.builtin.assert:
+        that:
+          - result.container['Mounts'] | selectattr('Destination', 'equalto', item) | list | length == 1
+      loop:
+        - /config
+        - /books
+        - /downloads

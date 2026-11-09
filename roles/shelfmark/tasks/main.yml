@@ -1,0 +1,53 @@
+---
+- name: Start Shelfmark
+  block:
+    - name: Create Shelfmark Directories
+      ansible.builtin.file:
+        path: "{{ item }}"
+        state: directory
+      with_items:
+        - "{{ shelfmark_config_directory }}"
+
+    - name: Create Shelfmark network
+      community.docker.docker_network:
+        name: "{{ shelfmark_network_name }}"
+
+    - name: Create Shelfmark Docker Container
+      community.docker.docker_container:
+        container_default_behavior: no_defaults
+        name: "{{ shelfmark_container_name }}"
+        image: "{{ shelfmark_image_name }}:{{ shelfmark_image_version }}"
+        pull: true
+        init: true
+        networks:
+          - name: "{{ shelfmark_network_name }}"
+        volumes:
+          - "{{ shelfmark_config_directory }}:/config:rw"
+          - "{{ shelfmark_books_directory }}:/books:rw"
+          - "{{ shelfmark_downloads_directory }}:{{ shelfmark_downloads_container_path }}:rw"
+        ports:
+          - "{{ shelfmark_port }}:{{ shelfmark_port_container }}"
+        env: "{{ shelfmark_optional_env | combine(shelfmark_env) }}"
+        hostname: "{{ shelfmark_hostname }}"
+        restart_policy: unless-stopped
+        memory: "{{ shelfmark_memory }}"
+        labels:
+          traefik.enable: "{{ shelfmark_available_externally | string }}"
+          traefik.http.routers.shelfmark.rule: "Host(`{{ shelfmark_hostname }}.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.shelfmark.tls.certresolver: "letsencrypt"
+          traefik.http.routers.shelfmark.tls.domains[0].main: "{{ ansible_nas_domain }}"
+          traefik.http.routers.shelfmark.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
+          traefik.http.services.shelfmark.loadbalancer.server.port: "{{ shelfmark_port_container }}"
+  when: shelfmark_enabled is true
+
+- name: Stop Shelfmark
+  block:
+    - name: Stop Shelfmark container
+      community.docker.docker_container:
+        name: "{{ shelfmark_container_name }}"
+        state: absent
+    - name: Remove Shelfmark network
+      community.docker.docker_network:
+        name: "{{ shelfmark_network_name }}"
+        state: absent
+  when: shelfmark_enabled is false

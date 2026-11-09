@@ -1,0 +1,46 @@
+---
+shelfmark_enabled: false
+shelfmark_available_externally: false
+
+# directories
+shelfmark_data_directory: "{{ docker_home }}/shelfmark"
+shelfmark_config_directory: "{{ shelfmark_data_directory }}/config"
+shelfmark_books_directory: "{{ books_root }}"
+shelfmark_downloads_directory: "{{ downloads_root }}"
+shelfmark_downloads_container_path: "/downloads"
+
+# network
+shelfmark_port: "8192"
+shelfmark_port_container: "8084"
+shelfmark_hostname: "shelfmark"
+shelfmark_network_name: "shelfmark"
+
+# specs
+shelfmark_memory: 1g
+
+# docker
+shelfmark_container_name: shelfmark
+shelfmark_image_name: "ghcr.io/calibrain/shelfmark"
+shelfmark_image_version: latest
+shelfmark_user_id: "1000"
+shelfmark_group_id: "1000"
+
+# shelfmark specific settings
+shelfmark_timezone: "{{ ansible_nas_timezone }}"
+
+# main env dictionary for the container and for merging with optional environment variables
+shelfmark_env:
+  PUID: "{{ shelfmark_user_id | quote }}"
+  PGID: "{{ shelfmark_group_id | quote }}"
+  TZ: "{{ shelfmark_timezone }}"
+  FLASK_PORT: "{{ shelfmark_port_container }}"
+
+# optional environment variables, override/extend in your inventory, for example:
+# shelfmark_optional_env:
+#   # Add to the search sources through a FlareSolverr instance
+#   EXT_BYPASSER_URL: "http://flaresolverr:8191"
+#   # Authentication: none, builtin, proxy, oidc or cwa
+#   AUTH_METHOD: "builtin"
+#   # Optional static API key for automation
+#   SHELFMARK_API_KEY: "change-me"
+shelfmark_optional_env: {}

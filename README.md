@@ -234,6 +234,7 @@ If you have a spare domain name you can configure applications to be accessible 
 - [Scribble.rs](https://github.com/scribble-rs/scribble.rs) - A skribbl.io alternative
 - [Servas](https://github.com/beromir/Servas) - A self-hosted bookmark management tool
 - [Shaarli](https://github.com/shaarli/Shaarli) - Personal, minimalist, super-fast, database free, bookmarking service
+- [Shelfmark](https://github.com/calibrain/shelfmark) - Search multiple sources for books and audiobooks and download them to your library
 - [Shiori](https://github.com/go-shiori/shiori) - Simple bookmark manager built with Go
 - [Sickchill](https://sickchill.github.io/) - for managing TV episodes
 - [Silverbullet](https://silverbullet.md) - Note-taking application optimized for people with a hacker mindset
