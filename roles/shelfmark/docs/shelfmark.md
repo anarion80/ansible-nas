@@ -26,10 +26,17 @@ The downloads mount has to use the same path, inside the container, that your do
 Shelfmark moves or hardlinks finished files from that path. Change the container side with
 `shelfmark_downloads_container_path` if your clients mount downloads somewhere else.
 
+The image keeps its scratch and entrypoint log directories owned by its built-in user, uid 1000, so
+the role mounts `/tmp` and `/var/log/shelfmark` as tmpfs. That lets the container start as any
+`user:group`, and its output stays available through `docker logs`.
+
 ## Settings
 
 - `shelfmark_user_id` and `shelfmark_group_id` set `PUID` and `PGID` for files Shelfmark writes,
-  `1000` by default.
+  `1000` by default, and the container runs as that user and group. Set both to your host user, for
+  example `1001`, so it can read and write the mounted books and downloads directories; the config
+  directory is created with that ownership. To run the container as a different identity, set
+  `shelfmark_container_user` directly, for example `"1001:1001"`.
 - `shelfmark_timezone` is passed as `TZ`, `shelfmark_memory` limits the container and
   `shelfmark_available_externally` publishes it through Traefik.
 - `shelfmark_image_version` defaults to `latest`; pin a release to update on purpose.
