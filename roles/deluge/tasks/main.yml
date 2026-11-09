@@ -35,10 +35,10 @@
           homepage.group: Download Tools
           homepage.name: Deluge
           homepage.icon: deluge.png
-          homepage.href: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ deluge_port }}"
+          homepage.href: "http://{{ ansible_facts['default_ipv4']['address'] }}:{{ deluge_port }}"
           homepage.description: BitTorrent client
           homepage.widget.type: deluge
-          homepage.widget.url: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ deluge_port }}"
+          homepage.widget.url: "http://{{ ansible_facts['default_ipv4']['address'] }}:{{ deluge_port }}"
   when: deluge_enabled is true
 
 - name: Stop Deluge

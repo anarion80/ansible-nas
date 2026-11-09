@@ -64,7 +64,7 @@ plex_autoscan_verbosity: "0"
 plex_api_token: ""
 
 # meta manager
-plex_meta_plex_url: http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:32400
+plex_meta_plex_url: http://{{ ansible_facts['default_ipv4']['address'] }}:32400
 plex_meta_tmdb_api_key: ""
 plex_meta_tautulli_url: ""
 plex_meta_tautulli_api_key: ""

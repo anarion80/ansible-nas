@@ -8,7 +8,7 @@ woodpecker_ci_data_directory: "{{ docker_home }}/woodpecker-ci"
 # network
 woodpecker_ci_port_ui: 8000
 woodpecker_ci_port_grpc: 9000
-woodpecker_ci_address: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ woodpecker_ci_port_ui }}"
+woodpecker_ci_address: "http://{{ ansible_facts['default_ipv4']['address'] }}:{{ woodpecker_ci_port_ui }}"
 woodpecker_ci_hostname: woodpecker-ci
 
 # docker
@@ -35,7 +35,7 @@ woodpecker_ci_agent_secret: 9f3aeaa7bbabcf42b724f65d4acb38456899ca32511677a8c383
 woodpecker_ci_log_level: info
 
 # the url to your gitea server
-woodpecker_ci_gitea_url: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ gitea_port_http }}"
+woodpecker_ci_gitea_url: "http://{{ ansible_facts['default_ipv4']['address'] }}:{{ gitea_port_http }}"
 
 # gitea auth credentials. see https://woodpecker-ci.org/docs/administration/forges/gitea for more info
 woodpecker_ci_gitea_client: notset

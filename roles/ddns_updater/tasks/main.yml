@@ -46,7 +46,7 @@
           homepage.group: Networking
           homepage.name: DDNS Updater
           homepage.icon: ddns-updater
-          homepage.href: "http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ ddns_updater_port }}"
+          homepage.href: "http://{{ ansible_facts['default_ipv4']['address'] }}:{{ ddns_updater_port }}"
   when: ddns_updater_enabled is true
 
 - name: Stop DDNS Updater

@@ -56,7 +56,7 @@
         ports:
           - "{{ drone_ci_runner_port_http }}:3000"
         env:
-          DRONE_RPC_HOST: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ drone_ci_port_http }}"
+          DRONE_RPC_HOST: "{{ ansible_facts['default_ipv4']['address'] }}:{{ drone_ci_port_http }}"
           DRONE_RPC_SECRET: "{{ drone_ci_agent_secret }}"
           DRONE_RPC_PROTO: "http"
           DRONE_RUNNER_CAPACITY: "{{ drone_ci_runner_capacity | string }}"

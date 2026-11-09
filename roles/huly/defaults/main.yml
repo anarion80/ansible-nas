@@ -75,7 +75,7 @@ huly_user_id: "1000"
 huly_group_id: "1000"
 
 # huly
-huly_server_address: "{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}"
+huly_server_address: "{{ ansible_facts['default_ipv4']['address'] }}"
 
 huly_elastic_bitnami_debug: "true"
 huly_elastic_discovery_type: single-node

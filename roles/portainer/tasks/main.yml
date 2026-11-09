@@ -38,10 +38,10 @@
           homepage.group: System Tools
           homepage.name: Portainer
           homepage.icon: portainer.png
-          homepage.href: "https://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ portainer_port }}"
+          homepage.href: "https://{{ ansible_facts['default_ipv4']['address'] }}:{{ portainer_port }}"
           homepage.description: Container management
           homepage.widget.type: portainer
-          homepage.widget.url: "https://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ portainer_port }}"
+          homepage.widget.url: "https://{{ ansible_facts['default_ipv4']['address'] }}:{{ portainer_port }}"
   when: portainer_enabled is true
 
 - name: Stop Portainer

@@ -32,7 +32,7 @@
           homepage.group: Download Tools
           homepage.name: Jackett
           homepage.icon: jackett
-          homepage.href: http://{{ hostvars[inventory_hostname]['ansible_default_ipv4']['address'] }}:{{ jackett_port }}
+          homepage.href: http://{{ ansible_facts['default_ipv4']['address'] }}:{{ jackett_port }}
           homepage.description: API Support for your favorite torrent trackers
   when: jackett_enabled is true
 
