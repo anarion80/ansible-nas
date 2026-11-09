@@ -41,3 +41,9 @@
           - result_db.container['State']['Restarting'] == false
           - result.container['State']['Status'] == "running"
           - result.container['State']['Restarting'] == false
+
+    - name: Check if the import directory is mounted read-only
+      ansible.builtin.assert:
+        that:
+          - result.container['Mounts'] | selectattr('Destination', 'equalto', '/import') | list | length == 1
+          - result.container['Mounts'] | selectattr('Destination', 'equalto', '/import') | map(attribute='RW') | first == false

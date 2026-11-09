@@ -8,6 +8,7 @@
       with_items:
         - "{{ bookorbit_app_data_directory }}"
         - "{{ bookorbit_postgres_data_directory }}"
+        - "{{ bookorbit_import_directory }}"
 
     - name: Create BookOrbit network
       community.docker.docker_network:
@@ -65,6 +66,7 @@
         volumes:
           - "{{ bookorbit_books_directory }}:/books:rw"
           - "{{ bookorbit_app_data_directory }}:/data:rw"
+          - "{{ bookorbit_import_directory }}:/import:ro"
         ports:
           - "{{ bookorbit_port }}:{{ bookorbit_port_container }}"
         networks:

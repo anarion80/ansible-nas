@@ -6,6 +6,7 @@ bookorbit_available_externally: false
 bookorbit_data_directory: "{{ docker_home }}/bookorbit"
 bookorbit_app_data_directory: "{{ bookorbit_data_directory }}/app"
 bookorbit_postgres_data_directory: "{{ bookorbit_data_directory }}/postgres"
+bookorbit_import_directory: "{{ bookorbit_data_directory }}/import"
 bookorbit_books_directory: "{{ books_root }}"
 
 # network
@@ -83,7 +84,7 @@ bookorbit_optional_env:
   # rather than stored in the clear without it (generate: openssl rand -hex 32)
   BOOK_REQUEST_ENCRYPTION_KEY: ""
   # Absolute container path that authorizes local migration backup files.
-  # Mount a dedicated host directory at this path as read-only before enabling backup mode.
+  # This role mounts bookorbit_import_directory at /import read-only; set this to /import to use it.
   MIGRATION_IMPORT_ROOT: ""
 
 # database env dictionary for the container and for merging with optional environment variables
