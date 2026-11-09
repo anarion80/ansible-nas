@@ -27,7 +27,7 @@
           - "{{ shelfmark_downloads_directory }}:{{ shelfmark_downloads_container_path }}:rw"
         ports:
           - "{{ shelfmark_port }}:{{ shelfmark_port_container }}"
-        env: "{{ shelfmark_optional_env | combine(shelfmark_env) }}"
+        env: "{{ (shelfmark_optional_env | combine(shelfmark_env)) | dict2items | rejectattr('value', 'in', ['', none]) | items2dict }}"
         hostname: "{{ shelfmark_hostname }}"
         restart_policy: unless-stopped
         memory: "{{ shelfmark_memory }}"

@@ -36,9 +36,12 @@ Shelfmark moves or hardlinks finished files from that path. Change the container
 - `shelfmark_timezone` is passed as `TZ`, `shelfmark_memory` limits the container and
   `shelfmark_available_externally` publishes it through Traefik.
 - `shelfmark_image_version` defaults to `latest`; pin a release to update on purpose.
-- `shelfmark_optional_env` adds any other
-  [environment variable](https://github.com/calibrain/shelfmark/blob/main/docs/environment-variables.md),
-  for example:
+- `shelfmark_optional_env` holds every variable from the upstream
+  [environment variables guide](https://github.com/calibrain/shelfmark/blob/main/docs/environment-variables.md).
+  All of them default to an empty value, and empty values are not passed to the container, so the
+  role works without defining any of them and nothing is locked to an environment override unless
+  you set it. The comment after each entry shows Shelfmark's own default. Set only what you need,
+  quoted as strings:
 
       shelfmark_optional_env:
         AUTH_METHOD: "builtin"
@@ -47,3 +50,5 @@ Shelfmark moves or hardlinks finished files from that path. Change the container
 
   `AUTH_METHOD` selects `none`, `builtin`, `proxy`, `oidc` or `cwa`; the OIDC and proxy variables are
   documented in the upstream [configuration guide](https://github.com/calibrain/shelfmark/blob/main/docs/configuration.md).
+  The egress and VPN variables additionally need capabilities such as `NET_ADMIN` that this role does
+  not add.

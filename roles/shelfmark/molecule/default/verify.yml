@@ -26,3 +26,11 @@
         - /config
         - /books
         - /downloads
+
+    - name: Check that only set environment variables are passed
+      ansible.builtin.assert:
+        that:
+          - result.container['Config']['Env'] | select('match', 'EXT_BYPASSER_URL=http://flaresolverr:8191') | list | length == 1
+          - result.container['Config']['Env'] | select('match', 'AUTH_METHOD=') | list | length == 0
+          - result.container['Config']['Env'] | select('match', 'SHELFMARK_API_KEY=') | list | length == 0
+          - result.container['Config']['Env'] | select('match', 'PUID=1000') | list | length == 1

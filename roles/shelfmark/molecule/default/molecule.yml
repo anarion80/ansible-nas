@@ -4,3 +4,5 @@ provisioner:
     group_vars:
       all:
         shelfmark_enabled: true
+        shelfmark_optional_env:
+          EXT_BYPASSER_URL: "http://flaresolverr:8191"
