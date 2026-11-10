@@ -6,10 +6,62 @@ flaresolverr_available_externally: false
 flaresolverr_config_directory: "{{ docker_home }}/flaresolverr"
 
 # network
+flaresolverr_hostname: "flaresolverr"
 flaresolverr_port: "8191"
+flaresolverr_port_container: "8191"
+# Prometheus exporter, off by default; the metrics port is only published when it is enabled
+flaresolverr_prometheus_enabled: "false"
+flaresolverr_prometheus_port: "8193"
+flaresolverr_prometheus_port_container: "8192"
 
 # specs
 flaresolverr_memory: 200m
+# the headless browser creates and destroys its temporary profiles in /tmp, keep them in RAM
+flaresolverr_tmpfs_size: "256M"
 
 # docker
 flaresolverr_container_name: flaresolverr
+flaresolverr_image_name: "ghcr.io/flaresolverr/flaresolverr"
+flaresolverr_image_version: latest
+
+# flaresolverr specific settings
+flaresolverr_timezone: "{{ ansible_nas_timezone }}"
+flaresolverr_log_level: "info"
+# "none" disables the log file, or use a path inside the container, for example /config/flaresolverr.log
+flaresolverr_log_file: "none"
+flaresolverr_log_html: "false"
+# "none" or the file name of a captcha solver adapter in the image's /captcha directory
+flaresolverr_captcha_solver: "none"
+
+# published ports, the metrics port is added when the Prometheus exporter is enabled
+flaresolverr_ports: "{{ [flaresolverr_port ~ ':' ~ flaresolverr_port_container] + ([flaresolverr_prometheus_port ~ ':' ~ flaresolverr_prometheus_port_container] if flaresolverr_prometheus_enabled | bool else []) }}"
+
+# main env dictionary for the container and for merging with optional environment variables
+flaresolverr_env:
+  TZ: "{{ flaresolverr_timezone }}"
+  LOG_LEVEL: "{{ flaresolverr_log_level }}"
+  LOG_FILE: "{{ flaresolverr_log_file }}"
+  LOG_HTML: "{{ flaresolverr_log_html }}"
+  CAPTCHA_SOLVER: "{{ flaresolverr_captcha_solver }}"
+  PROMETHEUS_ENABLED: "{{ flaresolverr_prometheus_enabled }}"
+  PROMETHEUS_PORT: "{{ flaresolverr_prometheus_port_container }}"
+
+# optional environment variables
+# Every variable is empty by default and only reaches the container when set, so the role works
+# without defining any of them. The comment after each entry is FlareSolverr's own default, from
+# https://github.com/FlareSolverr/FlareSolverr#environment-variables.
+# Set only the ones you need, for example:
+#
+# flaresolverr_optional_env:
+#   PROXY_URL: "http://127.0.0.1:8080"
+#   BROWSER_WAIT_TIMEOUT: "5"
+flaresolverr_optional_env:
+  PROXY_URL: ""  # default: none
+  PROXY_USERNAME: ""  # default: none
+  PROXY_PASSWORD: ""  # default: none
+  LANG: ""  # default: none
+  HEADLESS: ""  # default: true
+  DISABLE_MEDIA: ""  # default: false
+  BROWSER_WAIT_TIMEOUT: ""  # default: 1
+  TEST_URL: ""  # default: https://www.google.com
+  HOST: ""  # default: 0.0.0.0
