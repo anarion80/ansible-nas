@@ -11,23 +11,23 @@
     - name: FlareSolverr Docker Container
       community.docker.docker_container:
         name: "{{ flaresolverr_container_name }}"
-        image: flaresolverr/flaresolverr
+        image: "{{ flaresolverr_image_name }}:{{ flaresolverr_image_version }}"
         pull: true
+        tmpfs:
+          - "/tmp:size={{ flaresolverr_tmpfs_size }},mode=1777"
         volumes:
           - "{{ flaresolverr_config_directory }}:/config:rw"
-        ports:
-          - "{{ flaresolverr_port }}:8191"
-        env:
-          TZ: "{{ ansible_nas_timezone }}"
+        ports: "{{ flaresolverr_ports }}"
+        env: "{{ (flaresolverr_optional_env | combine(flaresolverr_env)) | dict2items | rejectattr('value', 'in', ['', none]) | items2dict }}"
         restart_policy: unless-stopped
         memory: "{{ flaresolverr_memory }}"
         labels:
           traefik.enable: "{{ flaresolverr_available_externally | string }}"
-          traefik.http.routers.flaresolverr.rule: "Host(`flaresolverr.{{ ansible_nas_domain }}`)"
+          traefik.http.routers.flaresolverr.rule: "Host(`{{ flaresolverr_hostname }}.{{ ansible_nas_domain }}`)"
           traefik.http.routers.flaresolverr.tls.certresolver: "letsencrypt"
           traefik.http.routers.flaresolverr.tls.domains[0].main: "{{ ansible_nas_domain }}"
           traefik.http.routers.flaresolverr.tls.domains[0].sans: "*.{{ ansible_nas_domain }}"
-          traefik.http.services.flaresolverr.loadbalancer.server.port: "8191"
+          traefik.http.services.flaresolverr.loadbalancer.server.port: "{{ flaresolverr_port_container }}"
   when: flaresolverr_enabled is true
 
 - name: Stop FlareSolverr

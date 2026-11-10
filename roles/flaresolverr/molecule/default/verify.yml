@@ -16,3 +16,32 @@
         that:
           - result.container['State']['Status'] == "running"
           - result.container['State']['Restarting'] == false
+
+    - name: Check FlareSolverr scratch directory is tmpfs
+      ansible.builtin.assert:
+        that:
+          - "'/tmp' in result.container['HostConfig']['Tmpfs']"
+
+    - name: Check the environment is passed to the container
+      ansible.builtin.assert:
+        that:
+          - result.container['Config']['Env'] | select('match', 'LOG_LEVEL=info') | list | length == 1
+          - result.container['Config']['Env'] | select('match', 'LOG_FILE=none') | list | length == 1
+          - result.container['Config']['Env'] | select('match', 'LOG_HTML=false') | list | length == 1
+          - result.container['Config']['Env'] | select('match', 'CAPTCHA_SOLVER=none') | list | length == 1
+
+    - name: Check the optional environment variables are merged
+      ansible.builtin.assert:
+        that:
+          - result.container['Config']['Env'] | select('match', 'BROWSER_WAIT_TIMEOUT=5') | list | length == 1
+
+    - name: Check unset optional environment variables are not passed
+      ansible.builtin.assert:
+        that:
+          - result.container['Config']['Env'] | select('match', 'PROXY_URL=') | list | length == 0
+
+    - name: Check the API port is published
+      ansible.builtin.assert:
+        that:
+          - result.container['HostConfig']['PortBindings'] | length == 1
+          - "'8191/tcp' in result.container['HostConfig']['PortBindings']"

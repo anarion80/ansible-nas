@@ -4,3 +4,6 @@ provisioner:
     group_vars:
       all:
         flaresolverr_enabled: true
+        flaresolverr_optional_env:
+          BROWSER_WAIT_TIMEOUT: "5"
+          PROXY_URL: ""
