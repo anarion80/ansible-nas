@@ -31,15 +31,22 @@ bookorbit_group_id: "1000"
 
 # bookorbit specific settings
 bookorbit_timezone: "{{ ansible_nas_timezone }}"
-bookorbit_app_url: "https://{{ ansible_facts['hostname'] }}.{{ ansible_nas_domain }}"
+bookorbit_app_url: "https://{{ bookorbit_hostname }}.{{ ansible_nas_domain }}"
 bookorbit_client_url: "{{ bookorbit_app_url }}"
 bookorbit_node_max_old_space_size: "2048"
-bookorbit_book_dock_path: "/data/book-dock"
+bookorbit_book_dock_path: "/import"
 bookorbit_library_browse_root: "/books"
 bookorbit_fix_permissions: "true"
 bookorbit_log_level: "info"
 bookorbit_oidc_allow_local_issuers: "false"
+bookorbit_disable_local_auth: "false"
 bookorbit_csp_allow_cloudflare_insights: "false"
+bookorbit_host: "0.0.0.0"
+# In-container path to a PEM CA bundle trusted for outbound TLS, needed when an OIDC
+# provider uses a private certificate authority. The app data directory is mounted at
+# /data, so a bundle dropped in bookorbit_app_data_directory works as /data/<file>.pem
+# without an extra mount. Leave empty to keep NODE_EXTRA_CA_CERTS unset.
+bookorbit_node_extra_ca_certs: ""
 
 # database settings
 bookorbit_db_name: "bookorbit"
@@ -53,6 +60,7 @@ bookorbit_setup_bootstrap_token: "change-me-to-a-long-random-secret"
 bookorbit_env:
   NODE_ENV: production
   PORT: "{{ bookorbit_port_container }}"
+  HOST: "{{ bookorbit_host }}"
   DATABASE_URL: "postgres://{{ bookorbit_db_user }}:{{ bookorbit_db_pass }}@{{ bookorbit_db_container_name }}:{{ bookorbit_db_port }}/{{ bookorbit_db_name }}"
   POSTGRES_HOST: "{{ bookorbit_db_container_name }}"
   POSTGRES_PORT: "{{ bookorbit_db_port }}"
@@ -72,6 +80,8 @@ bookorbit_env:
   BOOKORBIT_FIX_PERMISSIONS: "{{ bookorbit_fix_permissions }}"
   LOG_LEVEL: "{{ bookorbit_log_level }}"
   OIDC_ALLOW_LOCAL_ISSUERS: "{{ bookorbit_oidc_allow_local_issuers }}"
+  DISABLE_LOCAL_AUTH: "{{ bookorbit_disable_local_auth }}"
+  NODE_EXTRA_CA_CERTS: "{{ bookorbit_node_extra_ca_certs }}"
   CSP_ALLOW_CLOUDFLARE_INSIGHTS: "{{ bookorbit_csp_allow_cloudflare_insights }}"
 
 # optional environment variables, override/extend in your inventory
@@ -86,6 +96,8 @@ bookorbit_optional_env:
   # Absolute container path that authorizes local migration backup files.
   # This role mounts bookorbit_import_directory at /import read-only; set this to /import to use it.
   MIGRATION_IMPORT_ROOT: ""
+  # Optional GitHub token used to read release notes, raising the anonymous API rate limit
+  GITHUB_RELEASES_TOKEN: ""
 
 # database env dictionary for the container and for merging with optional environment variables
 bookorbit_db_env:
